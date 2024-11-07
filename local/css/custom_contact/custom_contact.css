@@ -1,0 +1,48 @@
+.crm-entity-widget-client-box-preferences{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.crm-entity-widget-client-box-preferences span{
+    /*background: #eef2f4;*/
+    /*border-radius: 6px;*/
+    /*padding: 2px 4px;*/
+    color: #a8acb3;
+    white-space: nowrap;
+    font: 500 13px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
+
+}
+
+.crm-entity-widget-client-box-preferences span .yes,
+.crm-entity-widget-client-box-preferences span .no{
+    margin-left: 4px;
+    padding: 2px 4px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    border-radius: 6px;
+}
+
+.crm-entity-widget-client-box-preferences span .yes{
+    background: #13c4ef;
+}
+
+.crm-entity-widget-client-box-preferences span .no{
+    background: #ff7373;
+}
+
+.crm-entity-widget-client-box-quiz{
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.crm-entity-widget-client-box-quiz span{
+    margin: 0 3px 0 0;
+    color: #a8acb3;
+    white-space: nowrap;
+    font: 500 13px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
+    word-break: break-word;
+    /*text-decoration: underline;*/
+}
