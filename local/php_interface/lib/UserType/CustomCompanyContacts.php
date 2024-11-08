@@ -58,7 +58,7 @@ class CustomCompanyContacts extends TypeBase
             'QUIZ_FIELD' => 'UF_CONTACT_QUIZ_AREA',
             'BASE_TYPE' => \CUserTypeManager::BASE_TYPE_STRING,
             'DEFAULT_VALUE' => "-",
-            'EDIT_CALLBACK' => [__CLASS__, 'GetPublicEdit'],
+            'EDIT_CALLBACK' => [__CLASS__, 'GetPublicView'],
             'VIEW_CALLBACK' => [__CLASS__, 'GetPublicView'],
         );
     }
