@@ -54,9 +54,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_be
                 </div>
             </div>
         </div>
-        <div class="ui-ctl ui-ctl__combined-input">
-            <button class="ui-btn ui-btn-success" >Сохранить</button>
-            <button class="ui-btn " >Сохранить</button>
+        <div class="ui-ctl ui-ctl-row">
+            <button class="ui-btn ui-btn-success" ><span class="ui-btn-text">Сохранить</span></button>
+            <button class="ui-btn " ><span class="ui-btn-text">Сохранить</span></button>
         </div>
     </div>
 
