@@ -1,7 +1,7 @@
 .crm-entity-widget-client-box-preferences{
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    colmn-gap: 8px;
 }
 .crm-entity-widget-client-box-preferences span{
     /*background: #eef2f4;*/
