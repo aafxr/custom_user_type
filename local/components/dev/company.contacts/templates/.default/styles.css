@@ -1,0 +1,13 @@
+body{
+    background-color: purple!important;
+}
+
+.ui-form{
+    height: 100%;
+}
+
+.ui-form-buttons{
+    margin-top: auto;
+    display: flex;
+    gap: 8px;
+}

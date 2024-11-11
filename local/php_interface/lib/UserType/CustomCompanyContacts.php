@@ -179,7 +179,6 @@ class CustomCompanyContacts extends TypeBase
                 </div>
                 <script>
                     BX.ready(() => {
-                        console.log("'.$templateUrl.'")
                         let node = document.querySelector("[data-cid=\"'.$arUserField['FIELD_NAME'].'\"]")
                         if(node){
                             let titleNode = node.querySelector(".ui-entity-editor-block-title")
@@ -187,8 +186,7 @@ class CustomCompanyContacts extends TypeBase
                         } 
                         dialog = new BX.CDialog({
                             "title": "test title",
-                            "content_url": "'.$templateUrl.'/content.php",
-                            "content_post": "foo=5&bar=7",
+                            "content_url": "'.$templateUrl.'/content.php?IFRAME=Y",
                         });
                         dialog.Show()
                     })
