@@ -1,0 +1,2 @@
+<?php
+$MESS["NIKOLAEVEVGE_DATE_CURRENT_TEMPLATE_LABEL_TEXT"] = "Текущая дата";

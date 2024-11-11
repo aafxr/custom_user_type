@@ -1,5 +1,5 @@
 body{
-    background-color: purple!important;
+    background-color: lightgray!important;
 }
 
 .ui-form{
@@ -10,4 +10,8 @@ body{
     margin-top: auto;
     display: flex;
     gap: 8px;
+}
+
+.ui-form-title{
+    font-size: inherit;
 }

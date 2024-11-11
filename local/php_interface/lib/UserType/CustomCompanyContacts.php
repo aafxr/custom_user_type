@@ -185,9 +185,16 @@ class CustomCompanyContacts extends TypeBase
                             titleNode.style.display = "none"
                         } 
                         dialog = new BX.CDialog({
-                            "title": "test title",
+                            "title": "Контакт",
                             "content_url": "'.$templateUrl.'/content.php?IFRAME=Y",
                         });
+                        document.addEventListener("click", (e) => {
+                            const el = e.target.closest(".crm-entity-widget-client-block)
+                            if(el && el.hasAttribute("data-contact-id")){
+                                e.preventDefault()
+                                
+                            }
+                        })
                         dialog.Show()
                     })
                 </script>

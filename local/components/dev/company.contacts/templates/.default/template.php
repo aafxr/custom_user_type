@@ -10,7 +10,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_be
 ?>
 
 <div class="ui-form">
-    <h2><? json_encode($arResult ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?? 'asdasd' ?></h2>
+    <h2 class="ui-form-title"><? json_encode($arResult ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?? 'asdasd' ?></h2>
     <div>
         <div class="ui-ctl">
             <div class="ui-ctl-label-text">Имя:</div>

@@ -5,6 +5,7 @@ class CCompanyContacts extends CBitrixComponent{
     function OnPrepareComponentParams($arParams){
         $this->arParams = $arParams;
         $this->arResult['CUSTOM'] = $arResult['CUSTOM'] ?? '13';
+        $this->arParams['CACHE_TIME'] = 0;
         return $arParams;
     }
 
