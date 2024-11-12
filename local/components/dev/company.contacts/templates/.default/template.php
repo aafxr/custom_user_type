@@ -9,13 +9,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_be
 
 ?>
 
-<div class="ui-form">
-    <h2 class="ui-form-title"><? json_encode($arResult ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?? 'asdasd' ?></h2>
+<div class="ui-form contact-edite-form" data-cid="<?php $arResult['ID'] ?>">
     <div>
         <div class="ui-ctl">
             <div class="ui-ctl-label-text">Имя:</div>
             <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactName" type="text" class="ui-ctl-element"/>
+                <input id="contactName" type="text" class="ui-ctl-element" data-field="NAME"/>
             </div>
         </div>
     </div>
@@ -24,7 +23,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_be
         <div class="ui-ctl">
             <div class="ui-ctl-label-text">Фамилия:</div>
             <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactName" type="text" class="ui-ctl-element"/>
+                <input id="contactLastName" type="text" class="ui-ctl-element" data-field="LAST_NAME"/>
             </div>
         </div>
     </div>
@@ -33,7 +32,25 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_be
         <div class="ui-ctl">
             <div class="ui-ctl-label-text">Должность:</div>
             <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactName" type="text" class="ui-ctl-element"/>
+                <input id="contactPost" type="text" class="ui-ctl-element" data-field="POST"/>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="ui-ctl">
+            <div class="ui-ctl-label-text">Телефон:</div>
+            <div class="ui-ctl ui-ctl__combined-input">
+                <input id="contactComment" type="text" class="ui-ctl-element" data-field="PHONE"/>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="ui-ctl">
+            <div class="ui-ctl-label-text">E-mail:</div>
+            <div class="ui-ctl ui-ctl__combined-input">
+                <input id="contactComment" type="text" class="ui-ctl-element" data-field="EMAIL"/>
             </div>
         </div>
     </div>
@@ -42,13 +59,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_be
         <div class="ui-ctl">
             <div class="ui-ctl-label-text">Комментарий:</div>
             <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactName" type="text" class="ui-ctl-element"/>
+                <input id="contactComment" type="text" class="ui-ctl-element" data-field="COMMENT"/>
             </div>
         </div>
     </div>
 
-    <div class="ui-form-buttons">
-        <button class="ui-btn ui-btn-success"><span class="ui-btn-text">Сохранить</span></button>
-        <button class="ui-btn "><span class="ui-btn-text">Сохранить</span></button>
+    <div class="ui-form-buttons contact-form-buttons">
+        <button class="ui-btn ui-btn-success save-button"><span class="ui-btn-text">Сохранить</span></button>
+        <button class="ui-btn cancel-button"><span class="ui-btn-text">Отменить</span></button>
     </div>
 </div>

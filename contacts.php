@@ -40,7 +40,7 @@ if (!Main\Loader::IncludeModule('crm')) {
 
 
 $arOrder = ['ID' => 'ASC'];
-$arFilter = ['COMPANY_ID' => '3',];
+$arFilter = ['COMPANY_ID' => '1',];
 $arSelect = ['*', 'UF_*'];
 $contacts = CCrmContact::getList(
     $arOrder,

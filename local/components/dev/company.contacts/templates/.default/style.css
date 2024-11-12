@@ -4,6 +4,8 @@ body{
 
 .ui-form{
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .ui-form-buttons{
