@@ -1,71 +1,93 @@
 <?php
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true ) die();
-
-
-require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_before.php");
-\Bitrix\Main\UI\Extension::load("ui.forms");
-\Bitrix\Main\UI\Extension::load("ui.alerts");
-\Bitrix\Main\UI\Extension::load("ui.buttons");
-
 ?>
-
-<div class="ui-form contact-edite-form" data-cid="<?php $arResult['ID'] ?>">
-    <div>
-        <div class="ui-ctl">
-            <div class="ui-ctl-label-text">Имя:</div>
-            <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactName" type="text" class="ui-ctl-element" data-field="NAME"/>
-            </div>
+<div class="crm-entity-widget-content-block-inner crm-entity-widget-inner">
+    <div class="crm-entity-widget-content-block-inner-container">
+        <div class="crm-entity-widget-content-block-title">
+            <span class="crm-entity-widget-content-subtitle-text">
+                <span>Контакты, связанные с компанией</span>
+                <span class="crm-entity-card-widget-title-edit-icon"></span>
+            </span>
         </div>
-    </div>
-
-    <div>
-        <div class="ui-ctl">
-            <div class="ui-ctl-label-text">Фамилия:</div>
-            <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactLastName" type="text" class="ui-ctl-element" data-field="LAST_NAME"/>
+        <?php foreach ($arResult['CONTACTS'] as $k => $contact): ?>
+            <div
+                class="crm-entity-widget-client-block contact-block"
+                data-contact-id="<?= $contact['ID']; ?>"
+                data-contact-name="<?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?>"
+            >
+                <div class="crm-entity-widget-client-box crm-entity-widget-participants-block">
+                    <div class="crm-entity-widget-client-box-name-container">
+                        <div class="crm-entity-widget-client-box-name-row">
+                            <a class="crm-entity-widget-client-box-name"
+                               href="/crm/contact/details/<?= $contact["ID"]; ?>"><?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?></a>
+                        </div>
+                    </div>
+                    <div class="crm-entity-widget-client-box-preferences">
+                        <?php
+                        if (isset($contact[$arResult['PREFERENCES_FIELD']]) && is_array($contact[$arResult['PREFERENCES_FIELD']])) {
+                            $preferences = '';
+                            foreach ($contact[$arResult['PREFERENCES_FIELD']] as $k => $pref) {
+                                $pref = explode(':',$pref);
+                                $isYes = $pref[1] == 'да';
+                                ?>
+                                <span><?= $pref[0]; ?><span class="<?= $isYes ? 'yes' : 'no'; ?>"><?= $isYes ? 'да' : 'нет'; ?></span></span>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </div>
+                    <div class="crm-entity-widget-client-box-position"><?= $contact['POST']; ?></div>
+                    <div class="crm-entity-widget-client-contact">
+                        <?php if (isset($contact['PHONE']) && is_array($contact['PHONE'])): ?>
+                            <?php foreach ($contact['PHONE'] as $k => $phone): ?>
+                                <div class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"><?= $phone['VALUE'] ?></div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                        <?php if (isset($contact['EMAIL']) && is_array($contact['EMAIL'])): ?>
+                            <?php foreach ($contact['EMAIL'] as $k => $email): ?>
+                                <div class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"><?= $email['VALUE'] ?></div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php if (isset($contact['EMAIL']) && is_array($contact['EMAIL'])): ?>
+                        <?php foreach ($contact['EMAIL'] as $k => $email): ?>
+                            <div class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"><?= $email['VALUE'] ?></div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    <div class="crm-entity-widget-client-box-quiz">
+                        <?php if (isset($contact[$arResult['QUIZ_FIELD']]) && $contact[$arResult['QUIZ_FIELD']] != false) {
+                            $quiz = '';
+                            foreach ($contact[$arResult['QUIZ_FIELD']] as $k => $q) {
+                                ?>
+                                <span><?= $q; ?> </span>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </div>
+                    <div class="crm-entity-widget-client-address"></div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <div>
-        <div class="ui-ctl">
-            <div class="ui-ctl-label-text">Должность:</div>
-            <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactPost" type="text" class="ui-ctl-element" data-field="POST"/>
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <div class="ui-ctl">
-            <div class="ui-ctl-label-text">Телефон:</div>
-            <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactComment" type="text" class="ui-ctl-element" data-field="PHONE"/>
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <div class="ui-ctl">
-            <div class="ui-ctl-label-text">E-mail:</div>
-            <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactComment" type="text" class="ui-ctl-element" data-field="EMAIL"/>
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <div class="ui-ctl">
-            <div class="ui-ctl-label-text">Комментарий:</div>
-            <div class="ui-ctl ui-ctl__combined-input">
-                <input id="contactComment" type="text" class="ui-ctl-element" data-field="COMMENT"/>
-            </div>
-        </div>
-    </div>
-
-    <div class="ui-form-buttons contact-form-buttons">
-        <button class="ui-btn ui-btn-success save-button"><span class="ui-btn-text">Сохранить</span></button>
-        <button class="ui-btn cancel-button"><span class="ui-btn-text">Отменить</span></button>
+        <?php endforeach; ?>
     </div>
 </div>
+<script>
+    BX.ready(() => {
+        let node = document.querySelector('[data-cid="<?=$arResult['USER_FIELD_NAME'];?>"]')
+        if (node) {
+            let titleNode = node.querySelector(".ui-entity-editor-block-title")
+            titleNode.style.display = "none"
+            node.addEventListener('click', (e) => {
+                const el = e.target.closest('.contact-block')
+                if(el && el.hasAttribute('data-contact-id')){
+                    const contact_id = el.getAttribute('data-contact-id')
+                    const title = "Контакт " + el.getAttribute('data-contact-name')
+                    const contact_url = window.location.origin + '/local/contact/contact_edite.php?contact_id=' + contact_id + '&IFRAME=Y'
+                    const dialog = new BX.CDialog({title, contact_url});
+                    dialog.Show()
+                }
+                return false
+            })
+        }
+    })
+</script>

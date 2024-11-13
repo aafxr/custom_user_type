@@ -7,7 +7,7 @@
 </head>
 <body>
 <?php
-    echo file_get_contents($_SERVER['DOCUMENT_ROOT'].'/local/dev/test.log');
+    echo file_get_contents($_SERVER['DOCUMENT_ROOT'].'/test.log');
 ?>
 
 <script>
