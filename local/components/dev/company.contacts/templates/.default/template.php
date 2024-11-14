@@ -79,19 +79,18 @@ $editeMode = boolval($arResult['EDITE_MODE'])
     <script>
         BX.ready(() => {
             let node = document.querySelector('[data-cid="<?=$arResult['USER_FIELD_NAME'];?>"]')
-            console.log(node)
             if (node) {
                 let titleNode = node.querySelector(".ui-entity-editor-block-title")
                 titleNode.style.display = "none"
 <?php if($editeMode):?>
                 node.addEventListener('click', (e) => {
-                    console.log(2)
                     const el = e.target.closest('.contact-block')
                     if(el && el.hasAttribute('data-contact-id')){
                         const contact_id = el.getAttribute('data-contact-id')
                         const title = "Контакт " + el.getAttribute('data-contact-name')
-                        const contact_url = window.location.origin + '/local/contact/contact_edite.php?contact_id=' + contact_id + '&IFRAME=Y'
-                        const dialog = new BX.CDialog({title, contact_url});
+                        const content_url = window.location.origin + '/local/contact/contact_edite.php?IFRAME=Y'
+                        const content_post = 'contact_id=' + contact_id
+                        const dialog = new BX.CDialog({title, content_url, content_post});
                         dialog.Show()
                     }
                     return false
