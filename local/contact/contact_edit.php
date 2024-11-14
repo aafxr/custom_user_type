@@ -1,5 +1,10 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_before.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+
+
+$APPLICATION->ShowHeadScripts();
+$APPLICATION->ShowHead();
+
 
 use Bitrix\Main\Loader;
 
@@ -22,5 +27,7 @@ $APPLICATION->IncludeComponent(
     '',
     [
         'CONTACT_ID' => $contactID,
+        'PREFERENCES_FIELD' => 'UF_CONTACT_PREFERENCES_AREA',
+        'QUIZ_FIELD' => 'UF_CONTACT_QUIZ_AREA',
     ]
 );

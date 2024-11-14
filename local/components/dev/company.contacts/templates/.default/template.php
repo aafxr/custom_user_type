@@ -88,7 +88,7 @@ $editeMode = boolval($arResult['EDITE_MODE'])
                     if(el && el.hasAttribute('data-contact-id')){
                         const contact_id = el.getAttribute('data-contact-id')
                         const title = "Контакт " + el.getAttribute('data-contact-name')
-                        const content_url = window.location.origin + '/local/contact/contact_edite.php?IFRAME=Y'
+                        const content_url = '/local/contact/contact_edit.php?IFRAME=Y'
                         const content_post = 'contact_id=' + contact_id
                         const dialog = new BX.CDialog({title, content_url, content_post});
                         dialog.Show()

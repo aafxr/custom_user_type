@@ -45,6 +45,7 @@ $arFields = [];
 if (isset($request['NAME']) && $request['NAME'] != '') $arFields['NAME'] = $request['NAME'];
 if (isset($request['LAST_NAME']) && $request['LAST_NAME'] != '') $arFields['LAST_NAME'] = $request['LAST_NAME'];
 if (isset($request['POST']) && $request['POST'] != '') $arFields['POST'] = $request['POST'];
+if (isset($request['UF_CONTACT_PREFERENCES_AREA']) && is_array($request['UF_CONTACT_PREFERENCES_AREA'])) $arFields['UF_CONTACT_PREFERENCES_AREA'] = $request['UF_CONTACT_PREFERENCES_AREA'];
 if (isset($request['ID']) && $request['ID'] != '') {
     $contactID = $request['ID'];
 }
