@@ -1,0 +1,19 @@
+body{
+    background-color: lightgray!important;
+}
+
+.ui-form{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-form-buttons{
+    margin-top: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.ui-form-title{
+    font-size: inherit;
+}
