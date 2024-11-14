@@ -57,11 +57,29 @@ if (isset($request['PHONE']) && $request['PHONE'] != '') $PHONE['PHONE'] = $requ
 if (isset($request['EMAIL']) && $request['EMAIL'] != '') $EMAIL['EMAIL'] = $request['EMAIL'];
 
 
+$result['errors'] = [];
 $oContact = new \CCrmContact(false);
+$fm = new \CCrmFieldMulti();
 if (isset($contactID)){
     $oContact->add($arFields);
+    foreach ($PHONE as $key => $value){
+        if(!$fm->Add($value)){
+            $result['errors'][] = $fm->LAST_ERROR;
+        }
+    }
 } else{
     $oContact->Update($contactID, $arFields);
+    foreach ($PHONE as $key => $value){
+        if($value['ID'] != ''){
+            if(!$fm->Update($value['ID'],$value)){
+                $result['errors'][] = $fm->LAST_ERROR;
+            }
+        } else{
+            if(!$fm->Add($value)){
+                $result['errors'][] = $fm->LAST_ERROR;
+            }
+        }
+    }
 }
 if($oContact->LAST_ERROR != ""){
     $result = [
