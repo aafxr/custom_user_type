@@ -19,7 +19,6 @@ local\components\dev\contact.popup\ajax.php
 ---
 
 - добавить пользовательское поле (UF_CONTACT_PREFERENCES_AREA) типа строка, множественное для блока CRM_CONTACT
-
 используется в:
 \local\php_interface\lib\UserType\CustomCompanyContacts.php
 \local\components\dev\contact.popup\ajax.php
