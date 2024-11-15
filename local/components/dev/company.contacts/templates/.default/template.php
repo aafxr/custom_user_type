@@ -99,7 +99,7 @@ $editeMode = boolval($arResult['EDITE_MODE'])
                         const title = "Контакт " + el.getAttribute('data-contact-name')
                         const content_url = '/local/contact/contact_edit.php?IFRAME=Y'
                         const content_post = `contact_id=${contact_id}&company_id=${company_id}`
-                        const dialog = new BX.CDialog({title, content_url, content_post});
+                        const dialog = new BX.CDialog({title, content_url, content_post, width: 740, height: 740});
                         dialog.Show()
                     }
                     return false

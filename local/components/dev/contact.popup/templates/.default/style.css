@@ -21,3 +21,9 @@ body{
 .form-checkbox-label{
     cursor: pointer;
 }
+
+.form-phone-button,
+.form-email-button{
+    width: 320px;
+    max-width: 320px;
+}

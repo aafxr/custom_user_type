@@ -78,12 +78,22 @@ if(empty($preferences)) $preferences = $defaultPreferences;
                     <input id="contactPost" type="text" class="ui-ctl-element form-input-field" data-field="POST" value="<?=$arResult['CONTACT']['POST'];?>"/>
                 </div>
             </div>
+
+            <!--            <div class="ui-ctl">-->
+            <!--                <div class="ui-ctl-label-text">Ден рождения:</div>-->
+            <!--                <div class="ui-ctl ui-ctl-after-icon ui-ctl-date">-->
+            <!--                    <div class="ui-ctl-after ui-ctl-icon-calendar"></div>-->
+            <!--                    <div class="ui-ctl-element" onclick="contactBirthday.click()">14.10.2014</div>-->
+            <!--                    <input id="contactBirthday" type="date" hidden>-->
+            <!--                </div>-->
+            <!--            </div>-->
         </div>
 
 
 
         <div class="ui-form-col">
             <div>
+                <div class="ui-ctl-label-text" style="visibility: hidden;">Доп поля</div>
                 <?php foreach ($preferences as $k => $p){
                     $r = explode(':',$p);
                     $value = $r[0];
@@ -299,7 +309,7 @@ if(empty($preferences)) $preferences = $defaultPreferences;
                             VALUE: input.value.trim()
                         }
                         if(!em.VALUE.length) continue
-                        if(!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(em.VALUE)){
+                        if(!/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g.test(em.VALUE)){
                             console.log(em)
                             handleBadCondition(input)
                             continue
