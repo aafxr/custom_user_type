@@ -3,6 +3,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_be
 /** CUser */
 global $USER;
 
+use \Bitrix\Crm\Binding\ContactCompanyTable;
+
 $result = [];
 
 if(!$USER->IsAuthorized()){
@@ -45,10 +47,11 @@ $arFields = [];
 if (isset($request['NAME']) && $request['NAME'] != '') $arFields['NAME'] = $request['NAME'];
 if (isset($request['LAST_NAME']) && $request['LAST_NAME'] != '') $arFields['LAST_NAME'] = $request['LAST_NAME'];
 if (isset($request['POST']) && $request['POST'] != '') $arFields['POST'] = $request['POST'];
+if (isset($request['COMPANY_ID']) && $request['COMPANY_ID'] != '') $arFields['COMPANY_ID'] = $request['COMPANY_ID'];
 if (isset($request['UF_CONTACT_PREFERENCES_AREA']) && is_array($request['UF_CONTACT_PREFERENCES_AREA'])) $arFields['UF_CONTACT_PREFERENCES_AREA'] = $request['UF_CONTACT_PREFERENCES_AREA'];
-if (isset($request['ID']) && $request['ID'] != '') {
-    $contactID = $request['ID'];
-}
+if (isset($request['UF_CONTACT_COMMENT'])) $arFields['UF_CONTACT_COMMENT'] = $request['UF_CONTACT_COMMENT'];
+if (isset($request['ID']) && $request['ID'] != '') $contactID = $request['ID'];
+
 
 $PHONE = [];
 $EMAIL = [];
@@ -57,12 +60,12 @@ if (isset($request['PHONE']) && $request['PHONE'] != '') $PHONE = $request['PHON
 if (isset($request['EMAIL']) && $request['EMAIL'] != '') $EMAIL = $request['EMAIL'];
 
 
-function getMultiFields($contactID, $arFields){
+function getMultiFields($contactID, $arFields, $typeID, $valueType = 'WORK'){
     $multiField = [
         'ENTITY_ID'  => \CCrmOwnerType::ContactName,
         'ELEMENT_ID' => $contactID,
-        'TYPE_ID'    => 'PHONE',
-        'VALUE_TYPE' => 'WORK',
+        'TYPE_ID'    => $typeID,
+        'VALUE_TYPE' => $valueType,
         'VALUE'      => $arFields['VALUE']
     ];
     if(isset($arFields['ID'])) $multiField['ID'] = $arFields['ID'];
@@ -70,17 +73,23 @@ function getMultiFields($contactID, $arFields){
 }
 
 
-$result['errors'] = [];
-$result['fields_prev'] = [];
 $result['fields'] = [];
 $oContact = new \CCrmContact(false);
 $fm = new \CCrmFieldMulti();
 if (!isset($contactID)){
-    $res = $oContact->add($arFields);
+    $contactID = $oContact->add($arFields);
+    $company_id = $arFields['COMPANY_ID'];
+    if(isset($company_id) && $contactID){
+        ContactCompanyTable::bindCompanyIDs($contactID, [$company_id]);
+    }
     foreach ($PHONE as $key => $value){
-        $result['fields_prev'][] = $value;
-        $value = getMultiFields($res['ID'], $value);
-        $result['fields'][] = $value;
+        $value = getMultiFields($contactID, $value, 'PHONE');
+        if(!$fm->Add($value)){
+            $result['errors'][] = $fm->LAST_ERROR;
+        }
+    }
+    foreach ($EMAIL as $key => $value){
+        $value = getMultiFields($contactID, $value, 'EMAIL');
         if(!$fm->Add($value)){
             $result['errors'][] = $fm->LAST_ERROR;
         }
@@ -89,22 +98,35 @@ if (!isset($contactID)){
     $oContact->Update($contactID, $arFields);
     foreach ($PHONE as $key => $value){
         if($value['ID'] != ''){
-            $result['fields_prev'][] = $value;
-            $value = getMultiFields($contactID, $value);
-            $result['fields'][] = $value;
+            $value = getMultiFields($contactID, $value, 'PHONE');
             if(!$fm->Update($value['ID'],$value)){
                 $result['errors'][] = $fm->LAST_ERROR;
             }
         } else{
-            $result['fields_prev'][] = $value;
-            $value = getMultiFields($contactID, $value);
-            $result['fields'][] = $value;
+            $value = getMultiFields($contactID, $value, 'PHONE');
+            if(!$fm->Add($value)){
+                $result['errors'][] = $fm->LAST_ERROR;
+            }
+        }
+    }
+
+    foreach ($EMAIL as $key => $value){
+        if($value['ID'] != ''){
+            $value = getMultiFields($contactID, $value, 'EMAIL');
+            if(!$fm->Update($value['ID'],$value)){
+                $result['errors'][] = $fm->LAST_ERROR;
+            }
+        } else{
+            $value = getMultiFields($contactID, $value, 'EMAIL');
             if(!$fm->Add($value)){
                 $result['errors'][] = $fm->LAST_ERROR;
             }
         }
     }
 }
+
+if ($contactID) $result['bindings'] = ContactCompanyTable::getContactCompanyIDs($contactID);
+
 if($oContact->LAST_ERROR != ""){
     $result = [
         'ok' => false,

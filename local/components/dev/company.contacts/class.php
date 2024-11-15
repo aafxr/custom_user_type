@@ -28,9 +28,9 @@ class CCompanyContacts extends \CBitrixComponent{
         if (!isset($companyID)) return [];
         $arOrder = ['ID' => 'ASC'];
         $arFilter = ['COMPANY_ID' => $companyID,];
-        $arSelect = ['*', 'UF_*'];
+        $arSelect = [];
         $list = [];
-        $contacts = \CCrmContact::GetList($arOrder, $arFilter, [], $arSelect);
+        $contacts = \CCrmContact::GetList($arOrder, $arFilter, $arSelect );
         while ($contact = $contacts->fetch()) {
             $contact['PHONE'] = $this->loadFieldMulti($contact['ID'], \CCrmFieldMulti::PHONE );
             $contact['EMAIL'] = $this->loadFieldMulti($contact['ID'], \CCrmFieldMulti::EMAIL );

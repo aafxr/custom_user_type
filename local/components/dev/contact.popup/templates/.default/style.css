@@ -17,3 +17,7 @@ body{
 .ui-form-title{
     font-size: inherit;
 }
+
+.form-checkbox-label{
+    cursor: pointer;
+}

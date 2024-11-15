@@ -89,7 +89,7 @@ if(empty($preferences)) $preferences = $defaultPreferences;
                     $value = $r[0];
                     $checked = $r[1] == 'да';
                     ?>
-                    <label class="ui-ctl ui-ctl-checkbox">
+                    <label class="ui-ctl ui-ctl-checkbox form-checkbox-label">
                         <input
                                 type="checkbox"
                                 class="ui-ctl-element form-input-checkbox"
@@ -146,7 +146,7 @@ if(empty($preferences)) $preferences = $defaultPreferences;
                     <div class="ui-ctl ui-ctl__combined-input">
                         <input
                                 type="text"
-                                class="ui-ctl-element form-input-phone"
+                                class="ui-ctl-element form-input-email"
                                 data-field="EMAIL"
                                 data-id=""
                                 value=""
@@ -174,7 +174,11 @@ if(empty($preferences)) $preferences = $defaultPreferences;
         <div class="ui-form-col ui-form-col-comment">
             <div class="ui-ctl-label-text">Комментарий:</div>
             <div class="ui-ctl ui-ctl-textarea ui-ctl-no-resize">
-                <textarea class="ui-ctl-element form-comment" data-field="COMMENT"></textarea>
+                <textarea
+                    class="ui-ctl-element form-comment"
+                    data-field="<?=$arResult['COMMENT_FIELD'];?>"
+                    value="<?=$contact[$arResult['COMMENT_FIELD']] ?? '';?>"
+                ><?=$contact[$arResult['COMMENT_FIELD']] ?? '';?></textarea>
             </div>
         </div>
 
@@ -224,6 +228,7 @@ if(empty($preferences)) $preferences = $defaultPreferences;
 
 
         const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
+        const contact_id = <?= $arResult['CONTACT_ID'] ?? 0; ?>;
         console.log(<?=json_encode($arResult)?>)
         BX.WindowManager.Get()?.SetTitle?.('<?=$isNewContact ? 'Добавить контакт' : 'Изменить контакт: ' .$arResult['CONTACT']['NAME'].' '.$arResult['CONTACT']['LAST_NAME']?>')
         const confirmChangesURL = '<?=$arResult['COMPONENT_PATH']?>';
@@ -245,14 +250,11 @@ if(empty($preferences)) $preferences = $defaultPreferences;
 
 
         function handleSaveClick() {
-            console.log(contactForm)
             if (contactForm) {
                 const fields = { PHONE: [], EMAIL: [] }
                 if (company_id) fields['COMPANY_ID'] = company_id
 
-                if (contactForm.hasAttribute('data-cid')) {
-                    fields['ID'] = contactForm.getAttribute('data-cid')
-                }
+                if (contact_id) fields['ID'] = contact_id
 
 
                 let hasError = false
@@ -318,9 +320,8 @@ if(empty($preferences)) $preferences = $defaultPreferences;
 
 
 
-                const comment = contactForm.querySelector('textarea')
+                const comment = contactForm.querySelector('.form-comment')
                 if(comment && comment.hasAttribute('data-field')) fields[comment.getAttribute('data-field')] = comment.value.trim()
-                console.log(confirmChangesURL + '/ajax.php', fields)
                 if(hasError) throw new Error('некоторые поля заполнены не правельно')
                 return fetch(confirmChangesURL + '/ajax.php', {
                     method: 'POST',

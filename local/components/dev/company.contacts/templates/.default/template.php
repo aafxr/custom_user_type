@@ -14,7 +14,6 @@ $editeMode = boolval($arResult['EDITE_MODE'])
         </div>
         <?php foreach ($arResult['CONTACTS'] as $k => $contact): ?>
             <div
-
                 class="crm-entity-widget-client-block contact-block"
                 data-contact-id="<?= $contact['ID']; ?>"
                 data-contact-name="<?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?>"
@@ -29,6 +28,7 @@ $editeMode = boolval($arResult['EDITE_MODE'])
                             <?php endif;?>
                         </div>
                     </div>
+                    <div class="crm-entity-widget-client-box-position"><?= $contact['POST']; ?></div>
                     <div class="crm-entity-widget-client-box-preferences">
                         <?php
                         if (isset($contact[$arResult['PREFERENCES_FIELD']]) && is_array($contact[$arResult['PREFERENCES_FIELD']])) {
@@ -43,7 +43,6 @@ $editeMode = boolval($arResult['EDITE_MODE'])
                         }
                         ?>
                     </div>
-                    <div class="crm-entity-widget-client-box-position"><?= $contact['POST']; ?></div>
                     <div class="crm-entity-widget-client-contact">
                         <?php if (isset($contact['PHONE']) && is_array($contact['PHONE'])): ?>
                             <?php foreach ($contact['PHONE'] as $k => $phone): ?>
@@ -84,6 +83,7 @@ $editeMode = boolval($arResult['EDITE_MODE'])
 </div>
     <script>
         BX.ready(() => {
+            console.log(<?=json_encode($arResult)?>)
             const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
             let node = document.querySelector('[data-cid="<?=$arResult['USER_FIELD_NAME'];?>"]')
             if (node) {
