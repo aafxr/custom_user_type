@@ -22,11 +22,13 @@ if (!Loader::includeModule('crm')) {
 }
 
 $contactID = $_POST['contact_id'];
+$companyID = $_POST['company_id'];
 $APPLICATION->IncludeComponent(
     'dev:contact.popup',
     '',
     [
         'CONTACT_ID' => $contactID,
+        'COMPANY_ID' => $contactID,
         'PREFERENCES_FIELD' => 'UF_CONTACT_PREFERENCES_AREA',
         'QUIZ_FIELD' => 'UF_CONTACT_QUIZ_AREA',
     ]

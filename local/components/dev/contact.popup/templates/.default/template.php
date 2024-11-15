@@ -19,6 +19,8 @@ $quiz =  $contact[$arResult['QUIZ_FIELD']] ?? [];
 $phones = $contact['PHONE'] ?? [];
 $emails = $contact['EMAIL'] ?? [];
 
+if(empty($preferences)) $preferences = $defaultPreferences;
+
 ?>
 <style>
     .ui-form{
@@ -28,13 +30,17 @@ $emails = $contact['EMAIL'] ?? [];
     .ui-form-container{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 0 10px;
+        gap: 20px 20px;
     }
 
     .ui-form-col{
         display: flex;
         flex-direction: column;
         gap: 10px;
+    }
+
+    .ui-form-col-comment{
+        grid-column: 1 / -1
     }
 
     .ui-form .ui-ctl,
@@ -72,49 +78,10 @@ $emails = $contact['EMAIL'] ?? [];
                     <input id="contactPost" type="text" class="ui-ctl-element form-input-field" data-field="POST" value="<?=$arResult['CONTACT']['POST'];?>"/>
                 </div>
             </div>
-
-            <div>
-                <div class="ui-ctl-label-text">Телефон:</div>
-                <?php foreach($phones as $k => $p) : ?>
-                    <div class="ui-ctl">
-                        <div class="ui-ctl ui-ctl__combined-input">
-                            <input
-                                type="text"
-                                class="ui-ctl-element form-input-phone"
-                                data-field="PHONE"
-                                data-id="<?=$p['ID'];?>"
-                                value="<?= $p['VALUE']; ?>"
-                            />
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-                <input type="button" class="ui-btn ui-btn-success form-phone-button"  name="extraPhone" value="Добавить телефон" title="Добавить телефон">
-            </div>
-
-            <div>
-                <div class="ui-ctl-label-text">E-mail:</div>
-                <?php foreach($emails as $k => $e) : ?>
-                    <div class="ui-ctl">
-                        <div class="ui-ctl ui-ctl__combined-input">
-                            <input
-                                    type="text"
-                                    class="ui-ctl-element form-input-email"
-                                    data-field="PHONE"
-                                    data-id="<?=$e['ID'];?>"
-                                    value="<?= $e['VALUE']; ?>"
-                            />
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-                <input type="button" class="ui-btn ui-btn-success form-email-button"  name="extraPhone" value="Добавить e-mail" title="Добавить e-mail">
-            </div>
-
-
-            <div class="ui-ctl ui-ctl-textarea ui-ctl-no-resize">
-                <div class="ui-ctl-label-text">Комментарий:</div>
-                <textarea class="ui-ctl-element form-comment" data-field="COMMENT"></textarea>
-            </div>
         </div>
+
+
+
         <div class="ui-form-col">
             <div>
                 <?php foreach ($preferences as $k => $p){
@@ -135,6 +102,83 @@ $emails = $contact['EMAIL'] ?? [];
                 <?php };?>
             </div>
         </div>
+
+
+
+        <div class="ui-form-col">
+            <div class="ui-ctl-label-text">Телефон:</div>
+            <?php if(empty($phones)) : ?>
+                <div class="ui-ctl">
+                    <div class="ui-ctl ui-ctl__combined-input">
+                        <input
+                                type="text"
+                                class="ui-ctl-element form-input-phone"
+                                data-field="PHONE"
+                                data-id=""
+                                value=""
+                        />
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php foreach($phones as $k => $p) : ?>
+                <div class="ui-ctl">
+                    <div class="ui-ctl ui-ctl__combined-input">
+                        <input
+                                type="text"
+                                class="ui-ctl-element form-input-phone"
+                                data-field="PHONE"
+                                data-id="<?=$p['ID'];?>"
+                                value="<?= $p['VALUE']; ?>"
+                        />
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <input type="button" class="ui-btn ui-btn-success form-phone-button"  name="extraPhone" value="Добавить телефон" title="Добавить телефон">
+        </div>
+
+
+
+
+        <div class="ui-form-col">
+            <div class="ui-ctl-label-text">E-mail:</div>
+            <?php if(empty($emails)) : ?>
+                <div class="ui-ctl">
+                    <div class="ui-ctl ui-ctl__combined-input">
+                        <input
+                                type="text"
+                                class="ui-ctl-element form-input-phone"
+                                data-field="EMAIL"
+                                data-id=""
+                                value=""
+                        />
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php foreach($emails as $k => $e) : ?>
+                <div class="ui-ctl">
+                    <div class="ui-ctl ui-ctl__combined-input">
+                        <input
+                                type="text"
+                                class="ui-ctl-element form-input-email"
+                                data-field="EMAIL"
+                                data-id="<?=$e['ID'];?>"
+                                value="<?= $e['VALUE']; ?>"
+                        />
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <input type="button" class="ui-btn ui-btn-success form-email-button"  name="extraPhone" value="Добавить e-mail" title="Добавить e-mail">
+        </div>
+
+
+        <div class="ui-form-col ui-form-col-comment">
+            <div class="ui-ctl-label-text">Комментарий:</div>
+            <div class="ui-ctl ui-ctl-textarea ui-ctl-no-resize">
+                <textarea class="ui-ctl-element form-comment" data-field="COMMENT"></textarea>
+            </div>
+        </div>
+
+
     </div>
     <div class="ui-form-buttons">
         <button class="ui-btn ui-btn-success ui-btn-icon-done save-button">Сохранить</button>
@@ -179,6 +223,7 @@ $emails = $contact['EMAIL'] ?? [];
         }
 
 
+        const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
         console.log(<?=json_encode($arResult)?>)
         BX.WindowManager.Get()?.SetTitle?.('<?=$isNewContact ? 'Добавить контакт' : 'Изменить контакт: ' .$arResult['CONTACT']['NAME'].' '.$arResult['CONTACT']['LAST_NAME']?>')
         const confirmChangesURL = '<?=$arResult['COMPONENT_PATH']?>';
@@ -203,6 +248,7 @@ $emails = $contact['EMAIL'] ?? [];
             console.log(contactForm)
             if (contactForm) {
                 const fields = { PHONE: [], EMAIL: [] }
+                if (company_id) fields['COMPANY_ID'] = company_id
 
                 if (contactForm.hasAttribute('data-cid')) {
                     fields['ID'] = contactForm.getAttribute('data-cid')
@@ -266,7 +312,7 @@ $emails = $contact['EMAIL'] ?? [];
                     if (input.hasAttribute('data-field')) {
                         const field = input.getAttribute('data-field')
                         if(!fields[field]) fields[field] = []
-                        fields[field].push(`${input.value}:${input.checked ? 'да' : 'нет'}`)
+                        fields[field].push(`${input.getAttribute('data-value')}:${input.checked ? 'да' : 'нет'}`)
                     }
                 }
 

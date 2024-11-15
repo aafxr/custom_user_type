@@ -13,6 +13,7 @@ class CCompanyContacts extends \CBitrixComponent{
     }
 
     function executeComponent(){
+        $this->arResult['COMPANY_ID'] = $this->arParams['COMPANY_ID'];
         $this->arResult['CONTACTS'] = $this->GetContactsList($this->arParams['COMPANY_ID']);
         $this->arResult['QUIZ_FIELD'] = $this->arParams['QUIZ_FIELD'];
         $this->arResult['PREFERENCES_FIELD'] = $this->arParams['PREFERENCES_FIELD'];

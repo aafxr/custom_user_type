@@ -10,7 +10,7 @@
         </fileTransfer>
       </webServer>
       <webServer id="abd182d0-b621-4374-bad1-9d07748017c5" name="bx_local">
-        <fileTransfer rootFolder="/home/bitrix/www" accessType="SFTP" host="172.31.255.166" port="22" sshConfigId="e4cf9c90-521d-49bb-8f5f-1e42ca6b3acb" sshConfig="root@172.31.255.166:22 password">
+        <fileTransfer rootFolder="/home/bitrix/www" accessType="SFTP" host="172.28.42.208" port="22" sshConfigId="e4cf9c90-521d-49bb-8f5f-1e42ca6b3acb" sshConfig="root@172.28.42.208:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

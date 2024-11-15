@@ -6,6 +6,7 @@ class CContactPopup extends \CBitrixComponent
     function onPrepareComponentParams($arParams)
     {
         $this->arParams['CONTACT_ID'] = $arParams['CONTACT_ID'];
+        $this->arParams['COMPANY_ID'] = $arParams['COMPANY_ID'];
         $this->arParams['QUIZ_FIELD'] = $arParams['QUIZ_FIELD'] ?? '';
         $this->arParams['PREFERENCES_FIELD'] = $arParams['PREFERENCES_FIELD'] ?? '';
         return $arParams;

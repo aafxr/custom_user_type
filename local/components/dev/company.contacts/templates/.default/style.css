@@ -1,0 +1,13 @@
+.crm-entity-widget-client-box-preferences{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 10px;
+}
+
+.crm-entity-widget-client-box-quiz-fields{
+    gap: 0 10px!important;
+}
+
+.edit-contact{
+    cursor: pointer;
+}
