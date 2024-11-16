@@ -2,7 +2,33 @@
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true ) die();
 \Bitrix\Main\UI\Extension::load("ui.buttons");
 
-$editeMode = boolval($arResult['EDITE_MODE'])
+$editeMode = boolval($arResult['EDITE_MODE']);
+
+$preferences = [
+    'Зарегистрирован в чат-боте' => [
+        'NAME' => 'UF_CRM_HAS_TG_REGISTRATION',
+        'VALUE' => false
+    ],
+    'Любит ПВХ плитку?' => [
+        'NAME' => 'UF_CRM_60120C8A6BD67',
+        'VALUE' => false
+    ],
+    'Прослушал семинар?' => [
+        'NAME' => 'UF_CRM_SEMINAR',
+        'VALUE' => false
+    ],
+    'Прослушал семинар Кварцпаркет' => [
+        'NAME' => 'UF_SEMINAR_QP',
+        'VALUE' => false
+    ],
+];
+
+foreach ($preferences as $name => $defaultValue) {
+    if(isset($contact[$defaultValue['NAME']])) {
+        $preferences[$name]['VALUE'] = $contact[$defaultValue['NAME']];
+    }
+}
+
 ?>
 <div class="crm-entity-widget-content-block-inner crm-entity-widget-inner">
     <div class="crm-entity-widget-content-block-inner-container">
@@ -30,18 +56,13 @@ $editeMode = boolval($arResult['EDITE_MODE'])
                     </div>
                     <div class="crm-entity-widget-client-box-position"><?= $contact['POST']; ?></div>
                     <div class="crm-entity-widget-client-box-preferences">
-                        <?php
-                        if (isset($contact[$arResult['PREFERENCES_FIELD']]) && is_array($contact[$arResult['PREFERENCES_FIELD']])) {
-                            $preferences = '';
-                            foreach ($contact[$arResult['PREFERENCES_FIELD']] as $k => $pref) {
-                                $pref = explode(':',$pref);
-                                $isYes = $pref[1] == 'да';
-                                ?>
-                                <span><?= $pref[0]; ?><span class="<?= $isYes ? 'yes' : 'no'; ?>"><?= $isYes ? 'да' : 'нет'; ?></span></span>
-                                <?php
-                            }
-                        }
+                        <?php foreach ($preferences as $k => $p){
+                        $name = $k;
+                        $ufFieldName = $p['NAME'];
+                        $checked = $contact[$ufFieldName] ?? false;
                         ?>
+                        <span><?= $name; ?><span class="<?= $checked ? 'yes' : 'no'; ?>"><?= $checked ? 'да' : 'нет'; ?></span></span>
+                        <?php } ?>
                     </div>
                     <div class="crm-entity-widget-client-contact">
                         <?php if (isset($contact['PHONE']) && is_array($contact['PHONE'])): ?>

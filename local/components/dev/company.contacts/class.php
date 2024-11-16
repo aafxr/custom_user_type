@@ -5,7 +5,6 @@ class CCompanyContacts extends \CBitrixComponent{
     function OnPrepareComponentParams($arParams){
         $this->arParams['COMPANY_ID'] = $arParams['COMPANY_ID'] ?? '';
         $this->arParams['QUIZ_FIELD'] = $arParams['QUIZ_FIELD'] ?? '';
-        $this->arParams['PREFERENCES_FIELD'] = $arParams['PREFERENCES_FIELD'] ?? '';
         $this->arParams['USER_FIELD_NAME'] = $arParams['USER_FIELD_NAME'] ?? '';
         $this->arParams['EDITE_MODE'] = $arParams['EDITE_MODE'];
         $this->arParams['CACHE_TIME'] = 0;
@@ -16,7 +15,6 @@ class CCompanyContacts extends \CBitrixComponent{
         $this->arResult['COMPANY_ID'] = $this->arParams['COMPANY_ID'];
         $this->arResult['CONTACTS'] = $this->GetContactsList($this->arParams['COMPANY_ID']);
         $this->arResult['QUIZ_FIELD'] = $this->arParams['QUIZ_FIELD'];
-        $this->arResult['PREFERENCES_FIELD'] = $this->arParams['PREFERENCES_FIELD'];
         $this->arResult['USER_FIELD_NAME'] = $this->arParams['USER_FIELD_NAME'];
         $this->arResult['EDITE_MODE'] = $this->arParams['EDITE_MODE'];
 
