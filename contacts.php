@@ -40,13 +40,12 @@ if (!Main\Loader::IncludeModule('crm')) {
 
 
 $arOrder = ['ID' => 'ASC'];
-$arFilter = ['COMPANY_ID' => '1',];
-$arSelect = ['*', 'UF_*'];
+$arFilter = isset($_GET['company_id']) ? ['COMPANY_ID' => $_GET['company_id']] : [];
+$arSelect = [];
 $contacts = CCrmContact::getList(
     $arOrder,
     $arFilter,
-    [],
-    $arSelect
+    $arSelect,
 );
 
 $list = [];
