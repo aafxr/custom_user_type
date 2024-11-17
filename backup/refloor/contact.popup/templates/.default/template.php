@@ -5,47 +5,21 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true ) die();
 \Bitrix\Main\UI\Extension::load("ui.alerts");
 \Bitrix\Main\UI\Extension::load("ui.buttons");
 
-$isNewContact = empty($arResult['CONTACT']);
-$contact = $arResult['CONTACT'] ?? [];
-
-
-$preferences = [
-  'Зарегистрирован в чат-боте' => [
-      'NAME' => 'UF_CRM_HAS_TG_REGISTRATION',
-      'VALUE' => false,
-      'TRUE_VALUE' => '1',
-      'FALSE_VALUE' => '0',
-  ],
-  'Любит ПВХ плитку?' => [
-      'NAME' => 'UF_CRM_60120C8A6BD67',
-      'VALUE' => false,
-      'TRUE_VALUE' => '800',
-      'FALSE_VALUE' => '0',
-  ],
-  'Прослушал семинар?' => [
-      'NAME' => 'UF_CRM_SEMINAR',
-      'VALUE' => false,
-      'TRUE_VALUE' => '1',
-      'FALSE_VALUE' => '0',
-  ],
-  'Прослушал семинар Кварцпаркет' => [
-      'NAME' => 'UF_SEMINAR_QP',
-      'VALUE' => false,
-      'TRUE_VALUE' => '1',
-      'FALSE_VALUE' => '0',
-  ],
+$defaultPreferences = [
+  'Зарегистрирован в чат-боте:нет',
+  'Любит ПВХ плитку?:нет',
+  'Прослушал семинар?:нет',
+  'Прослушал семинар Кварцпаркет:нет',
 ];
 
-foreach ($preferences as $name => $defaultValue) {
-    if(isset($contact[$defaultValue['NAME']])) {
-        $preferences[$name]['VALUE'] = $contact[$defaultValue['NAME']];
-    }
-}
-
-
+$isNewContact = empty($arResult['CONTACT']);
+$contact = $arResult['CONTACT'] ?? [];
+$preferences = $contact[$arResult['PREFERENCES_FIELD']] ?? $defaultPreferences;
 $quiz =  $contact[$arResult['QUIZ_FIELD']] ?? [];
 $phones = $contact['PHONE'] ?? [];
 $emails = $contact['EMAIL'] ?? [];
+
+if(empty($preferences)) $preferences = $defaultPreferences;
 
 ?>
 <style>
@@ -106,7 +80,7 @@ $emails = $contact['EMAIL'] ?? [];
             </div>
 
             <!--            <div class="ui-ctl">-->
-            <!--                <div class="ui-ctl-label-text">День рождения:</div>-->
+            <!--                <div class="ui-ctl-label-text">Ден рождения:</div>-->
             <!--                <div class="ui-ctl ui-ctl-after-icon ui-ctl-date">-->
             <!--                    <div class="ui-ctl-after ui-ctl-icon-calendar"></div>-->
             <!--                    <div class="ui-ctl-element" onclick="contactBirthday.click()">14.10.2014</div>-->
@@ -121,23 +95,19 @@ $emails = $contact['EMAIL'] ?? [];
             <div>
                 <div class="ui-ctl-label-text" style="visibility: hidden;">Доп поля</div>
                 <?php foreach ($preferences as $k => $p){
-                    $name = $k;
-                    $ufFieldName = $p['NAME'];
-                    $checked = boolval($p['VALUE']);
-                    $trueValue = $p['TRUE_VALUE'];
-                    $falseValue = $p['FALSE_VALUE'];
+                    $r = explode(':',$p);
+                    $value = $r[0];
+                    $checked = $r[1] == 'да';
                     ?>
                     <label class="ui-ctl ui-ctl-checkbox form-checkbox-label">
                         <input
                                 type="checkbox"
                                 class="ui-ctl-element form-input-checkbox"
-                                data-field="<?=$ufFieldName;?>"
-                                data-value="<?=$name;?>"
-                                data-true-value="<?=$trueValue;?>"
-                                data-false-value="<?=$falseValue;?>"
+                                data-field="<?=$arResult['PREFERENCES_FIELD'];?>"
+                                data-value="<?=$value;?>"
                             <?= $checked ? 'checked' : '';?>
                         />
-                        <div class="ui-ctl-label-text"><?=$name;?></div>
+                        <div class="ui-ctl-label-text"><?=explode(':',$p)[0];?></div>
                     </label>
                 <?php };?>
             </div>
@@ -216,9 +186,9 @@ $emails = $contact['EMAIL'] ?? [];
             <div class="ui-ctl ui-ctl-textarea ui-ctl-no-resize">
                 <textarea
                     class="ui-ctl-element form-comment"
-                    data-field="COMMENTS"
-                    value="<?=$contact['COMMENTS'] ?? '';?>"
-                ><?=$contact['COMMENTS'] ?? '';?></textarea>
+                    data-field="<?=$arResult['COMMENT_FIELD'];?>"
+                    value="<?=$contact[$arResult['COMMENT_FIELD']] ?? '';?>"
+                ><?=$contact[$arResult['COMMENT_FIELD']] ?? '';?></textarea>
             </div>
         </div>
 
@@ -353,9 +323,8 @@ $emails = $contact['EMAIL'] ?? [];
                 for (const input of inputs) {
                     if (input.hasAttribute('data-field')) {
                         const field = input.getAttribute('data-field')
-                        fields[field] = input.checked
-                            ? input.getAttribute('data-true-value')
-                            : input.getAttribute('data-false-value')
+                        if(!fields[field]) fields[field] = []
+                        fields[field].push(`${input.getAttribute('data-value')}:${input.checked ? 'да' : 'нет'}`)
                     }
                 }
 

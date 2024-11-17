@@ -29,6 +29,8 @@ $APPLICATION->IncludeComponent(
     [
         'CONTACT_ID' => $contactID,
         'COMPANY_ID' => $companyID,
+        'PREFERENCES_FIELD' => 'UF_CONTACT_PREFERENCES_AREA',
         'QUIZ_FIELD' => 'UF_CONTACT_QUIZ_AREA',
+        'COMMENT_FIELD' => 'UF_CONTACT_COMMENT'
     ]
 );
