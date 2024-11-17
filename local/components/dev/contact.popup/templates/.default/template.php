@@ -232,6 +232,7 @@ $emails = $contact['EMAIL'] ?? [];
 </div>
 <script>
     BX.ready(() => {
+        BX.loadCSS('/bitrix/panel/main/popup.min.css');
         const getExtraPhoneTemplate = () => {
             const div = document.createElement('div')
             div.classList.add('ui-ctl')
