@@ -54,7 +54,7 @@ function getPrefferences($contact){
                         <div class="crm-entity-widget-client-box-name-container">
                             <div class="crm-entity-widget-client-box-name-row">
                                 <a class="crm-entity-widget-client-box-name edit-contact" ><?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?></a>
-                                <a href="/crm/contact/details/<?= $contact["ID"]; ?>/">
+                                <a href="/crm/contact/details/<?= $contact["ID"]; ?>/" class="form-client-card-link">
                                     <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24">
                                         <path d="M 5 3 C 3.9069372 3 3 3.9069372 3 5 L 3 19 C 3 20.093063 3.9069372 21 5 21 L 19 21 C 20.093063 21 21 20.093063 21 19 L 21 12 L 19 12 L 19 19 L 5 19 L 5 5 L 12 5 L 12 3 L 5 3 z M 14 3 L 14 5 L 17.585938 5 L 8.2929688 14.292969 L 9.7070312 15.707031 L 19 6.4140625 L 19 10 L 21 10 L 21 3 L 14 3 z"></path>
                                     </svg>
@@ -135,6 +135,7 @@ function getPrefferences($contact){
 
 
                 node.addEventListener('click', (e) => {
+                    if(e.target.closest('.form-client-card-link')) return
                     const el = e.target.closest('.contact-block')
                     if(el && el.hasAttribute('data-contact-id')){
                         const contact_id = el.getAttribute('data-contact-id')
