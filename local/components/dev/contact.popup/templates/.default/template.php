@@ -410,11 +410,11 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
 
             if (saveButton) {
                 saveButton.addEventListener('click', () => {
-                    console.log('click save')
                     saveButton.classList.add('ui-btn-wait')
+                    const node = window.document.getElementById('refloorContactsComp')
                     new Promise((r) => r(handleSaveClick()))
                         .then(() => BX.WindowManager.Get().Close())
-                        .then(() => document.querySelector('#refloor-refresh')?.click())
+                        .then(() => window.BX.ajax.insertToNode(`/local/contact/contacts.php?company_id=${company_id}`, node))
                         .catch(e => {
                             console.error(e)
                             saveButton.classList.remove('ui-btn-wait')
@@ -424,7 +424,6 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
 
             if (cancelButton) {
                 cancelButton.addEventListener('click', () => {
-                    console.log('click cancel')
                     BX.WindowManager.Get().Close()
                 })
             }

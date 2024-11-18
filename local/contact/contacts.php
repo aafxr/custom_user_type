@@ -1,8 +1,68 @@
 <?php
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true ) die();
-\Bitrix\Main\UI\Extension::load("ui.buttons");
+require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
-//$editeMode = boolval($arResult['EDITE_MODE']);
+
+use \Bitrix\Main\Loader;
+
+use \Bitrix\Main;
+use \Bitrix\Crm;
+
+global $APPLICATION;
+global $USER;
+
+
+CModule::IncludeModule("crm");
+
+
+
+function GetContactsList($companyID)
+{
+    if (!isset($companyID)) return [];
+    $arOrder = ['ID' => 'ASC'];
+    $arFilter = ['COMPANY_ID' => $companyID,];
+    $arSelect = [];
+    $list = [];
+    $contacts = \CCrmContact::GetList($arOrder, $arFilter, $arSelect );
+    while ($contact = $contacts->fetch()) {
+        $contact['PHONE'] = loadFieldMulti($contact['ID'], \CCrmFieldMulti::PHONE );
+        $contact['EMAIL'] = loadFieldMulti($contact['ID'], \CCrmFieldMulti::EMAIL );
+        $list[] = $contact;
+    }
+    return $list;
+}
+
+function loadFieldMulti($contactID, $fieldType){
+    $resFieldMulti = \CCrmFieldMulti::GetListEx(
+        [],
+        [
+            'ENTITY_ID' => \CCrmOwnerType::ContactName,
+            'ELEMENT_ID' => $contactID,
+            'TYPE_ID' => $fieldType
+        ]
+    );
+
+    $list = [];
+    while( $field = $resFieldMulti->fetch() ){
+        $list[] = transformMultiformFields($field);
+    }
+    return $list;
+}
+
+
+function transformMultiformFields($multifield){
+    return [
+        'ID' => $multifield['ID'],
+        'TYPE_ID' => $multifield['TYPE_ID'],
+        'VALUE' => $multifield['VALUE'],
+        'VALUE_TYPE' => $multifield['VALUE_TYPE'],
+    ];
+}
+
+
+$contacts = GetContactsList($_GET['company_id']);
+
+$arResult['CONTACTS'] = $contacts;
+
 
 function getPrefferences($contact){
     $preferences = [
@@ -31,10 +91,12 @@ function getPrefferences($contact){
     }
     return $preferences;
 }
-
 ?>
-<div id="refloorContactsComp">
-    <div class="refloor-contacts">
+
+
+
+
+<div class="refloor-contacts" data-id="<?=$_GET['company_id']?>">
         <div class="crm-entity-widget-content-block-inner crm-entity-widget-inner">
         <div class="crm-entity-widget-content-block-inner-container">
             <div class="crm-entity-widget-content-block-title">
@@ -163,13 +225,3 @@ function getPrefferences($contact){
             })
         </script>
     </div>
-</div>
-<?php
-/*
-<?php if (isset($contact['EMAIL']) && is_array($contact['EMAIL'])): ?>
-    <?php foreach ($contact['EMAIL'] as $k => $email): ?>
-        <div class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"><?= $email['VALUE'] ?></div>
-    <?php endforeach; ?>
-<?php endif; ?>
-*/
-
