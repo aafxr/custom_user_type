@@ -55,6 +55,7 @@ if (isset($request['UF_CRM_HAS_TG_REGISTRATION'])) $arFields['UF_CRM_HAS_TG_REGI
 if (isset($request['UF_CRM_60120C8A6BD67'])) $arFields['UF_CRM_60120C8A6BD67'] = $request['UF_CRM_60120C8A6BD67'];
 if (isset($request['UF_CRM_SEMINAR'])) $arFields['UF_CRM_SEMINAR'] = $request['UF_CRM_SEMINAR'];
 if (isset($request['UF_SEMINAR_QP'])) $arFields['UF_SEMINAR_QP'] = $request['UF_SEMINAR_QP'];
+if (isset($request['BIRTHDATE'])) $arFields['BIRTHDATE'] = $request['BIRTHDATE'];
 
 
 

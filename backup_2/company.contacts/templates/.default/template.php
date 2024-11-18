@@ -4,32 +4,29 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true ) die();
 
 $editeMode = boolval($arResult['EDITE_MODE']);
 
-function getPrefferences($contact){
-    $preferences = [
-        'В чат-боте' => [
-            'NAME' => 'UF_CRM_HAS_TG_REGISTRATION',
-            'VALUE' => false,
-        ],
-        'Любит ПВХ плитку?' => [
-            'NAME' => 'UF_CRM_60120C8A6BD67',
-            'VALUE' => false,
-        ],
-        'Прослушал семинар?' => [
-            'NAME' => 'UF_CRM_SEMINAR',
-            'VALUE' => false,
-        ],
-        'Прослушал семинар QP' => [
-            'NAME' => 'UF_SEMINAR_QP',
-            'VALUE' => false,
-        ],
-    ];
+$preferences = [
+    'В чат-боте' => [
+        'NAME' => 'UF_CRM_HAS_TG_REGISTRATION',
+        'VALUE' => false,
+    ],
+    'Любит ПВХ плитку?' => [
+        'NAME' => 'UF_CRM_60120C8A6BD67',
+        'VALUE' => false,
+    ],
+    'Прослушал семинар?' => [
+        'NAME' => 'UF_CRM_SEMINAR',
+        'VALUE' => false,
+    ],
+    'Прослушал семинар QP' => [
+        'NAME' => 'UF_SEMINAR_QP',
+        'VALUE' => false,
+    ],
+];
 
-    foreach ($preferences as $name => $defaultValue) {
-        if(isset($contact[$defaultValue['NAME']])) {
-            $preferences[$name]['VALUE'] = $contact[$defaultValue['NAME']];
-        }
+foreach ($preferences as $name => $defaultValue) {
+    if(isset($contact[$defaultValue['NAME']])) {
+        $preferences[$name]['VALUE'] = $contact[$defaultValue['NAME']];
     }
-    return $preferences;
 }
 
 ?>
@@ -52,12 +49,15 @@ function getPrefferences($contact){
                 <div class="crm-entity-widget-client-box crm-entity-widget-participants-block">
                     <div class="crm-entity-widget-client-box-name-container">
                         <div class="crm-entity-widget-client-box-name-row">
-                            <a class="crm-entity-widget-client-box-name edit-contact" ><?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?></a>
-                            <a href="/crm/contact/details/<?= $contact["ID"]; ?>/">
-                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24">
-                                    <path d="M 5 3 C 3.9069372 3 3 3.9069372 3 5 L 3 19 C 3 20.093063 3.9069372 21 5 21 L 19 21 C 20.093063 21 21 20.093063 21 19 L 21 12 L 19 12 L 19 19 L 5 19 L 5 5 L 12 5 L 12 3 L 5 3 z M 14 3 L 14 5 L 17.585938 5 L 8.2929688 14.292969 L 9.7070312 15.707031 L 19 6.4140625 L 19 10 L 21 10 L 21 3 L 14 3 z"></path>
-                                </svg>
-                            </a>
+                            <?php if($editeMode): ?>
+                                <span class="crm-entity-widget-client-box-name edit-contact" ><?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?></span>
+                            <?php else: ?>
+                                <a class="crm-entity-widget-client-box-name" href="/crm/contact/details/<?= $contact["ID"]; ?>/"><?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?></a>
+                            <?php endif;?>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24">
+                                <path d="M 5 3 C 3.9069372 3 3 3.9069372 3 5 L 3 19 C 3 20.093063 3.9069372 21 5 21 L 19 21 C 20.093063 21 21 20.093063 21 19 L 21 12 L 19 12 L 19 19 L 5 19 L 5 5 L 12 5 L 12 3 L 5 3 z M 14 3 L 14 5 L 17.585938 5 L 8.2929688 14.292969 L 9.7070312 15.707031 L 19 6.4140625 L 19 10 L 21 10 L 21 3 L 14 3 z"></path>
+                            </svg>
                         </div>
                     </div>
 
@@ -72,9 +72,7 @@ function getPrefferences($contact){
                         <? endif ?>
                     </div>
                     <div class="crm-entity-widget-client-box-preferences refloor-contact-properties">
-                        <?php
-                        $preferences = getPrefferences($contact);
-                        foreach ($preferences as $k => $p){
+                        <?php foreach ($preferences as $k => $p){
                             $name = $k;
                             $ufFieldName = $p['NAME'];
                             $checked = boolval($p['VALUE']);
@@ -125,39 +123,39 @@ function getPrefferences($contact){
 </div>
     <script>
         BX.ready(() => {
+            console.log(<?=json_encode($arResult)?>)
             const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
             let node = document.querySelector('[data-cid="<?=$arResult['USER_FIELD_NAME'];?>"]')
-            console.log(node)
             if (node) {
                 let titleNode = node.querySelector(".ui-entity-editor-block-title")
                 titleNode.style.display = "none"
 
 
-            node.addEventListener('click', (e) => {
-                const el = e.target.closest('.contact-block')
-                if(el && el.hasAttribute('data-contact-id')){
-                    const contact_id = el.getAttribute('data-contact-id')
-                    const title = "Контакт " + el.getAttribute('data-contact-name')
-                    const content_url = '/local/contact/contact_edit.php?IFRAME=Y'
-                    const content_post = `contact_id=${contact_id}&company_id=${company_id}`
-                    const dialog = new BX.CDialog({title, content_url, content_post, width: 740, height: 740});
-                    dialog.Show()
-                }
-                return false
-            })
-
-
-            const newContactButton = node.querySelector('.add-contact-button')
-            if(newContactButton){
-                newContactButton.addEventListener('click', (e) => {
-                    e.preventDefault()
-                    const title = "Добавить контакт"
-                    const content_url = '/local/contact/contact_edit.php?IFRAME=Y'
-                    const content_post = `company_id=${company_id}`
-                    const dialog = new BX.CDialog({title, content_url, content_post, width: 740, height: 740});
-                    dialog.Show()
+            <?php if($editeMode):?>
+                node.addEventListener('click', (e) => {
+                    const el = e.target.closest('.contact-block')
+                    if(el && el.hasAttribute('data-contact-id')){
+                        const contact_id = el.getAttribute('data-contact-id')
+                        const title = "Контакт " + el.getAttribute('data-contact-name')
+                        const content_url = '/local/contact/contact_edit.php?IFRAME=Y'
+                        const content_post = `contact_id=${contact_id}&company_id=${company_id}`
+                        const dialog = new BX.CDialog({title, content_url, content_post, width: 740, height: 740});
+                        dialog.Show()
+                    }
+                    return false
                 })
-            }
+
+                const newContactButton = node.querySelector('.add-contact-button')
+                if(newContactButton){
+                    newContactButton.addEventListener('click', (e) => {
+                        const title = "Добавить контакт"
+                        const content_url = '/local/contact/contact_edit.php?IFRAME=Y'
+                        const content_post = `company_id=${company_id}`
+                        const dialog = new BX.CDialog({title, content_url, content_post});
+                        dialog.Show()
+                    })
+                }
+            <?php endif; ?>
             }
         })
     </script>

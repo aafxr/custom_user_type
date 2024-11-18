@@ -47,6 +47,8 @@ $quiz =  $contact[$arResult['QUIZ_FIELD']] ?? [];
 $phones = $contact['PHONE'] ?? [];
 $emails = $contact['EMAIL'] ?? [];
 
+$birthdate = explode(" ",$contact['BIRTHDATE'])[0];
+
 ?>
 <style>
     .ui-form{
@@ -105,14 +107,14 @@ $emails = $contact['EMAIL'] ?? [];
                 </div>
             </div>
 
-            <!--            <div class="ui-ctl">-->
-            <!--                <div class="ui-ctl-label-text">День рождения:</div>-->
-            <!--                <div class="ui-ctl ui-ctl-after-icon ui-ctl-date">-->
-            <!--                    <div class="ui-ctl-after ui-ctl-icon-calendar"></div>-->
-            <!--                    <div class="ui-ctl-element" onclick="contactBirthday.click()">14.10.2014</div>-->
-            <!--                    <input id="contactBirthday" type="date" hidden>-->
-            <!--                </div>-->
-            <!--            </div>-->
+            <div class="ui-ctl">
+                <div class="ui-ctl-label-text">День рождения:</div>
+                <div class="ui-ctl ui-ctl-after-icon ui-ctl-date form-input-birthdate-container">
+                    <div class="ui-ctl-after ui-ctl-icon-calendar"></div>
+                    <div class="ui-ctl-element form-input-birthdate-value"><?=$birthdate;?></div>
+                    <input type="text" class="form-input-birthdate" value="<?=$birthdate;?>" hidden/>
+                </div>
+            </div>
         </div>
 
 
@@ -270,7 +272,6 @@ $emails = $contact['EMAIL'] ?? [];
 
         const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
         const contact_id = <?= $arResult['CONTACT_ID'] ?? 0; ?>;
-        console.log(<?=json_encode($arResult)?>)
         BX.WindowManager.Get()?.SetTitle?.('<?=$isNewContact ? 'Добавить контакт' : 'Изменить контакт: ' .$arResult['CONTACT']['NAME'].' '.$arResult['CONTACT']['LAST_NAME']?>')
         const confirmChangesURL = '<?=$arResult['COMPONENT_PATH']?>';
         const contactForm = document.querySelector('.ui-form.contact-edite-form')
@@ -288,6 +289,27 @@ $emails = $contact['EMAIL'] ?? [];
             e.preventDefault()
             emailButton.parentElement.insertBefore(getExtraEmailTemplate(), emailButton)
         })
+
+
+        const birthDateValue = document.querySelector('.form-input-birthdate-value')
+        const birthDateContainer = document.querySelector('.form-input-birthdate-container')
+        const birthDateInput = document.querySelector('.form-input-birthdate')
+        let birthDate
+
+        birthDateValue.addEventListener('click', () => {
+            BX.calendar({
+                node: birthDateContainer,
+                field: birthDateInput,
+                value: '<?=$contact['BIRTHDATE'];?>',
+                callback_after: (date) => {
+                    birthDate = date
+                    birthDateValue.innerText = new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(date)
+                }
+            })
+        })
+
+
+
 
 
         function handleSaveClick() {
@@ -364,6 +386,13 @@ $emails = $contact['EMAIL'] ?? [];
 
                 const comment = contactForm.querySelector('.form-comment')
                 if(comment && comment.hasAttribute('data-field')) fields[comment.getAttribute('data-field')] = comment.value.trim()
+
+
+                if(birthDate) {
+                    fields['BIRTHDATE'] = new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(birthDate) + ' 00:00:00'
+                }
+
+
                 if(hasError) throw new Error('некоторые поля заполнены не правельно')
                 return fetch(confirmChangesURL + '/ajax.php', {
                     method: 'POST',
