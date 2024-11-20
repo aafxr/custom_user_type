@@ -5,7 +5,6 @@ class CCompanyContacts extends \CBitrixComponent{
     function OnPrepareComponentParams($arParams){
         $this->arParams['COMPANY_ID'] = $arParams['COMPANY_ID'] ?? '';
         $this->arParams['QUIZ_FIELD'] = $arParams['QUIZ_FIELD'] ?? '';
-        $this->arParams['PREFERENCES_FIELD'] = $arParams['PREFERENCES_FIELD'] ?? '';
         $this->arParams['USER_FIELD_NAME'] = $arParams['USER_FIELD_NAME'] ?? '';
         $this->arParams['EDITE_MODE'] = $arParams['EDITE_MODE'];
         $this->arParams['CACHE_TIME'] = 0;
@@ -16,7 +15,6 @@ class CCompanyContacts extends \CBitrixComponent{
         $this->arResult['COMPANY_ID'] = $this->arParams['COMPANY_ID'];
         $this->arResult['CONTACTS'] = $this->GetContactsList($this->arParams['COMPANY_ID']);
         $this->arResult['QUIZ_FIELD'] = $this->arParams['QUIZ_FIELD'];
-        $this->arResult['PREFERENCES_FIELD'] = $this->arParams['PREFERENCES_FIELD'];
         $this->arResult['USER_FIELD_NAME'] = $this->arParams['USER_FIELD_NAME'];
         $this->arResult['EDITE_MODE'] = $this->arParams['EDITE_MODE'];
 
@@ -25,7 +23,8 @@ class CCompanyContacts extends \CBitrixComponent{
 
     function GetContactsList($companyID)
     {
-        if (!isset($companyID)) return [];
+
+        if (!isset($companyID) || $companyID == 0) return [];
         $arOrder = ['ID' => 'ASC'];
         $arFilter = ['COMPANY_ID' => $companyID,];
         $arSelect = [];
@@ -34,6 +33,13 @@ class CCompanyContacts extends \CBitrixComponent{
         while ($contact = $contacts->fetch()) {
             $contact['PHONE'] = $this->loadFieldMulti($contact['ID'], \CCrmFieldMulti::PHONE );
             $contact['EMAIL'] = $this->loadFieldMulti($contact['ID'], \CCrmFieldMulti::EMAIL );
+
+            /*if(array_key_exists('BIRTHDATE',$contact)) {
+                if ($contact['BIRTHDATE']) {
+                    $date = DateTime::createFromFormat("d.m.Y", $contact['BIRTHDATE']);
+                    $contact['BIRTHDAY'] = $date->format("d.m.Y");
+                }
+            }*/
             $list[] = $contact;
         }
         return $list;

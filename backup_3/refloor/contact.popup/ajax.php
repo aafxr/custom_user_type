@@ -44,13 +44,20 @@ if (!Bitrix\Main\Loader::IncludeModule('crm')) {
 
 
 $arFields = [];
+if (isset($request['ID']) && $request['ID'] != '') $contactID = $request['ID'];
 if (isset($request['NAME']) && $request['NAME'] != '') $arFields['NAME'] = $request['NAME'];
 if (isset($request['LAST_NAME']) && $request['LAST_NAME'] != '') $arFields['LAST_NAME'] = $request['LAST_NAME'];
 if (isset($request['POST']) && $request['POST'] != '') $arFields['POST'] = $request['POST'];
 if (isset($request['COMPANY_ID']) && $request['COMPANY_ID'] != '') $arFields['COMPANY_ID'] = $request['COMPANY_ID'];
-if (isset($request['UF_CONTACT_PREFERENCES_AREA']) && is_array($request['UF_CONTACT_PREFERENCES_AREA'])) $arFields['UF_CONTACT_PREFERENCES_AREA'] = $request['UF_CONTACT_PREFERENCES_AREA'];
-if (isset($request['UF_CONTACT_COMMENT'])) $arFields['UF_CONTACT_COMMENT'] = $request['UF_CONTACT_COMMENT'];
-if (isset($request['ID']) && $request['ID'] != '') $contactID = $request['ID'];
+if (isset($request['COMMENTS'])) $arFields['COMMENTS'] = $request['COMMENTS'];
+
+if (isset($request['UF_CRM_HAS_TG_REGISTRATION'])) $arFields['UF_CRM_HAS_TG_REGISTRATION'] = $request['UF_CRM_HAS_TG_REGISTRATION'];
+if (isset($request['UF_CRM_60120C8A6BD67'])) $arFields['UF_CRM_60120C8A6BD67'] = $request['UF_CRM_60120C8A6BD67'];
+if (isset($request['UF_CRM_SEMINAR'])) $arFields['UF_CRM_SEMINAR'] = $request['UF_CRM_SEMINAR'];
+if (isset($request['UF_SEMINAR_QP'])) $arFields['UF_SEMINAR_QP'] = $request['UF_SEMINAR_QP'];
+if (isset($request['BIRTHDATE'])) $arFields['BIRTHDATE'] = $request['BIRTHDATE'];
+
+
 
 
 $PHONE = [];

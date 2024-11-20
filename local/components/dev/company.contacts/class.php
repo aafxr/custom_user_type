@@ -23,7 +23,8 @@ class CCompanyContacts extends \CBitrixComponent{
 
     function GetContactsList($companyID)
     {
-        if (!isset($companyID)) return [];
+
+        if (!isset($companyID) || $companyID == 0) return [];
         $arOrder = ['ID' => 'ASC'];
         $arFilter = ['COMPANY_ID' => $companyID,];
         $arSelect = [];
@@ -32,6 +33,13 @@ class CCompanyContacts extends \CBitrixComponent{
         while ($contact = $contacts->fetch()) {
             $contact['PHONE'] = $this->loadFieldMulti($contact['ID'], \CCrmFieldMulti::PHONE );
             $contact['EMAIL'] = $this->loadFieldMulti($contact['ID'], \CCrmFieldMulti::EMAIL );
+
+            /*if(array_key_exists('BIRTHDATE',$contact)) {
+                if ($contact['BIRTHDATE']) {
+                    $date = DateTime::createFromFormat("d.m.Y", $contact['BIRTHDATE']);
+                    $contact['BIRTHDAY'] = $date->format("d.m.Y");
+                }
+            }*/
             $list[] = $contact;
         }
         return $list;

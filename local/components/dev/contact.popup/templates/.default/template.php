@@ -84,6 +84,7 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
     }
 </style>
 <div id="contactEditForm" class="ui-form contact-edite-form" data-cid="<?= $arResult['CONTACT_ID']; ?>">
+    <div id="alert" class="alert-container"></div>
     <div class="ui-form-container">
         <div class="ui-form-col">
             <div class="ui-ctl">
@@ -308,11 +309,30 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
             })
         })
 
+        let alerts = []
+
+        const newAlert = (e) => {
+            const myAlert = new BX.UI.Alert({
+                text: e.message,
+                /*inline: true,*/
+                color: BX.UI.Alert.Color.WARNING,
+                icon: BX.UI.Alert.Icon.WARNING,
+                closeBtn: true,
+                animate: true
+            });
+            myAlert.renderTo(document.getElementById("alert"));
+            alerts.push(myAlert)
+        }
+
 
 
 
 
         function handleSaveClick() {
+            alerts.forEach(a => a.closeNode?.click())
+            alerts = []
+
+
             if (contactForm) {
                 const fields = { PHONE: [], EMAIL: [] }
                 if (company_id) fields['COMPANY_ID'] = company_id
@@ -347,6 +367,7 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
                         if(!p.VALUE.length) continue
                         if(p.VALUE.length < 10){
                             handleBadCondition(input)
+                            newAlert( new Error(`не корректный номер <strong>${input.value}</strong>`) )
                             continue
                         }
                         fields['PHONE'].push(p)
@@ -363,8 +384,8 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
                         }
                         if(!em.VALUE.length) continue
                         if(!/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g.test(em.VALUE)){
-                            console.log(em)
                             handleBadCondition(input)
+                            newAlert(new Error(`не корректно указан e-mail <strong>${input.value}</strong>`) )
                             continue
                         }
                         fields['EMAIL'].push(em)
@@ -417,6 +438,7 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
                         .then(() => window.BX.ajax.insertToNode(`/local/contact/contacts.php?company_id=${company_id}`, node))
                         .catch(e => {
                             console.error(e)
+                            newAlert(e.message)
                             saveButton.classList.remove('ui-btn-wait')
                         })
                 })

@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
 
 
 use \Bitrix\Main\Loader;
@@ -14,7 +14,6 @@ global $USER;
 CModule::IncludeModule("crm");
 
 
-
 function GetContactsList($companyID)
 {
     if (!isset($companyID)) return [];
@@ -22,16 +21,17 @@ function GetContactsList($companyID)
     $arFilter = ['COMPANY_ID' => $companyID,];
     $arSelect = [];
     $list = [];
-    $contacts = \CCrmContact::GetList($arOrder, $arFilter, $arSelect );
+    $contacts = \CCrmContact::GetList($arOrder, $arFilter, $arSelect);
     while ($contact = $contacts->fetch()) {
-        $contact['PHONE'] = loadFieldMulti($contact['ID'], \CCrmFieldMulti::PHONE );
-        $contact['EMAIL'] = loadFieldMulti($contact['ID'], \CCrmFieldMulti::EMAIL );
+        $contact['PHONE'] = loadFieldMulti($contact['ID'], \CCrmFieldMulti::PHONE);
+        $contact['EMAIL'] = loadFieldMulti($contact['ID'], \CCrmFieldMulti::EMAIL);
         $list[] = $contact;
     }
     return $list;
 }
 
-function loadFieldMulti($contactID, $fieldType){
+function loadFieldMulti($contactID, $fieldType)
+{
     $resFieldMulti = \CCrmFieldMulti::GetListEx(
         [],
         [
@@ -42,14 +42,15 @@ function loadFieldMulti($contactID, $fieldType){
     );
 
     $list = [];
-    while( $field = $resFieldMulti->fetch() ){
+    while ($field = $resFieldMulti->fetch()) {
         $list[] = transformMultiformFields($field);
     }
     return $list;
 }
 
 
-function transformMultiformFields($multifield){
+function transformMultiformFields($multifield)
+{
     return [
         'ID' => $multifield['ID'],
         'TYPE_ID' => $multifield['TYPE_ID'],
@@ -64,7 +65,8 @@ $contacts = GetContactsList($_GET['company_id']);
 $arResult['CONTACTS'] = $contacts;
 
 
-function getPrefferences($contact){
+function getPrefferences($contact)
+{
     $preferences = [
         'В чат-боте' => [
             'NAME' => 'UF_CRM_HAS_TG_REGISTRATION',
@@ -85,19 +87,18 @@ function getPrefferences($contact){
     ];
 
     foreach ($preferences as $name => $defaultValue) {
-        if(isset($contact[$defaultValue['NAME']])) {
+        if (isset($contact[$defaultValue['NAME']])) {
             $preferences[$name]['VALUE'] = $contact[$defaultValue['NAME']];
         }
     }
     return $preferences;
 }
+
 ?>
 
 
-
-
-<div class="refloor-contacts" data-id="<?=$_GET['company_id']?>">
-        <div class="crm-entity-widget-content-block-inner crm-entity-widget-inner">
+<div class="refloor-contacts" data-id="<?= $_GET['company_id'] ?>">
+    <div class="crm-entity-widget-content-block-inner crm-entity-widget-inner">
         <div class="crm-entity-widget-content-block-inner-container">
             <div class="crm-entity-widget-content-block-title">
                 <span class="crm-entity-widget-content-subtitle-text">
@@ -107,17 +108,18 @@ function getPrefferences($contact){
             </div>
             <?php foreach ($arResult['CONTACTS'] as $k => $contact): ?>
                 <div
-                    class="crm-entity-widget-client-block contact-block refloor-contact-block"
-                    data-contact-id="<?= $contact['ID']; ?>"
-                    data-contact-name="<?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?>"
+                        class="crm-entity-widget-client-block contact-block refloor-contact-block"
+                        data-contact-id="<?= $contact['ID']; ?>"
+                        data-contact-name="<?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?>"
                 >
 
                     <div class="crm-entity-widget-client-box crm-entity-widget-participants-block">
                         <div class="crm-entity-widget-client-box-name-container">
                             <div class="crm-entity-widget-client-box-name-row">
-                                <a class="crm-entity-widget-client-box-name edit-contact" ><?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?></a>
-                                <a href="/crm/contact/details/<?= $contact["ID"]; ?>/">
-                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24">
+                                <a class="crm-entity-widget-client-box-name edit-contact"><?= $contact['NAME'] . ' ' . $contact['LAST_NAME']; ?></a>
+                                <a href="/crm/contact/details/<?= $contact["ID"]; ?>/" class="form-client-card-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16"
+                                         viewBox="0 0 24 24">
                                         <path d="M 5 3 C 3.9069372 3 3 3.9069372 3 5 L 3 19 C 3 20.093063 3.9069372 21 5 21 L 19 21 C 20.093063 21 21 20.093063 21 19 L 21 12 L 19 12 L 19 19 L 5 19 L 5 5 L 12 5 L 12 3 L 5 3 z M 14 3 L 14 5 L 17.585938 5 L 8.2929688 14.292969 L 9.7070312 15.707031 L 19 6.4140625 L 19 10 L 21 10 L 21 3 L 14 3 z"></path>
                                     </svg>
                                 </a>
@@ -125,40 +127,41 @@ function getPrefferences($contact){
                         </div>
 
                         <div class="crm-entity-widget-client-box-position">
-                            <? if($contact['POST'] != ""): ?>
+                            <? if ($contact['POST'] != ""): ?>
                                 <?= $contact['POST']; ?>&nbsp;
                             <? endif ?>
-                            <? if($contact['BIRTHDATE'] != ""): ?>
-                                <? $birthday = explode(" ",$contact['BIRTHDATE']); ?>
+                            <? if ($contact['BIRTHDATE'] != ""): ?>
+                                <? $birthday = explode(" ", $contact['BIRTHDATE']); ?>
 
-                                день рождения: <?=$birthday[0]?>
+                                день рождения: <?= $birthday[0] ?>
                             <? endif ?>
                         </div>
                         <div class="crm-entity-widget-client-box-preferences refloor-contact-properties">
                             <?php
                             $preferences = getPrefferences($contact);
-                            foreach ($preferences as $k => $p){
+                            foreach ($preferences as $k => $p) {
                                 $name = $k;
                                 $ufFieldName = $p['NAME'];
                                 $checked = boolval($p['VALUE']);
-                            ?>
-                            <span class="refloor-contact-property"><?= $name; ?><span class="<?= $checked ? 'yes' : 'no'; ?>"><?= $checked ? 'да' : 'нет'; ?></span></span>
+                                ?>
+                                <span class="refloor-contact-property"><?= $name; ?><span
+                                            class="<?= $checked ? 'yes' : 'no'; ?>"><?= $checked ? 'да' : 'нет'; ?></span></span>
                             <?php } ?>
                         </div>
                         <div class="crm-entity-widget-client-contact">
                             <?php if (isset($contact['PHONE']) && is_array($contact['PHONE'])): ?>
                                 <?php foreach ($contact['PHONE'] as $k => $phone): ?>
                                     <a
-                                        class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"
-                                        href="callto://<?=$phone['VALUE'];?>"
+                                            class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"
+                                            href="callto://<?= $phone['VALUE']; ?>"
                                     ><?= $phone['VALUE'] ?></a>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                             <?php if (isset($contact['EMAIL']) && is_array($contact['EMAIL'])): ?>
                                 <?php foreach ($contact['EMAIL'] as $k => $email): ?>
                                     <a
-                                        class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"
-                                        href="mailto:<?=$email['VALUE'];?>"
+                                            class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"
+                                            href="mailto:<?= $email['VALUE']; ?>"
                                     ><?= $email['VALUE'] ?></a>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -175,7 +178,7 @@ function getPrefferences($contact){
                             ?>
                         </div> */ ?>
                         <div class="refloor-comments">
-                            <?=$contact['COMMENTS'];?>
+                            <?= $contact['COMMENTS']; ?>
                         </div>
                     </div>
                 </div>
@@ -186,19 +189,22 @@ function getPrefferences($contact){
             <a class="add-contact-button">Добавить контакт</a>
         </div>
     </div>
-        <script>
-            BX.ready(() => {
-                const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
-                let node = document.querySelector('[data-cid="<?=$arResult['USER_FIELD_NAME'];?>"]')
-                console.log(node)
-                if (node) {
-                    let titleNode = node.querySelector(".ui-entity-editor-block-title")
-                    titleNode.style.display = "none"
+    <script>
+        BX.ready(() => {
+            console.log("Init contacts")
+            const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
+            let node = document.querySelector('[data-cid="<?=$arResult['USER_FIELD_NAME'];?>"]')
+            console.log(node)
+            if (node) {
+                let titleNode = node.querySelector(".ui-entity-editor-block-title")
+                titleNode.style.display = "none"
 
 
                 node.addEventListener('click', (e) => {
+                    e.stopImmediatePropagation()
+                    if (e.target.closest('.form-client-card-link')) return
                     const el = e.target.closest('.contact-block')
-                    if(el && el.hasAttribute('data-contact-id')){
+                    if (el && el.hasAttribute('data-contact-id')) {
                         const contact_id = el.getAttribute('data-contact-id')
                         const title = "Контакт " + el.getAttribute('data-contact-name')
                         const content_url = '/local/contact/contact_edit.php?IFRAME=Y'
@@ -211,7 +217,7 @@ function getPrefferences($contact){
 
 
                 const newContactButton = node.querySelector('.add-contact-button')
-                if(newContactButton){
+                if (newContactButton) {
                     newContactButton.addEventListener('click', (e) => {
                         e.preventDefault()
                         const title = "Добавить контакт"
@@ -221,7 +227,7 @@ function getPrefferences($contact){
                         dialog.Show()
                     })
                 }
-                }
-            })
-        </script>
-    </div>
+            }
+        })
+    </script>
+</div>

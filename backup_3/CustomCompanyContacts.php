@@ -20,7 +20,6 @@ class CustomCompanyContacts extends TypeBase
             'USER_TYPE_ID' => CustomCompanyContacts::USER_TYPE_ID,
             'CLASS_NAME' => __CLASS__,
             'DESCRIPTION' => "контакты компании",
-            'PREFERENCES_FIELD' => 'UF_CONTACT_PREFERENCES_AREA',
             'QUIZ_FIELD' => 'UF_CONTACT_QUIZ_AREA',
             'BASE_TYPE' => \CUserTypeManager::BASE_TYPE_STRING,
             'DEFAULT_VALUE' => "-",
@@ -76,8 +75,8 @@ class CustomCompanyContacts extends TypeBase
             'refloor:company.contacts',
             '',
             [
+                /*'AJAX_MODE' => 'Y',*/
                 'COMPANY_ID' => $companyID,
-                'PREFERENCES_FIELD' => $arUserField['USER_TYPE']['PREFERENCES_FIELD'],
                 'QUIZ_FIELD' => $arUserField['USER_TYPE']['QUIZ_FIELD'],
                 'USER_FIELD_NAME' => $arUserField['FIELD_NAME'],
                 'EDITE_MODE' => $arAdditionalParameters['CONTEXT'] == 'UI_EDITOR' && $arAdditionalParameters['mode'] =="main.edit",

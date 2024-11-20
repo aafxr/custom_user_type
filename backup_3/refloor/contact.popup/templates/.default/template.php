@@ -5,21 +5,49 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true ) die();
 \Bitrix\Main\UI\Extension::load("ui.alerts");
 \Bitrix\Main\UI\Extension::load("ui.buttons");
 
-$defaultPreferences = [
-  'Зарегистрирован в чат-боте:нет',
-  'Любит ПВХ плитку?:нет',
-  'Прослушал семинар?:нет',
-  'Прослушал семинар Кварцпаркет:нет',
-];
-
 $isNewContact = empty($arResult['CONTACT']);
 $contact = $arResult['CONTACT'] ?? [];
-$preferences = $contact[$arResult['PREFERENCES_FIELD']] ?? $defaultPreferences;
+
+
+$preferences = [
+  'Зарегистрирован в чат-боте' => [
+      'NAME' => 'UF_CRM_HAS_TG_REGISTRATION',
+      'VALUE' => false,
+      'TRUE_VALUE' => '1',
+      'FALSE_VALUE' => '0',
+  ],
+  'Любит ПВХ плитку?' => [
+      'NAME' => 'UF_CRM_60120C8A6BD67',
+      'VALUE' => false,
+      'TRUE_VALUE' => '800',
+      'FALSE_VALUE' => '0',
+  ],
+  'Прослушал семинар?' => [
+      'NAME' => 'UF_CRM_SEMINAR',
+      'VALUE' => false,
+      'TRUE_VALUE' => '1',
+      'FALSE_VALUE' => '0',
+  ],
+  'Прослушал семинар Кварцпаркет' => [
+      'NAME' => 'UF_SEMINAR_QP',
+      'VALUE' => false,
+      'TRUE_VALUE' => '1',
+      'FALSE_VALUE' => '0',
+  ],
+];
+
+foreach ($preferences as $name => $defaultValue) {
+    if(isset($contact[$defaultValue['NAME']])) {
+        $preferences[$name]['VALUE'] = $contact[$defaultValue['NAME']];
+    }
+}
+
+
 $quiz =  $contact[$arResult['QUIZ_FIELD']] ?? [];
 $phones = $contact['PHONE'] ?? [];
 $emails = $contact['EMAIL'] ?? [];
 
-if(empty($preferences)) $preferences = $defaultPreferences;
+$birthdate = explode(" ",$contact['BIRTHDATE'])[0];
 
 ?>
 <style>
@@ -79,14 +107,14 @@ if(empty($preferences)) $preferences = $defaultPreferences;
                 </div>
             </div>
 
-            <!--            <div class="ui-ctl">-->
-            <!--                <div class="ui-ctl-label-text">Ден рождения:</div>-->
-            <!--                <div class="ui-ctl ui-ctl-after-icon ui-ctl-date">-->
-            <!--                    <div class="ui-ctl-after ui-ctl-icon-calendar"></div>-->
-            <!--                    <div class="ui-ctl-element" onclick="contactBirthday.click()">14.10.2014</div>-->
-            <!--                    <input id="contactBirthday" type="date" hidden>-->
-            <!--                </div>-->
-            <!--            </div>-->
+            <div class="ui-ctl">
+                <div class="ui-ctl-label-text">День рождения:</div>
+                <div class="ui-ctl ui-ctl-after-icon ui-ctl-date form-input-birthdate-container">
+                    <div class="ui-ctl-after ui-ctl-icon-calendar"></div>
+                    <div class="ui-ctl-element form-input-birthdate-value"><?=$birthdate;?></div>
+                    <input type="text" class="form-input-birthdate" value="<?=$birthdate;?>" hidden/>
+                </div>
+            </div>
         </div>
 
 
@@ -95,19 +123,23 @@ if(empty($preferences)) $preferences = $defaultPreferences;
             <div>
                 <div class="ui-ctl-label-text" style="visibility: hidden;">Доп поля</div>
                 <?php foreach ($preferences as $k => $p){
-                    $r = explode(':',$p);
-                    $value = $r[0];
-                    $checked = $r[1] == 'да';
+                    $name = $k;
+                    $ufFieldName = $p['NAME'];
+                    $checked = boolval($p['VALUE']);
+                    $trueValue = $p['TRUE_VALUE'];
+                    $falseValue = $p['FALSE_VALUE'];
                     ?>
                     <label class="ui-ctl ui-ctl-checkbox form-checkbox-label">
                         <input
                                 type="checkbox"
                                 class="ui-ctl-element form-input-checkbox"
-                                data-field="<?=$arResult['PREFERENCES_FIELD'];?>"
-                                data-value="<?=$value;?>"
+                                data-field="<?=$ufFieldName;?>"
+                                data-value="<?=$name;?>"
+                                data-true-value="<?=$trueValue;?>"
+                                data-false-value="<?=$falseValue;?>"
                             <?= $checked ? 'checked' : '';?>
                         />
-                        <div class="ui-ctl-label-text"><?=explode(':',$p)[0];?></div>
+                        <div class="ui-ctl-label-text"><?=$name;?></div>
                     </label>
                 <?php };?>
             </div>
@@ -186,9 +218,9 @@ if(empty($preferences)) $preferences = $defaultPreferences;
             <div class="ui-ctl ui-ctl-textarea ui-ctl-no-resize">
                 <textarea
                     class="ui-ctl-element form-comment"
-                    data-field="<?=$arResult['COMMENT_FIELD'];?>"
-                    value="<?=$contact[$arResult['COMMENT_FIELD']] ?? '';?>"
-                ><?=$contact[$arResult['COMMENT_FIELD']] ?? '';?></textarea>
+                    data-field="COMMENTS"
+                    value="<?=$contact['COMMENTS'] ?? '';?>"
+                ><?=$contact['COMMENTS'] ?? '';?></textarea>
             </div>
         </div>
 
@@ -202,6 +234,7 @@ if(empty($preferences)) $preferences = $defaultPreferences;
 </div>
 <script>
     BX.ready(() => {
+        BX.loadCSS('/bitrix/panel/main/popup.min.css');
         const getExtraPhoneTemplate = () => {
             const div = document.createElement('div')
             div.classList.add('ui-ctl')
@@ -239,7 +272,6 @@ if(empty($preferences)) $preferences = $defaultPreferences;
 
         const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
         const contact_id = <?= $arResult['CONTACT_ID'] ?? 0; ?>;
-        console.log(<?=json_encode($arResult)?>)
         BX.WindowManager.Get()?.SetTitle?.('<?=$isNewContact ? 'Добавить контакт' : 'Изменить контакт: ' .$arResult['CONTACT']['NAME'].' '.$arResult['CONTACT']['LAST_NAME']?>')
         const confirmChangesURL = '<?=$arResult['COMPONENT_PATH']?>';
         const contactForm = document.querySelector('.ui-form.contact-edite-form')
@@ -257,6 +289,27 @@ if(empty($preferences)) $preferences = $defaultPreferences;
             e.preventDefault()
             emailButton.parentElement.insertBefore(getExtraEmailTemplate(), emailButton)
         })
+
+
+        const birthDateValue = document.querySelector('.form-input-birthdate-value')
+        const birthDateContainer = document.querySelector('.form-input-birthdate-container')
+        const birthDateInput = document.querySelector('.form-input-birthdate')
+        let birthDate
+
+        birthDateValue.addEventListener('click', () => {
+            BX.calendar({
+                node: birthDateContainer,
+                field: birthDateInput,
+                value: '<?=$contact['BIRTHDATE'];?>',
+                callback_after: (date) => {
+                    birthDate = date
+                    birthDateValue.innerText = new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(date)
+                }
+            })
+        })
+
+
+
 
 
         function handleSaveClick() {
@@ -323,8 +376,9 @@ if(empty($preferences)) $preferences = $defaultPreferences;
                 for (const input of inputs) {
                     if (input.hasAttribute('data-field')) {
                         const field = input.getAttribute('data-field')
-                        if(!fields[field]) fields[field] = []
-                        fields[field].push(`${input.getAttribute('data-value')}:${input.checked ? 'да' : 'нет'}`)
+                        fields[field] = input.checked
+                            ? input.getAttribute('data-true-value')
+                            : input.getAttribute('data-false-value')
                     }
                 }
 
@@ -332,6 +386,13 @@ if(empty($preferences)) $preferences = $defaultPreferences;
 
                 const comment = contactForm.querySelector('.form-comment')
                 if(comment && comment.hasAttribute('data-field')) fields[comment.getAttribute('data-field')] = comment.value.trim()
+
+
+                if(birthDate) {
+                    fields['BIRTHDATE'] = new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(birthDate) + ' 00:00:00'
+                }
+
+
                 if(hasError) throw new Error('некоторые поля заполнены не правельно')
                 return fetch(confirmChangesURL + '/ajax.php', {
                     method: 'POST',
@@ -349,11 +410,11 @@ if(empty($preferences)) $preferences = $defaultPreferences;
 
             if (saveButton) {
                 saveButton.addEventListener('click', () => {
-                    console.log('click save')
                     saveButton.classList.add('ui-btn-wait')
+                    const node = window.document.getElementById('refloorContactsComp')
                     new Promise((r) => r(handleSaveClick()))
                         .then(() => BX.WindowManager.Get().Close())
-                        .then(() => document.querySelector('#refloor-refresh')?.click())
+                        .then(() => window.BX.ajax.insertToNode(`/local/contact/contacts.php?company_id=${company_id}`, node))
                         .catch(e => {
                             console.error(e)
                             saveButton.classList.remove('ui-btn-wait')
@@ -363,7 +424,6 @@ if(empty($preferences)) $preferences = $defaultPreferences;
 
             if (cancelButton) {
                 cancelButton.addEventListener('click', () => {
-                    console.log('click cancel')
                     BX.WindowManager.Get().Close()
                 })
             }
