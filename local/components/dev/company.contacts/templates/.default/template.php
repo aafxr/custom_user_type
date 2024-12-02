@@ -140,6 +140,7 @@ function getPrefferences($contact){
 
 
                 node.addEventListener('click', (e) => {
+                    e.preventDefault()
                     e.stopImmediatePropagation()
                     if(e.target.closest('.form-client-card-link')) return
                     const el = e.target.closest('.contact-block')
