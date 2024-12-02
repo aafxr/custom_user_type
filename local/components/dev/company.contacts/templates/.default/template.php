@@ -88,7 +88,8 @@ function getPrefferences($contact){
                                 <?php foreach ($contact['PHONE'] as $k => $phone): ?>
                                     <a
                                         class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"
-                                        href="callto://<?=$phone['VALUE'];?>"
+                                        href="tel://<?=preg_replace('/[^+\d]/', '', $phone['VALUE']);?>"
+                                        onclick="event.stopPropagation()"
                                     ><?= $phone['VALUE'] ?></a>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -97,6 +98,7 @@ function getPrefferences($contact){
                                     <a
                                         class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"
                                         href="mailto:<?=$email['VALUE'];?>"
+                                        onclick="event.stopPropagation()"
                                     ><?= $email['VALUE'] ?></a>
                                 <?php endforeach; ?>
                             <?php endif; ?>
