@@ -1,0 +1,29 @@
+.ui-ctl-dropdown.open .dropdown-options{
+    max-height: 9999px;
+}
+
+.dropdown-options{
+    width: 100%;
+    position: relative;
+    border: 1px solid rgb(var(--ui-field-color-border-default));
+    border-radius: var(--ui-border-radius-2xs);
+    max-height: 0;
+    overflow-y: hidden;
+    transition: max-height .3s easy-out;
+}
+
+.dropdown-options .dropdown-options-item{
+    width: 100%;
+    text-overflow: ellipsis;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-options .dropdown-options-item:hover{
+    background-color: #eee;
+}
+
+.dropdown-options .dropdown-options-item.checked{
+    background-color: #eee;
+
+}
