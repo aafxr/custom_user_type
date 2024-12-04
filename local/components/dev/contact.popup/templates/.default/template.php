@@ -143,6 +143,16 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
                         <div class="ui-ctl-label-text"><?=$name;?></div>
                     </label>
                 <?php };?>
+                <? if(!$isNewContact){
+//                    $APPLICATION->IncludeComponent(
+//                        'refloor:contact.promo',
+//                        '',
+//                        [
+//                            'CONTACT_ID' => $arResult['CONTACT']['ID'],
+//                        ]
+//                    );
+                }
+                ?>
             </div>
         </div>
 

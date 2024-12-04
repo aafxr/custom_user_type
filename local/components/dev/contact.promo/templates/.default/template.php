@@ -16,14 +16,17 @@ foreach ($arResult['ITEMS'] as $item) {
 ?>
 
 <div id="contact-promo" class="contact-promo">
-    <button class="ui-btn ui-btn-light-border promo-dropdown">Выбрать promo</button>
+    <div class="contact-promo-list">
+
+    </div>
+    <button class="ui-btn ui-btn-success promo-dropdown-button">Добавить promo</button>
 </div>
 <script>
     BX.ready(() => {
         const componentPath = '<?=$arResult['COMPONENT_PATH']?>';
         const CONTACT_ID = <?= $arResult['CONTACT_ID']; ?>;
         const promoContainer = document.getElementById('contact-promo')
-        const dropDown = promoContainer.querySelector('.promo-dropdown')
+        const dropDown = promoContainer.querySelector('.promo-dropdown-button')
         const promoList = <?= json_encode($promoList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
         const selectedPromo = <?= json_encode($itemsList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
         const promoToAdd = {}
