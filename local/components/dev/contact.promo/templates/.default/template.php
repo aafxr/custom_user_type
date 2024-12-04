@@ -29,10 +29,6 @@ foreach ($arResult['ITEMS'] as $item) {
         const promoToAdd = {}
         const promoToRemove = {}
 
-        console.log(selectedPromo)
-        console.log('promoList', promoList)
-        console.log('selectedPromo', selectedPromo)
-
 
         function getPopupContent() {
             const listNode = document.createElement('div')

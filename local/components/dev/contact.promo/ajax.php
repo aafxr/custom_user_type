@@ -104,7 +104,6 @@ foreach ($request['promoToAdd'] as $addPromo){
 
 
 $result['request'] = $request;
-$result['res'] = [];
 
 foreach ($request['promoToRemove'] as $removePromo){
     if($removePromo['UF_PROMO_ID']){
@@ -117,7 +116,6 @@ foreach ($request['promoToRemove'] as $removePromo){
                 $result['message'][] = $r->getErrorMessages();
             }
         }
-        $result['res'][] = $res;
     }
 }
 
