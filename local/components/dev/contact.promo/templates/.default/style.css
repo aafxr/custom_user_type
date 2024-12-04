@@ -1,29 +1,94 @@
-.ui-ctl-dropdown.open .dropdown-options{
-    max-height: 9999px;
+/*.ui-ctl-dropdown.open .dropdown-options {*/
+/*    max-height: 9999px;*/
+/*}*/
+
+/*.dropdown-options {*/
+/*    width: 100%;*/
+/*    position: relative;*/
+/*    border: 1px solid rgb(var(--ui-field-color-border-default));*/
+/*    border-radius: var(--ui-border-radius-2xs);*/
+/*    max-height: 0;*/
+/*    overflow-y: hidden;*/
+/*    transition: max-height .3s easy-out;*/
+/*}*/
+
+/*.dropdown-options .dropdown-options-item {*/
+/*    width: 100%;*/
+/*    text-overflow: ellipsis;*/
+/*    border: none;*/
+/*    cursor: pointer;*/
+/*}*/
+
+/*.dropdown-options .dropdown-options-item:hover {*/
+/*    background-color: #eee;*/
+/*}*/
+
+/*.dropdown-options .dropdown-options-item.checked {*/
+/*    background-color: #eee;*/
+/*}*/
+
+/*.dropdown-options .dropdown-options-item.checked .ui-ctl-after {*/
+/*    opacity: 1;*/
+/*    pointer-events: all;*/
+/*}*/
+
+/*.dropdown-options .dropdown-options-item .ui-ctl-after {*/
+/*    opacity: 0;*/
+/*    pointer-events: none;*/
+/*}*/
+
+
+.promo-list {
+    display: grid!important;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    /*display: flex!important;*/
+    flex-direction: column;
+    gap: 20px;
 }
 
-.dropdown-options{
-    width: 100%;
-    position: relative;
-    border: 1px solid rgb(var(--ui-field-color-border-default));
-    border-radius: var(--ui-border-radius-2xs);
-    max-height: 0;
-    overflow-y: hidden;
-    transition: max-height .3s easy-out;
-}
-
-.dropdown-options .dropdown-options-item{
-    width: 100%;
-    text-overflow: ellipsis;
-    border: none;
+.promo-list-item {
+    /*padding: 10px 10px 10px 10px;*/
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: stretch;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    transition: background .3s;
     cursor: pointer;
 }
 
-.dropdown-options .dropdown-options-item:hover{
+.promo-list-item + .promo-list-item {
+    border-top: 1px solid #eee;
+}
+
+.promo-list-item--selected {
     background-color: #eee;
 }
 
-.dropdown-options .dropdown-options-item.checked{
-    background-color: #eee;
-
+.promo-list-item-name {
+    padding: 0 10px 10px;
+    flex: 1 1;
+    font-weight: 500;
 }
+
+.promo-list-item-photo {
+    flex: none;
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.promo-list-item-photo img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
