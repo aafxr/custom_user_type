@@ -12,6 +12,8 @@ class CContactPromo extends \CBitrixComponent
 
     function executeComponent()
     {
+        $this->arResult['COMPONENT_PATH'] = $this->GetPath();
+        $this->arResult['CONTACT_ID'] = $this->arParams['CONTACT_ID'];
         $this->arResult['ITEMS'] = $this->GetPromoItems();
         $this->arResult['PROMO'] = $this->GetPromoList();
         $this->includeComponentTemplate();
@@ -36,11 +38,18 @@ class CContactPromo extends \CBitrixComponent
         $rsData = $entityDataClass::getList(array(
             "select" => array("*"),
             "order" => array("ID" => "ASC"),
-            "filter" => array("UF_CONTACT_ID"=>$this->arParams['CONTACT_ID'])  // Задаем параметры фильтра выборки
+            "filter" => array(
+                "UF_CONTACT_ID"=>$this->arParams['CONTACT_ID'],
+                "UF_DELETED_AT" => null,
+            )
         ));
 
         $items = [];
         while($arData = $rsData->Fetch()){
+            $arData['UF_CREATED_AT'] = FormatDateFromDB($arData['UF_CREATED_AT']);
+            if($arData['UF_DELETED_AT']){
+                $arData['UF_DELETED_AT'] = FormatDateFromDB($arData['UF_DELETED_AT']);
+            }
             $items[] = $arData;
         }
         return $items;
