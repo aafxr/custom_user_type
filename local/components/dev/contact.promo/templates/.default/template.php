@@ -62,6 +62,17 @@ foreach ($arResult['ITEMS'] as $item) {
             selectedPromoListNode.innerHTML = selectedInner
         }
 
+
+        function askToRemovePromo(promo){
+            const p = promoItems.find(e => e.ID === promo.UF_PROMO_ID)
+            if(p){
+                return confirm(`Удалить "${p.UF_PROMO_VALUE}"?`)
+            }
+            return false
+        }
+
+
+
         if(selectedPromoListNode){
             updateSelectedPromoListNode()
             selectedPromoListNode.addEventListener('click', e => {
@@ -70,7 +81,7 @@ foreach ($arResult['ITEMS'] as $item) {
                     if(!selectedPromoItemNode) return
                     const promoId = selectedPromoItemNode.dataset.promoId
                     const removePromo = selectedPromo.find(e => e.ID === promoId)
-                    if(removePromo){
+                    if(removePromo && askToRemovePromo(removePromo)){
                         promoToRemove[removePromo.ID] = removePromo
                         handleSavePromo().catch(console.error)
                     }
