@@ -42,5 +42,5 @@ body{
 
 
 .form-promo-block{
-    margin-top: 10px;
+    max-height: 200px;
 }

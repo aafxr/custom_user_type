@@ -1,11 +1,22 @@
+.contact-promo{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+}
+
 .contact-promo-list{
     flex: 1 1;
     display: flex;
     flex-direction: column;
+    justify-content: stretch;
 }
 
 .selected-promo-list{
+    flex: 1 1;
     margin-bottom: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .selected-promo-list-item{
@@ -38,6 +49,7 @@
 
 
 .promo-dropdown-button{
+    margin-top: auto;
     flex: none;
     width: 320px;
     max-width: 320px;
