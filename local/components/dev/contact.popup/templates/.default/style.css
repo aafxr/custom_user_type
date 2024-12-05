@@ -18,7 +18,8 @@ body{
     font-size: inherit;
 }
 
-.form-checkbox-label{
+.ui-form .form-checkbox-label{
+    min-height: 20px;
     cursor: pointer;
 }
 
@@ -37,4 +38,9 @@ body{
     height: 0;
     border: none;
     outline: none;
+}
+
+
+.form-promo-block{
+    margin-top: 10px;
 }

@@ -7,6 +7,7 @@ class CContactPromo extends \CBitrixComponent
     function onPrepareComponentParams($arParams)
     {
         $this->arParams['CONTACT_ID'] = $arParams['CONTACT_ID'] ?? '';
+        $this->arParams['CLASS_NAME'] = $arParams['CLASS_NAME'] ?? '';
         return $arParams;
     }
 
@@ -14,6 +15,7 @@ class CContactPromo extends \CBitrixComponent
     {
         $this->arResult['COMPONENT_PATH'] = $this->GetPath();
         $this->arResult['CONTACT_ID'] = $this->arParams['CONTACT_ID'];
+        $this->arResult['CLASS_NAME'] = $this->arParams['CLASS_NAME'];
         $this->arResult['ITEMS'] = $this->GetPromoItems();
         $this->arResult['PROMO'] = $this->GetPromoList();
         $this->includeComponentTemplate();

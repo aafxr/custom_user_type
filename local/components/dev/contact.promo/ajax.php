@@ -76,10 +76,10 @@ function isPromoExist($list, $promoId){
 }
 
 
-function removePromoFromArray($list, $promoId){
+function removePromoFromArray(&$list, $promoId){
     foreach ($list as $k => $p){
-        if($p['UF_PROMO_ID'] == $promoId) {
-//            unset($list[$k]);
+        if($p['ID'] == $promoId) {
+            unset($list[$k]);
             return $p;
         }
     }
@@ -94,9 +94,15 @@ foreach ($request['promoToAdd'] as $addPromo){
             'UF_CREATED_AT' => \Bitrix\Main\Type\DateTime::createFromPhp(new \DateTime()),
             'UF_CREATED_BY' => $USER->GetID(),
             'UF_PROMO_ID' => $addPromo['UF_PROMO_ID'],
+            'UF_DELETED_BY' => '',
+            'UF_DELETED_AT' => null,
+
         ];
         $r = $entityDataClass::add($ar);
-        if(!$r->isSuccess()){
+        if($r->isSuccess()){
+            $ar = $entityDataClass::getById($r->getId())->fetch();
+            $arContactPromo[] = $ar;
+        }else{
             $result['message'][] = $r->getErrorMessages();
         }
     }
@@ -104,10 +110,11 @@ foreach ($request['promoToAdd'] as $addPromo){
 
 
 $result['request'] = $request;
+$result['remove'] = [];
 
 foreach ($request['promoToRemove'] as $removePromo){
-    if($removePromo['UF_PROMO_ID']){
-        $res = removePromoFromArray($arContactPromo, intval($removePromo['UF_PROMO_ID']));
+    if($removePromo['ID']){
+        $res = removePromoFromArray($arContactPromo, intval($removePromo['ID']));
         if($res){
             $res['UF_DELETED_AT'] = \Bitrix\Main\Type\DateTime::createFromPhp(new \DateTime());
             $res['UF_DELETED_BY'] = $USER->GetID();
@@ -116,11 +123,17 @@ foreach ($request['promoToRemove'] as $removePromo){
                 $result['message'][] = $r->getErrorMessages();
             }
         }
+        $result['remove'][] = $res;
     }
 }
 
+foreach ($arContactPromo as $k => $p) {
+    if($p['UF_DELETED_AT']) $arContactPromo[$k]['UF_DELETED_AT'] = FormatDateFromDB($p['UF_DELETED_AT']);
+    if($p['UF_CREATED_AT']) $arContactPromo[$k]['UF_CREATED_AT'] = FormatDateFromDB($p['UF_CREATED_AT']);
+}
 
 $result['ok'] = true;
+$result['list'] = array_values($arContactPromo);
 
 echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 

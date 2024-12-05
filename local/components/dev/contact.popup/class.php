@@ -5,7 +5,7 @@ class CContactPopup extends \CBitrixComponent
 {
     function onPrepareComponentParams($arParams)
     {
-        CContactPopup::log('onPrepareComponentParams', $arParams );
+//        CContactPopup::log('onPrepareComponentParams', $arParams );
         $this->arParams['CONTACT_ID'] = $arParams['CONTACT_ID'];
         $this->arParams['COMPANY_ID'] = $arParams['COMPANY_ID'];
         $this->arParams['COMMENT_FIELD'] = $arParams['COMMENT_FIELD'] ?? '';
@@ -16,7 +16,7 @@ class CContactPopup extends \CBitrixComponent
 
     function executeComponent()
     {
-        CContactPopup::log('executeComponent', $this->arParams, $this->arResult);
+//        CContactPopup::log('executeComponent', $this->arParams, $this->arResult);
         $this->arResult['COMPANY_ID'] = $this->arParams['COMPANY_ID'];
         $this->arResult['CONTACT_ID'] = $this->arParams['CONTACT_ID'];
         $this->arResult['COMMENT_FIELD'] = $this->arParams['COMMENT_FIELD'];

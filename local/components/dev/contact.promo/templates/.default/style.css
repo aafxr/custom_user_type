@@ -2,9 +2,39 @@
     flex: 1 1;
     display: flex;
     flex-direction: column;
+}
 
+.selected-promo-list{
+    margin-bottom: 10px;
+}
+
+.selected-promo-list-item{
+    margin-left: 0!important;
+}
+
+.selected-promo-list-item-content{
+    display: flex;
+    justify-content: stretch;
+    align-items: center;
+    gap: 10px
+}
+
+.selected-promo-list-item-photo{
+    position: relative;
+    width: 40px;
+    height: calc(var(--ui-field-size) - 2px);
+}
+
+.selected-promo-list-item-name{
 
 }
+
+.selected-promo-list .selected-promo-list-item-date{
+    font-size: 0.6rem;
+    font-weight: 300;
+    color: #a3a9b1;
+}
+
 
 
 .promo-dropdown-button{
@@ -53,6 +83,7 @@
     overflow: hidden;
 }
 
+.selected-promo-list-item-photo img,
 .promo-list-item-photo img {
     position: absolute;
     left: 0;
