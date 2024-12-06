@@ -52,6 +52,10 @@ class CContactPromo extends \CBitrixComponent
             if($arData['UF_DELETED_AT']){
                 $arData['UF_DELETED_AT'] = FormatDateFromDB($arData['UF_DELETED_AT']);
             }
+            $creator = $this->GetUser($arData['UF_CREATED_BY']);
+            if($creator){
+                $arData['CREATOR_NAME'] = $creator['LAST_NAME'];
+            }
             $items[] = $arData;
         }
         return $items;
@@ -81,5 +85,10 @@ class CContactPromo extends \CBitrixComponent
             $items[] = $arData;
         }
         return $items;
+    }
+
+
+    function GetUser($creatorID){
+        return CUser::GetByID($creatorID)->Fetch();
     }
 }

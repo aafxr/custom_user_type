@@ -3,6 +3,8 @@
     display: flex;
     flex-direction: column;
     justify-content: stretch;
+    width: 320px;
+    max-width: 320px;
 }
 
 .contact-promo-list{
@@ -24,10 +26,15 @@
 }
 
 .selected-promo-list-item-content{
+    width: 100%;
     display: flex;
     justify-content: stretch;
     align-items: center;
     gap: 10px
+}
+
+.selected-promo-list-item-inner{
+    flex: 1 1;
 }
 
 .selected-promo-list-item-photo{
@@ -41,6 +48,16 @@
 }
 
 .selected-promo-list .selected-promo-list-item-date{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-promo-list .selected-promo-list-item-date span{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
     font-size: 0.6rem;
     font-weight: 300;
     color: #a3a9b1;

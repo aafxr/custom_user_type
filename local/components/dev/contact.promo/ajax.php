@@ -86,6 +86,13 @@ function removePromoFromArray(&$list, $promoId){
     return false;
 }
 
+function GetUser($creatorID) {
+    return CUser::GetByID($creatorID)->Fetch();
+}
+
+$arUser = GetUser("212", ['*']);
+$result['user'] = $arUser;
+
 
 foreach ($request['promoToAdd'] as $addPromo){
     if($addPromo['UF_PROMO_ID']){
@@ -101,7 +108,10 @@ foreach ($request['promoToAdd'] as $addPromo){
         $r = $entityDataClass::add($ar);
         if($r->isSuccess()){
             $ar = $entityDataClass::getById($r->getId())->fetch();
-            $arContactPromo[] = $ar;
+            if($ar){
+                if($arUser) $ar['CREATOR_NAME'] = $arUser['LAST_NAME'];
+                $arContactPromo[] = $ar;
+            }
         }else{
             $result['message'][] = $r->getErrorMessages();
         }

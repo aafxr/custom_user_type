@@ -42,9 +42,12 @@ foreach ($arResult['ITEMS'] as $item) {
 
         function updateSelectedPromoListNode(){
             let selectedInner = ''
+            const [y,m,d] = new Date().toISOString().slice(0,10).split('-')
+            const currentDate = `${d}.${m}.${y}`
             for (const p of selectedPromo ){
                 const promoItem = promoItems.find(e => e.ID === p.UF_PROMO_ID)
                 if(promoItem){
+                    const isCreatedToday = p.UF_CREATED_AT.startsWith(currentDate)
                     selectedInner += `
                     <div class="ui-ctl ui-ctl-before-icon  ui-ctl-ext-after-icon selected-promo-list-item" data-promo-id="${p.ID}">
                         <div class="selected-promo-list-item-content">
@@ -53,10 +56,13 @@ foreach ($arResult['ITEMS'] as $item) {
                             </div>
                             <div class="selected-promo-list-item-inner">
                                 <div class="selected-promo-list-item-name">${promoItem.UF_PROMO_VALUE}</div>
-                                <div class="selected-promo-list-item-date">${p.UF_CREATED_AT}</div>
+                                <div class="selected-promo-list-item-date">
+                                    <span>${p.CREATOR_NAME}</span>
+                                    <span>${p.UF_CREATED_AT}</span>
+                                </div>
                             </div>
                         </div>
-                        <button class="ui-ctl-after ui-ctl-icon-clear selected-promo-list-item-remove-btn"></button>
+                        ${isCreatedToday ? '' : '<button class="ui-ctl-after ui-ctl-icon-clear selected-promo-list-item-remove-btn"></button>'}
                     </div>
                     `
                 }
