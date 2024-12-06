@@ -75,9 +75,12 @@
 }
 
 .promo-list {
+    width: 320px;
+    max-height: 400px;
     display: flex!important;
     flex-direction: column;
     gap: 2px;
+    overflow-y: auto;
 }
 
 .promo-list-item {

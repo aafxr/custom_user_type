@@ -46,6 +46,12 @@ if (!Bitrix\Main\Loader::IncludeModule('crm')) {
 }
 
 
+function GetUser($creatorID) {
+    return CUser::GetByID($creatorID)->Fetch();
+}
+
+
+
 /*
  * загрузка существующих запсей о закрепленной за контактом промо-информации
 */
@@ -64,6 +70,10 @@ $rsData = $entityDataClass::getList(array(
 
 $arContactPromo = [];
 while($arData = $rsData->Fetch()){
+    $user = GetUser($arData['UF_CREATED_BY']);
+    if($user){
+        $arData['CREATOR_NAME'] = $user['LAST_NAME'].' '.$user['NAME'];
+    }
     $arContactPromo[] = $arData;
 }
 
@@ -86,9 +96,7 @@ function removePromoFromArray(&$list, $promoId){
     return false;
 }
 
-function GetUser($creatorID) {
-    return CUser::GetByID($creatorID)->Fetch();
-}
+
 
 $arUser = GetUser("212", ['*']);
 $result['user'] = $arUser;
@@ -109,7 +117,7 @@ foreach ($request['promoToAdd'] as $addPromo){
         if($r->isSuccess()){
             $ar = $entityDataClass::getById($r->getId())->fetch();
             if($ar){
-                if($arUser) $ar['CREATOR_NAME'] = $creator['LAST_NAME'].' '.$creator['NAME'];
+                if($arUser) $ar['CREATOR_NAME'] = $arUser['LAST_NAME'].' '.$arUser['NAME'];
                 $arContactPromo[] = $ar;
             }
         }else{

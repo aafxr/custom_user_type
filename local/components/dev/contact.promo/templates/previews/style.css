@@ -8,6 +8,7 @@
     position: relative;
     width: 20px;
     height: 20px;
+    cursor: pointer;
 }
 
 .contact-promo-preview-list-item img {

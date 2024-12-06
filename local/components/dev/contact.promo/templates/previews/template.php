@@ -39,7 +39,7 @@ foreach ($arResult['ITEMS'] as $item) {
             for (const p of selectedPromo ){
                 const promoItem = promoItems.find(e => e.ID === p.UF_PROMO_ID)
                 if(promoItem){
-                    const title = `${promoItem.UF_PROMO_VALUE}\n${p.CREATOR_NAME}\n${p.UF_CREATED_AT}`
+                    const title = `${promoItem.UF_PROMO_VALUE}\nДобавил: ${p.CREATOR_NAME}\nДата: ${p.UF_CREATED_AT}`
                     selectedInner += `
                         <div class="contact-promo-preview-list-item" title="${title}" data-promo-id="${p.ID}">
                             <img src="${promoItem.UF_PROMO_PHOTO}" alt="" />
