@@ -146,6 +146,17 @@ function getPrefferences($contact)
                                 <span class="refloor-contact-property"><?= $name; ?><span class="<?= $checked ? 'yes' : 'no'; ?>"><?= $checked ? 'да' : 'нет'; ?></span></span>
                             <?php } ?>
                         </div>
+                        <?
+                            if(isset($contact['ID'])){
+                                $APPLICATION->IncludeComponent(
+                                    'refloor:contact.promo',
+                                    'previews',
+                                    [
+                                        'CONTACT_ID' => $contact['ID'] ?? '1',
+                                    ]
+                                );
+                            }
+                        ?>
                         <div class="crm-entity-widget-client-contact">
                             <?php if (isset($contact['PHONE']) && is_array($contact['PHONE'])): ?>
                                 <?php foreach ($contact['PHONE'] as $k => $phone): ?>

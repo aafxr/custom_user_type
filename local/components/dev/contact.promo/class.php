@@ -54,7 +54,7 @@ class CContactPromo extends \CBitrixComponent
             }
             $creator = $this->GetUser($arData['UF_CREATED_BY']);
             if($creator){
-                $arData['CREATOR_NAME'] = $creator['LAST_NAME'];
+                $arData['CREATOR_NAME'] = $creator['LAST_NAME'].' '.$creator['NAME'];
             }
             $items[] = $arData;
         }

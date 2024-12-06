@@ -62,7 +62,7 @@ foreach ($arResult['ITEMS'] as $item) {
                                 </div>
                             </div>
                         </div>
-                        ${isCreatedToday ? '' : '<button class="ui-ctl-after ui-ctl-icon-clear selected-promo-list-item-remove-btn"></button>'}
+                        ${isCreatedToday ? '<button class="ui-ctl-after ui-ctl-icon-clear selected-promo-list-item-remove-btn"></button>' : ''}
                     </div>
                     `
                 }

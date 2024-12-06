@@ -109,7 +109,7 @@ foreach ($request['promoToAdd'] as $addPromo){
         if($r->isSuccess()){
             $ar = $entityDataClass::getById($r->getId())->fetch();
             if($ar){
-                if($arUser) $ar['CREATOR_NAME'] = $arUser['LAST_NAME'];
+                if($arUser) $ar['CREATOR_NAME'] = $creator['LAST_NAME'].' '.$creator['NAME'];
                 $arContactPromo[] = $ar;
             }
         }else{
