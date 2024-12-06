@@ -152,6 +152,7 @@ function getPrefferences($contact)
                                     'refloor:contact.promo',
                                     'previews',
                                     [
+                                        'CLASS_NAME' => 'refloor-contact-promo-list',
                                         'CONTACT_ID' => $contact['ID'] ?? '1',
                                     ]
                                 );

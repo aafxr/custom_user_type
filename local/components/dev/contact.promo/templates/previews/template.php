@@ -21,11 +21,7 @@ foreach ($arResult['ITEMS'] as $item) {
 ?>
 
 <div id="<?=$NODE_ID;?>" class="contact-promo <?= $arResult['CLASS_NAME']; ?>">
-    <div class="contact-promo-preview-list">
-        <div class="contact-promo-preview-list-item">
-            <img src="" alt="" />
-        </div>
-    </div>
+    <div class="contact-promo-preview-list"></div>
 </div>
 
 <script>
@@ -33,12 +29,9 @@ foreach ($arResult['ITEMS'] as $item) {
         const componentPath = '<?=$arResult['COMPONENT_PATH']?>';
         const CONTACT_ID = <?= $arResult['CONTACT_ID']; ?>;
         const promoContainer = document.getElementById('<?=$NODE_ID;?>')
-        const previewsContainer = document.querySelector('.contact-promo-preview-list')
+        const previewsContainer = promoContainer.querySelector('.contact-promo-preview-list')
         const promoItems = <?= json_encode($promoList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
         const selectedPromo = <?= json_encode($itemsList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
-        console.warn(promoItems)
-        console.warn(selectedPromo)
-        console.warn(CONTACT_ID)
 
         function updatePreviews(){
             if(!previewsContainer) return
@@ -47,7 +40,7 @@ foreach ($arResult['ITEMS'] as $item) {
                 const promoItem = promoItems.find(e => e.ID === p.UF_PROMO_ID)
                 if(promoItem){
                     selectedInner += `
-                        <div class="contact-promo-preview-list-item" data-promo-id="${p.ID}">
+                        <div class="contact-promo-preview-list-item" title="${promoItem.UF_PROMO_VALUE}" data-promo-id="${p.ID}">
                             <img src="${promoItem.UF_PROMO_PHOTO}" alt="" />
                         </div>
                     `
