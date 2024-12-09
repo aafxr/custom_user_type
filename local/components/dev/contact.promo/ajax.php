@@ -61,7 +61,7 @@ $entityDataClass = $obEntity->getDataClass();
 
 $rsData = $entityDataClass::getList(array(
     "select" => array("*"),
-    "order" => array("ID" => "ASC"),
+    "order" => array("UF_CREATED_AT" => "DESC"),
     "filter" => array(
         "UF_CONTACT_ID"=>$request['CONTACT_ID'],
         "UF_DELETED_AT" => null,
@@ -118,7 +118,7 @@ foreach ($request['promoToAdd'] as $addPromo){
             $ar = $entityDataClass::getById($r->getId())->fetch();
             if($ar){
                 if($arUser) $ar['CREATOR_NAME'] = $arUser['LAST_NAME'].' '.$arUser['NAME'];
-                $arContactPromo[] = $ar;
+                array_unshift($arContactPromo, $ar);
             }
         }else{
             $result['message'][] = $r->getErrorMessages();

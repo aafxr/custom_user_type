@@ -10,9 +10,25 @@ $NODE_ID = 'contact-promo_' . strval(rand(0, PHP_INT_MAX));
 $promoList = $arResult['PROMO'] ?? [];
 $itemsList = [];
 
+$promoPhotoSize = [
+    "width" => $arResult['PHOTO_WIDTH'],
+    "height" => $arResult['PHOTO_HEIGHT']
+];
+
+//if($arResult['DEV']){
+//    echo "<pre>";
+//    print_r($promoPhotoSize);
+//    echo "</pre>";
+//}
+
 foreach ($promoList as $k => $promo) {
-    $res = CFile::GetPath(intval($promo['UF_PROMO_PHOTO'])) ?? '';
-    $promoList[$k]['UF_PROMO_PHOTO'] = $res;
+    $res = CFile::ResizeImageGet(intval($promo['UF_PROMO_PHOTO']), $promoPhotoSize) ?? '';
+    $promoList[$k]['UF_PROMO_PHOTO'] = $res['src'];
+//    if($arResult['DEV']){
+//        echo "<pre>";
+//        print_r($res);
+//        echo "</pre>";
+//    }
 }
 
 foreach ($arResult['ITEMS'] as $item) {

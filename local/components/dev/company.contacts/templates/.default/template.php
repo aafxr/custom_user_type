@@ -91,6 +91,8 @@ function getPrefferences($contact){
                                     [
                                         'CLASS_NAME' => 'refloor-contact-promo-list',
                                         'CONTACT_ID' => $contact['ID'] ?? '1',
+                                        'PHOTO_WIDTH' => 30,
+                                        'PHOTO_HEIGHT' => 30,
                                     ]
                                 );
                             }

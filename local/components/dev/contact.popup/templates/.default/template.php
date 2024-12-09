@@ -151,6 +151,8 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
                     [
                         'CLASS_NAME' => 'form-promo-block',
                         'CONTACT_ID' => $arResult['CONTACT']['ID'],
+                        'PHOTO_WIDTH' => 40,
+                        'PHOTO_HEIGHT' => 40,
                     ]
                 );
             }

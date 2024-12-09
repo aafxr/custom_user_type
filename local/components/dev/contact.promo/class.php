@@ -8,6 +8,14 @@ class CContactPromo extends \CBitrixComponent
     {
         $this->arParams['CONTACT_ID'] = $arParams['CONTACT_ID'] ?? '';
         $this->arParams['CLASS_NAME'] = $arParams['CLASS_NAME'] ?? '';
+
+        $width = intval($arParams['PHOTO_WIDTH']);
+        $height = intval($arParams['PHOTO_HEIGHT']);
+        $this->arParams['PHOTO_WIDTH'] = $width ? $width : 40;
+        $this->arParams['PHOTO_HEIGHT'] = $height ? $height : 40;
+
+        $this->arParams['DEV'] = $arParams['DEV'] ?? false;
+
         return $arParams;
     }
 
@@ -18,6 +26,10 @@ class CContactPromo extends \CBitrixComponent
         $this->arResult['CLASS_NAME'] = $this->arParams['CLASS_NAME'];
         $this->arResult['ITEMS'] = $this->GetPromoItems();
         $this->arResult['PROMO'] = $this->GetPromoList();
+
+        $this->arResult['PHOTO_WIDTH'] = $this->arParams['PHOTO_WIDTH'];
+        $this->arResult['PHOTO_HEIGHT'] = $this->arParams['PHOTO_HEIGHT'];
+        $this->arResult['DEV'] = $this->arParams['DEV'];
         $this->includeComponentTemplate();
     }
 
@@ -39,7 +51,7 @@ class CContactPromo extends \CBitrixComponent
 
         $rsData = $entityDataClass::getList(array(
             "select" => array("*"),
-            "order" => array("ID" => "ASC"),
+            "order" => array("UF_CREATED_AT" => "DESC"),
             "filter" => array(
                 "UF_CONTACT_ID"=>$this->arParams['CONTACT_ID'],
                 "UF_DELETED_AT" => null,
