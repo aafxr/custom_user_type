@@ -147,35 +147,33 @@ function getPrefferences($contact)
                             <?php } ?>
                         </div>
                         <?
-                            if(isset($contact['ID'])){
-                                $APPLICATION->IncludeComponent(
-                                    'refloor:contact.promo',
-                                    'previews',
-                                    [
-                                        'CLASS_NAME' => 'refloor-contact-promo-list',
-                                        'CONTACT_ID' => $contact['ID'] ?? '1',
-                                        'PHOTO_WIDTH' => 30,
-                                        'PHOTO_HEIGHT' => 30,
-                                    ]
-                                );
-                            }
+                        if(isset($contact['ID'])){
+                            $APPLICATION->IncludeComponent(
+                                'refloor:contact.promo',
+                                'previews',
+                                [
+                                    'CLASS_NAME' => 'refloor-contact-promo-list',
+                                    'CONTACT_ID' => $contact['ID'] ?? '1',
+                                    'PHOTO_WIDTH' => 30,
+                                    'PHOTO_HEIGHT' => 30,
+                                ]
+                            );
+                        }
                         ?>
                         <div class="crm-entity-widget-client-contact">
                             <?php if (isset($contact['PHONE']) && is_array($contact['PHONE'])): ?>
                                 <?php foreach ($contact['PHONE'] as $k => $phone): ?>
                                     <a
-                                            class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"
-                                            href="tel://<?=preg_replace('/[^+\d]/', '', $phone['VALUE']);?>"
-                                            onclick="event.stopPropagation()"
+                                            class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone --formOpenBlock"
+                                            href="callto://<?=preg_replace('/[^+\d]/', '', $phone['VALUE']);?>"
                                     ><?= $phone['VALUE'] ?></a>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                             <?php if (isset($contact['EMAIL']) && is_array($contact['EMAIL'])): ?>
                                 <?php foreach ($contact['EMAIL'] as $k => $email): ?>
                                     <a
-                                            class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone"
+                                            class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone --formOpenBlock"
                                             href="mailto:<?=$email['VALUE'];?>"
-                                            onclick="event.stopPropagation()"
                                     ><?= $email['VALUE'] ?></a>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -219,6 +217,7 @@ function getPrefferences($contact)
 
 
                 node.addEventListener('click', (e) => {
+                    if(e.target.closest('.--formOpenBlock')) return
                     e.preventDefault()
                     e.stopImmediatePropagation()
                     if(e.target.closest('.form-client-card-link')) return
