@@ -103,6 +103,7 @@ function getPrefferences($contact){
                                         <a
                                                 class="crm-entity-widget-client-contact-item crm-entity-widget-client-contact-phone --formOpenBlock"
                                                 href="callto://<?=preg_replace('/[^+\d]/', '', $phone['VALUE']);?>"
+                                                onclick="if(typeof(top.BXIM) !== 'undefined') { top.BXIM.phoneTo('<?=$phone['VALUE']; ?>', {'ENTITY_TYPE_NAME':'CONTACT','ENTITY_ID':<?= $contact['ID']; ?>,'AUTO_FOLD':true}); return BX.PreventDefault(event); }"
                                         ><?= $phone['VALUE'] ?></a>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -147,7 +148,6 @@ function getPrefferences($contact){
                 console.log("Init contacts")
                 const company_id = <?= $arResult['COMPANY_ID'] ?? 0; ?>;
                 let node = document.querySelector('[data-cid="<?=$arResult['USER_FIELD_NAME'];?>"]')
-                console.log(node)
                 if (node) {
                     let titleNode = node.querySelector(".ui-entity-editor-block-title")
                     titleNode.style.display = "none"
