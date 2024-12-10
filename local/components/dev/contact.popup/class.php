@@ -69,12 +69,12 @@ class CContactPopup extends \CBitrixComponent
         ];
     }
 
-    static function log($title = '', ...$params){
-        $log = "<div class=\"section\"><h4 class=\"title\">$title</h4>";
-        foreach ($params as $k => $param){
-            $log .= '<pre class="code">'.json_encode($param, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</pre>';
-        }
-        $log .= "</div>\n";
-        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/test.log', $log, FILE_APPEND);
-    }
+//    static function log($title = '', ...$params){
+//        $log = "<div class=\"section\"><h4 class=\"title\">$title</h4>";
+//        foreach ($params as $k => $param){
+//            $log .= '<pre class="code">'.json_encode($param, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</pre>';
+//        }
+//        $log .= "</div>\n";
+//        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/test.log', $log, FILE_APPEND);
+//    }
 }

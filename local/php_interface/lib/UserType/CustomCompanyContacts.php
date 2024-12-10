@@ -31,20 +31,15 @@ class CustomCompanyContacts extends TypeBase
 
     static function GetDBColumnType($arUserField = []): string
     {
-        CustomCompanyContacts::log('GetDBColumnType',$arUserField);
-
         return "varchar(10)";
     }
 
 
     function PrepareSettings($arUserField) {
-        CustomCompanyContacts::log('PrepareSettings',$arUserField);
-
         return $arUserField;
     }
 
     static function GetSettingsHTML($arUserField = false, $arHtmlControl, $bVarsFromForm){
-        CustomCompanyContacts::log('GetSettingsHTML',$arUserField, $arHtmlControl, $bVarsFromForm);
 
         $name = 'DEFAULT_VALUE';
         $value = '-';
@@ -68,13 +63,13 @@ class CustomCompanyContacts extends TypeBase
     public static function GetPublicView($arUserField, $arAdditionalParameters = array()): string
     {
         global $APPLICATION;
-        CustomCompanyContacts::log('GetPublicView',$arUserField, $arAdditionalParameters);
         $companyID = $arUserField['ENTITY_VALUE_ID'];
         ob_start();
         $APPLICATION->IncludeComponent(
             'refloor:company.contacts',
             '',
             [
+                /*'AJAX_MODE' => 'Y',*/
                 'COMPANY_ID' => $companyID,
                 'QUIZ_FIELD' => $arUserField['USER_TYPE']['QUIZ_FIELD'],
                 'USER_FIELD_NAME' => $arUserField['FIELD_NAME'],
@@ -88,17 +83,17 @@ class CustomCompanyContacts extends TypeBase
 
 
     static function OnBeforeSave($arUserField, $value){
-        CustomCompanyContacts::log('OnBeforeSave',$arUserField, $value);
+//        CustomCompanyContacts::log('OnBeforeSave',$arUserField, $value);
         return $value ?? $arUserField['VALUE'] ?? $arUserField['USER_TYPE']['DEFAULT_VALUE'] ?? 'N';
     }
 
 
-    static function log($title = '', ...$params){
-        $log = "<div class=\"section\"><h4 class=\"title\">$title</h4>";
-        foreach ($params as $k => $param){
-            $log .= '<pre class="code">'.json_encode($param, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</pre>';
-        }
-        $log .= "</div>\n";
-        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/test.log', $log, FILE_APPEND);
-    }
+//    static function log($title = '', ...$params){
+//        $log = "<div class=\"section\"><h4 class=\"title\">$title</h4>";
+//        foreach ($params as $k => $param){
+//            $log .= '<pre class="code">'.json_encode($param, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</pre>';
+//        }
+//        $log .= "</div>\n";
+//        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/test.log', $log, FILE_APPEND);
+//    }
 }
