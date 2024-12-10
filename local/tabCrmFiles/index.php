@@ -221,7 +221,9 @@ if($idPlacementEntity && $storage):
     }
 
     BX.ready(() => {
-        BX.ajax.insertToNode('<?= "/test2.php?folderId=$folderId&storageId=$storageId";?>', 'bx-disk-container')
+        BX.ajax.get('<?= "/local/apps/tabCrmFiles/files_grid.php?folderId=$folderId&storageId=$storageId";?>',
+            r => document.getElementById('bx-disk-container').innerHTML = r
+        )
     })
 </script>
 
