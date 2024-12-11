@@ -131,6 +131,8 @@ if(!empty($arResult['STORAGE']['CAN_CHANGE_RIGHTS_ON_STORAGE']))
 	);
 }
 
+print_r($component->getComponentId());
+
 $isBpAccessible = BizProcManager::isAccessible();
 
 if (!$isBpAccessible)

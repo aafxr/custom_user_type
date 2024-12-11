@@ -26,7 +26,7 @@ BX.Disk.FolderListClass = (function (){
 				instance: BX.Main.tileGridManager.getById(this.gridId).instance
 			});
 		}
-debugger
+
 		this.filter = BX.Main.filterManager.getById(this.filterId);
 
 		this.relativePath = parameters.relativePath;

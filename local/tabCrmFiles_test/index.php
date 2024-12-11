@@ -12,9 +12,10 @@ $userId = $USER->GetID();
 $idRootFolderCRM = 77386;
 $idPlacementEntity = false;
 
+
 try {
-    $placement = $_REQUEST['PLACEMENT'];
-    $placementOptions = $_REQUEST['PLACEMENT_OPTIONS'];
+    $placement = $_REQUEST['PLACEMENT'] ?? $_GET['PLACEMENT'];
+    $placementOptions = $_REQUEST['PLACEMENT_OPTIONS'] ?? $_GET['PLACEMENT_OPTIONS'];
     if($placement == "CRM_COMPANY_DETAIL_TAB") {
         $arPlacementOptions = json_decode($placementOptions, true);
         $idPlacementEntity = $arPlacementOptions['ID'];
@@ -68,6 +69,10 @@ if($idPlacementEntity && $storage):
         $folderId = $folderEntity->getId();
         $folderName = $folderEntity->getName();
 
+        print_r($folderId);
+        echo '<br/>';
+        print_r($storageId);
+
 
     } else {
         //echo "CRM folder not found<br />";
@@ -110,15 +115,17 @@ if($idPlacementEntity && $storage):
         </div>
     </div>
     <div id="bx-disk-container">
-    <?php
-//    $APPLICATION->IncludeComponent("bitrix:disk.folder.list","",
-//        [
+        <?
+//        $APPLICATION->IncludeComponent("bitrix:disk.folder.list","",[
 //            "FOLDER_ID" => $folderId,
 //            "STORAGE_ID" => $storageId,
-//
-//        ]
-//    );
-    ?>
+//        ]);
+        ?>
+        <iframe
+            class="app-frame"
+            src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>"
+            style="width: 100%;height: 100%;border-radius: var(--ui-border-radius-md);border: none;"
+        ></iframe>
     </div>
     <div id="disk-folder-list-toolbar"></div>
 <?php endif ?>
@@ -181,7 +188,7 @@ if($idPlacementEntity && $storage):
 </style>
 <script type="text/javascript">
     document.getElementById("upload-field").addEventListener("change", function () {
-        const url = 'upload.php';
+        const url = '/local/tabCrmFiles_test/upload.php';
         const files = document.querySelector('[type=file]').files;
         const formData = new FormData();
         for (let i = 0; i < files.length; i++) {
@@ -189,6 +196,7 @@ if($idPlacementEntity && $storage):
             formData.append('files[]', file)
         }
         formData.append('folderId',<?=$folderId;?>);
+
         fetch(url+"?folderId=<?=$folderId;?>", {
             method: 'POST',
             body: formData,
@@ -220,11 +228,11 @@ if($idPlacementEntity && $storage):
         return false;
     }
 
-    BX.ready(() => {
-        BX.ajax.get('<?= "/local/apps/tabCrmFiles/files_grid.php?folderId=$folderId&storageId=$storageId";?>',
-            r => document.getElementById('bx-disk-container').innerHTML = r
-        )
-    })
+    //BX.ready(() => {
+    //    BX.ajax.get('<?php //= "/local/apps/tabCrmFiles/files_grid.php?folderId=$folderId&storageId=$storageId";?>//',
+    //        r => document.getElementById('bx-disk-container').innerHTML = r
+    //    )
+    //})
 </script>
 
 
