@@ -363,9 +363,13 @@ BX.Disk.FolderListClass = (function (){
 			}.bind(this));
 		}
 
-		if (!this.needRunFilterUnderLinks())
-		{
-			return;
+		try {
+			if (!this.needRunFilterUnderLinks())
+			{
+				return;
+			}
+		} catch (e){
+
 		}
 
 		this.layout.fileListContainer.classList.add('disk-running-filter');

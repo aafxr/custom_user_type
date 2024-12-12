@@ -7,6 +7,7 @@ use Bitrix\Disk\Ui;
 CJSCore::Init(["fx","ajax","viewer","disk"]);
 \CModule::IncludeModule("crm");
 \Bitrix\Main\UI\Extension::load("ui.buttons");
+\Bitrix\Main\UI\Extension::load("ui.filter");
 
 $userId = $USER->GetID();
 $idRootFolderCRM = 77386;
@@ -68,6 +69,9 @@ if($idPlacementEntity && $storage):
 
         $folderId = $folderEntity->getId();
         $folderName = $folderEntity->getName();
+        $urlManager = \Bitrix\Disk\Driver::getInstance()->getUrlManager();
+		$folderURL = urlencode($urlManager->getPathFolderList($folderEntity));
+        $parentId = $folderEntity->getParentId();
 
         print_r($folderId);
         echo '<br/>';
@@ -81,7 +85,6 @@ if($idPlacementEntity && $storage):
 
 
     <?php
-
     /*
     $APPLICATION->includeComponent(
         'bitrix:disk.folder.toolbar',
@@ -100,7 +103,7 @@ if($idPlacementEntity && $storage):
                     <span class="ui-btn ui-btn-success ui-btn-icon-add" href="protoBitrix24://X:/CRM/<?=$folderName?>/">Загрузить файл</span>
                 </label>
             </form>
-            
+
             <a class="ui-btn ui-btn-primary ui-btn-icon-disk" href="protoBitrix24://X:/CRM/<?=$folderName?>/">Открыть на компьютере</a>
 
         </div>
@@ -117,17 +120,18 @@ if($idPlacementEntity && $storage):
     <div id="bx-disk-container">
         <?
 //        $APPLICATION->IncludeComponent("bitrix:disk.folder.list","",[
-//            "FOLDER_ID" => $folderId,
-//            "STORAGE_ID" => $storageId,
+//            'FOLDER_ID' => $folderId,
+//            'STORAGE_ID' => $storageId,
+//            'IFRAME' => 'Y'
 //        ]);
         ?>
         <iframe
             class="app-frame"
-            src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>"
+            src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
             style="width: 100%;height: 100%;border-radius: var(--ui-border-radius-md);border: none;"
         ></iframe>
     </div>
-    <div id="disk-folder-list-toolbar"></div>
+<div id="disk-folder-list-toolbar"></div>
 <?php endif ?>
 <style>
     .ut-btn-toolbar {

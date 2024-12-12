@@ -1,5 +1,9 @@
 <?php
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true ) die();
+/** CMain  */
+global $APPLICATION;
+
+CJSCore::Init(array('date'));
 
 \Bitrix\Main\UI\Extension::load("ui.forms");
 \Bitrix\Main\UI\Extension::load("ui.alerts");
@@ -83,6 +87,7 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
         gap: 8px;
     }
 </style>
+<script src="https://unpkg.com/imask"></script>
 <div id="contactEditForm" class="ui-form contact-edite-form" data-cid="<?= $arResult['CONTACT_ID']; ?>">
     <div id="alert" class="alert-container"></div>
     <div class="ui-form-container">
@@ -112,8 +117,8 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
                 <div class="ui-ctl-label-text">День рождения:</div>
                 <div class="ui-ctl ui-ctl-after-icon ui-ctl-date form-input-birthdate-container">
                     <div class="ui-ctl-after ui-ctl-icon-calendar"></div>
-                    <div class="ui-ctl-element form-input-birthdate-value"><?=$birthdate;?></div>
-                    <input type="text" class="form-input-birthdate" value="<?=$birthdate;?>" hidden/>
+<!--                    <input type="date" class="ui-ctl-element form-input-birthdate-value">--><?php //=$birthdate;?><!--</input>-->
+                    <input type="text" class="ui-ctl-element form-input-birthdate-value" value="<?=$birthdate;?>" />
                 </div>
             </div>
         </div>
@@ -305,21 +310,29 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
         })
 
 
-        const birthDateValue = document.querySelector('.form-input-birthdate-value')
         const birthDateContainer = document.querySelector('.form-input-birthdate-container')
-        const birthDateInput = document.querySelector('.form-input-birthdate')
+        const birthDateInput = document.querySelector('.form-input-birthdate-value')
         let birthDate
 
-        birthDateValue.addEventListener('click', () => {
+        birthDateInput.addEventListener('click', () => {
             BX.calendar({
                 node: birthDateContainer,
                 field: birthDateInput,
                 value: '<?=$contact['BIRTHDATE'];?>',
                 callback_after: (date) => {
                     birthDate = date
-                    birthDateValue.innerText = new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(date)
+                    birthDateInput.value = new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(date)
                 }
             })
+        })
+
+        birthDateInput.addEventListener('change', () => {
+            let dt = birthDateInput.value.trim()
+            if(/\d{2}\.\d{2}\.\d{4}/.test(dt)){
+                const [d, m ,y] = dt.split('.')
+                const tmp = new Date(+y,+m - 1, +d)
+                if(!Number.isNaN(tmp.valueOf())) birthDate = tmp
+            }
         })
 
         let alerts = []
@@ -338,7 +351,13 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
         }
 
 
-
+        birthDateInput.addEventListener('blur', () => {
+            let dt = birthDateInput.value.trim()
+            if(!/\d{2}\.\d{2}\.\d{4}/.test(dt)){
+                const e = new Error('Формат даты должен быть вида "дд.мм.гггг"')
+                newAlert(e)
+            }
+        })
 
 
         function handleSaveClick() {

@@ -78,11 +78,6 @@ if ($arResult['GRID']['MODE'] === FolderListOptions::VIEW_MODE_TILE)
 	$bodyClasses .= ' no-background';
 }
 
-
-echo "<pre>";
-print_r($arResult['GRID']);
-echo "</pre>";
-
 $bodyClass = $APPLICATION->getPageProperty('BodyClass', false);
 $APPLICATION->setPageProperty('BodyClass', trim(sprintf('%s %s', $bodyClass, $bodyClasses)));
 
