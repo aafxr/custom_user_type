@@ -73,10 +73,6 @@ if($idPlacementEntity && $storage):
 		$folderURL = urlencode($urlManager->getPathFolderList($folderEntity));
         $parentId = $folderEntity->getParentId();
 
-        print_r($folderId);
-        echo '<br/>';
-        print_r($storageId);
-
 
     } else {
         //echo "CRM folder not found<br />";

@@ -1,62 +1,111 @@
 <div id="disk-folder-list-toolbar"></div>
+<div id="disk-folder-breadcrumbs"></div>
 <?php
 require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
 /** CMain */
 global $APPLICATION;
 $APPLICATION->ShowHead();
 
-CJSCore::Init(["fx","ajax","viewer","disk"]);
+CJSCore::Init(["fx", "ajax", "viewer", "disk"]);
 \CModule::IncludeModule("crm");
 \Bitrix\Main\UI\Extension::load("ui.buttons");
-\Bitrix\Main\UI\Extension::load("ui.filter");
-\Bitrix\Main\UI\Extension::load("ui.grid");
 
-$params = [];
-$params['FOLDER_ID'] = $_GET['FOLDER_ID'];
-$params['STORAGE_ID'] = $_GET['STORAGE_ID'];
-
-$storage = \Bitrix\Disk\Driver::getInstance()->getStorageByCommonId('shared_files_s1');
-$folder = \Bitrix\Disk\Folder::loadById($_GET['FOLDER_ID']);
+use Bitrix\Disk\Folder;
 
 
-$urlManager = \Bitrix\Disk\Driver::getInstance()->getUrlManager();
-$folderURL = $urlManager->getPathFolderList($folder);
+$arFolderIds = $_GET['CRUMBS'] ?? [];
+$crumbs = [];
 
-print_r($folderURL)
+$actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+foreach ($arFolderIds as $id) {
+    $folder = Folder::getById($id);
+    if ($folder) {
+        $crumbs[] = [
+            'ID' => $id,
+            'NAME' => $folder->getName(),
+            'ENCODED_LINK' => $actual_link
+        ];
+    }
+}
+
 
 ?>
-
-<script>
-    console.log(BX.Main.filterManager.data)
-</script>
 <?php
-//$APPLICATION->IncludeComponent("refloor:disk.common", ".default", [
-//        "SEF_MODE" => "Y",
-//        "SEF_FOLDER" => $folderURL,
-//        "FOLDER_ID" => $folder->getId(),
-//        "STORAGE_ID" => Bitrix\Intranet\Integration\Wizards\Portal\Ids::getDiskStorageId('SHARED_STORAGE_ID'),
-//    ]
+//$APPLICATION->IncludeComponent(
+//    'bitrix:disk.folder.toolbar',
+//    '',
+//    array_intersect_key(
+//        $_GET,
+//        array(
+//            'STORAGE_ID' => true,
+//            'FOLDER_ID' => true,
+//        ))
 //);
 
-$APPLICATION->IncludeComponent("refloor:disk.folder.list","",
-    array_merge(array_intersect_key($params,array(
-//        'STORAGE' => true,
-//        'PATH_TO_FOLDER_LIST' => true,
-//        'PATH_TO_FILE_HISTORY' => true,
-//        'PATH_TO_FILE_VIEW' => true,
-//        'PATH_TO_DISK_BIZPROC_WORKFLOW_ADMIN' => true,
-//        'PATH_TO_DISK_START_BIZPROC' => true,
-//        'PATH_TO_DISK_TASK_LIST' => true,
-//        'PATH_TO_DISK_TASK' => true,
-//        'PATH_TO_DISK_VOLUME' => true,
-        'STORAGE_ID' => true,
-        'FOLDER_ID' => true,
-    )), array(
-        'FOLDER' => $folder,
-        'IFRAME' => 'Y',
-//        'RELATIVE_PATH' => '/',
-//        'RELATIVE_ITEMS' => [],
-    ))
+//$APPLICATION->IncludeComponent(
+//    'bitrix:disk.breadcrumbs',
+//    "disk-folder-breadcrumbs",
+//    [
+//        'BREADCRUMBS' => $crumbs,
+//        'BREADCRUMBS_ID' => 'disk-folder-breadcrumbs',
+//        'STORAGE_ID' => $_GET['STORAGE_ID']
+//
+//    ]
+//);
+//$uriString = \Bitrix\Main\Application::getInstance()->getContext()->getRequest()->getRequestUri();
+//$uri = new \Bitrix\Main\Web\Uri($uriString);
+
+
+$APPLICATION->includeComponent(
+    'bitrix:main.ui.filter',
+    '',
+    [
+        'FILTER_ID' => 'folder_list_' . $_GET['STORAGE_ID'],
+        'GRID_ID' => 'folder_list_' . $_GET['STORAGE_ID'],
+        'ENABLE_LIVE_SEARCH' => true,
+    ]
+);
+?>
+
+
+<script>
+    BX.Main.filterManager.data['<?='folder_list_' . $_GET['STORAGE_ID']?>'] = BX.Main.Filter
+</script>
+<div id="disk-folder-list-toolbar" class="disk-folder-list-toolbar"></div>
+
+
+<?php
+$APPLICATION->IncludeComponent('bitrix:disk.folder.list', "",
+    array_intersect_key(
+        $_GET,
+        array(
+            'STORAGE_ID' => true,
+            'FOLDER_ID' => true,
+        ))
 );
 
+//<script>
+//     BX(() => {
+/*        const node = document.getElementById('folder_list_<?=$_GET['STORAGE_ID']?>_search_container')*/
+//         if (node) node.style.display = 'none'
+//     })
+//</script>
+
 ?>
+
+
+<script>
+    BX(() => {
+        const refreshLink = document.querySelectorAll('.main-grid-more a')
+        if (refreshLink) {
+            const url = new URL(refreshLink.href)
+            document.querySelectorAll('a.bx-disk-folder-title')
+                .forEach(e => {
+                    const u = new URL(url)
+                    u.searchParams.set('FOLDER_ID', e.dataset.objectId)
+                    e.href = u.toString()
+                })
+        }
+    })
+</script>

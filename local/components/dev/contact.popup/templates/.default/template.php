@@ -87,7 +87,6 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
         gap: 8px;
     }
 </style>
-<script src="https://unpkg.com/imask"></script>
 <div id="contactEditForm" class="ui-form contact-edite-form" data-cid="<?= $arResult['CONTACT_ID']; ?>">
     <div id="alert" class="alert-container"></div>
     <div class="ui-form-container">
@@ -321,7 +320,7 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
                 value: '<?=$contact['BIRTHDATE'];?>',
                 callback_after: (date) => {
                     birthDate = date
-                    birthDateInput.value = new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(date)
+                    birthDateInput.value = BX.date.format("d.m.Y", birthDate) //new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(date)
                 }
             })
         })
@@ -351,13 +350,27 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
         }
 
 
-        birthDateInput.addEventListener('blur', () => {
+        function replaceBirthDateCharts(){
             let dt = birthDateInput.value.trim()
+            dt = dt.replace(/\D/g, '')
+            let [d,m,y] = [dt.slice(0,2), dt.slice(2,4), dt.slice(4)]
+            console.log(dt, [d,m,y])
+
+            if(+d > 31) d = '31'
+            if(+m > 12) m = '12'
+            if(+y < 1900) y = '1900'
+            if(+y > 2100) y = '2100'
+            dt = `${d.length == 2 ? d : ''}.${m.length == 2 ? m : ''}.${y ? y : ''}`
+
+            console.log(dt, [d,m,y])
+            birthDateInput.value = dt
             if(!/\d{2}\.\d{2}\.\d{4}/.test(dt)){
                 const e = new Error('Формат даты должен быть вида "дд.мм.гггг"')
                 newAlert(e)
             }
-        })
+        }
+
+        birthDateInput.addEventListener('blur', replaceBirthDateCharts)
 
 
         function handleSaveClick() {
@@ -440,9 +453,9 @@ $birthdate = explode(" ",$contact['BIRTHDATE'])[0];
                 const comment = contactForm.querySelector('.form-comment')
                 if(comment && comment.hasAttribute('data-field')) fields[comment.getAttribute('data-field')] = comment.value.trim()
 
-
+                replaceBirthDateCharts()
                 if(birthDate) {
-                    fields['BIRTHDATE'] = new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(birthDate) + ' 00:00:00'
+                    fields['BIRTHDATE'] = BX.date.format("d.m.Y", birthDate) //new Intl.DateTimeFormat('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(birthDate) + ' 00:00:00'
                 }
 
 
