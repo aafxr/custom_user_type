@@ -113,22 +113,13 @@ if($idPlacementEntity && $storage):
 
         </div>
     </div>
-    <div id="bx-disk-container">
-        <?
-//        $APPLICATION->IncludeComponent("bitrix:disk.folder.list","",[
-//            'FOLDER_ID' => $folderId,
-//            'STORAGE_ID' => $storageId,
-//            'IFRAME' => 'Y'
-//        ]);
-        ?>
-        <iframe
-            class="app-frame"
-            src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
-            style="width: 100%;height: 100%;border-radius: var(--ui-border-radius-md);border: none;"
-        ></iframe>
-    </div>
-<div id="disk-folder-list-toolbar"></div>
+    <iframe
+        class="app-frame"
+        src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
+        style="width: 100%; height: 100%; border-radius: var(--ui-border-radius-md);border: none;"
+    ></iframe>
 <?php endif ?>
+
 <style>
     .ut-btn-toolbar {
         display: flex;
@@ -227,12 +218,6 @@ if($idPlacementEntity && $storage):
         });
         return false;
     }
-
-    //BX.ready(() => {
-    //    BX.ajax.get('<?php //= "/local/apps/tabCrmFiles/files_grid.php?folderId=$folderId&storageId=$storageId";?>//',
-    //        r => document.getElementById('bx-disk-container').innerHTML = r
-    //    )
-    //})
 </script>
 
 
