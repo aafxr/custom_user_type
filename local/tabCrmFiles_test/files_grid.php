@@ -46,8 +46,8 @@
     $uriToGrid->addParams(['viewMode' => FolderListOptions::VIEW_MODE_GRID,]);
     ?>
     <style>
-        .bx-disk-interface-toolbar{
-            display:flex;
+        .bx-disk-interface-toolbar {
+            display: flex;
             align-items: center;
         }
 
@@ -71,25 +71,25 @@
         ?>
 
         <?
-//        $APPLICATION->IncludeComponent(
-//            'bitrix:disk.folder.toolbar',
-//            '',
-//            array_intersect_key(
-//                $_GET,
-//                array(
-//                    'STORAGE_ID' => true,
-//                    'FOLDER_ID' => true,
-//                )))
+        //        $APPLICATION->IncludeComponent(
+        //            'bitrix:disk.folder.toolbar',
+        //            '',
+        //            array_intersect_key(
+        //                $_GET,
+        //                array(
+        //                    'STORAGE_ID' => true,
+        //                    'FOLDER_ID' => true,
+        //                )))
+        //        <script>
+        //            BX(() => {
+        //                const node = document.querySelector('.bx-disk-context-button')
+        //                console.log(node)
+        //                if(node){
+        //                    node.style.display = 'none'
+        //                }
+        //            })
+        //        </script>
         ?>
-        <script>
-            BX(() => {
-                const node = document.querySelector('.bx-disk-context-button')
-                console.log(node)
-                if(node){
-                    node.style.display = 'none'
-                }
-            })
-        </script>
 
         <div class="disk-folder-list-config">
             <!--        --><? // if (!empty($arResult['ENABLED_TRASHCAN_TTL'])): ?>
@@ -151,14 +151,14 @@ $APPLICATION->IncludeComponent('bitrix:disk.folder.list', "",
 );
 
 
-//<script>
-//    BX(() => {
-/*        const node = document.getElementById('folder_list_<?=$_GET['STORAGE_ID']?>_search_container')*/
-//        if (node) node.style.display = 'none'
-//    })
-//</script>
 ?>
 
+<script>
+    BX(() => {
+        const node = document.getElementById('folder_list_<?=$_GET['STORAGE_ID']?>_search_container')
+        if (node) node.style.display = 'none'
+    })
+</script>
 
 <script>
     BX(() => {
@@ -173,17 +173,16 @@ $APPLICATION->IncludeComponent('bitrix:disk.folder.list', "",
                 })
         }
 
-    const resize = (w = window) => {
-        const parent = w.parent
-        const frame = parent.document.querySelector('iframe')
-        console.log(frame)
-        if(frame){
-            frame.style.height = w.document.body.scrollHeight + 17 + 'px'
+        const resize = (w = window) => {
+            const parent = w.parent
+            const frame = parent.document.querySelector('iframe')
+            console.log(frame)
+            if (frame) {
+                frame.style.height = w.document.body.scrollHeight + 17 + 'px'
+            }
+            if (w !== parent) resize(parent)
         }
-        if(w !== parent) resize(parent)
-    }
         resize();
         window.addEventListener('resize', resize)
     })
 </script>
-</div>
