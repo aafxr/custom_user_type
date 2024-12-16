@@ -113,11 +113,22 @@ if($idPlacementEntity && $storage):
 
         </div>
     </div>
+
+<div>
+
+    <script>
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+        }
+    </script>
+
     <iframe
         class="app-frame"
         src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
-        style="width: 100%; height: 100%; border-radius: var(--ui-border-radius-md);border: none;"
+        style="width: 100%;  border-radius: var(--ui-border-radius-md);border: none;"
+<!--        onload="resizeIframe(this)"-->
     ></iframe>
+</div>
 <?php endif ?>
 
 <style>
@@ -218,6 +229,10 @@ if($idPlacementEntity && $storage):
         });
         return false;
     }
+
+
+    // const elId = 'appframe_layout_994ac548da07e8bfac6076a0e993b7ec'
+    // window.parent.document.getElementById(elId).style.height = 'calc(100vh - 210px);'
 </script>
 
 
