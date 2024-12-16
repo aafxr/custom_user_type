@@ -175,12 +175,14 @@ $APPLICATION->IncludeComponent('bitrix:disk.folder.list', "",
 
         const resize = (w = window) => {
             const parent = w.parent
-            const frame = parent.document.querySelector('iframe')
-            console.log(frame)
-            if (frame) {
-                frame.style.height = w.document.body.scrollHeight + 17 + 'px'
+            if(parent){
+                const frame = parent.document.querySelector('iframe')
+                console.log(frame)
+                if (frame) {
+                    frame.style.height = w.document.body.scrollHeight + 17 + 'px'
+                }
+                if (w !== parent) resize(parent)
             }
-            if (w !== parent) resize(parent)
         }
         resize();
         window.addEventListener('resize', resize)
