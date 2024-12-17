@@ -14,14 +14,20 @@ $result = [
 $folderId = (int)$_REQUEST['folderId'];
 $folder = \Bitrix\Disk\Folder::getById($folderId);
 
+$result['1'] = '1';
+$result['files'] = $_FILES;
+print_r($_FILES);
+die();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $result['2'] = '2';
     if (isset($_FILES['files'])) {
+        $result['3'] = '3';
         $errors = [];
         $path = $_SERVER['DOCUMENT_ROOT'].'/upload/temp/';
         //$extensions = ['jpg', 'jpeg', 'png', 'gif'];
-
         $all_files = count($_FILES['files']['tmp_name']);
-
+        $result['4'] = '4';
         for ($i = 0; $i < $all_files; $i++) {
             $file_name = $_FILES['files']['name'][$i];
             $file_tmp = $_FILES['files']['tmp_name'][$i];
@@ -56,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($errors) {
+            $result['ok'] = false;
             $result['errors'] = $errors;
         }
     }

@@ -207,6 +207,7 @@ if($idPlacementEntity && $storage):
             if (data.ok) {
                 console.dir(data);
                 //alert("Загрузка временно недоступна");
+                debugger
                 location.reload();
             } else {
                 alert("fail!");
@@ -229,10 +230,4 @@ if($idPlacementEntity && $storage):
         });
         return false;
     }
-
-
-    // const elId = 'appframe_layout_994ac548da07e8bfac6076a0e993b7ec'
-    // window.parent.document.getElementById(elId).style.height = 'calc(100vh - 210px);'
 </script>
-
-

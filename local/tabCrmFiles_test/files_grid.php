@@ -10,6 +10,7 @@
     CJSCore::Init(["fx", "ajax", "viewer", "disk"]);
     \CModule::IncludeModule("crm");
     \Bitrix\Main\UI\Extension::load("ui.buttons");
+    \Bitrix\Main\UI\Extension::load("ui.toolbar");
 
     use Bitrix\Disk\Folder;
     use \Bitrix\Disk\Internals\Grid\FolderListOptions;
@@ -54,6 +55,10 @@
         .disk-breadcrumbs-item-title {
             text-decoration: unset;
         }
+
+        .ui-btn.js-disk-add-button.ui-btn-primary.ui-btn-dropdown{
+            margin-left: var(--ui-btn-margin-left);
+        }
     </style>
     <div class="disk-folder-list-toolbar" id="disk-folder-list-toolbar" style="align-items: center;">
         <?
@@ -62,46 +67,15 @@
             '',
             array(
                 'STORAGE_ID' => $_GET['STORAGE_ID'],
-//            'BREADCRUMBS_ROOT' => $arResult['BREADCRUMBS_ROOT'],
                 'BREADCRUMBS' => $crumbs,
-                'ENABLE_DROPDOWN' => false,//!$arResult['IS_TRASH_MODE']
+                'ENABLE_DROPDOWN' => false,
+                //!$arResult['IS_TRASH_MODE']
                 //'ENABLE_SHORT_MODE' => true,
             )
         );
         ?>
 
-        <?
-        //        $APPLICATION->IncludeComponent(
-        //            'bitrix:disk.folder.toolbar',
-        //            '',
-        //            array_intersect_key(
-        //                $_GET,
-        //                array(
-        //                    'STORAGE_ID' => true,
-        //                    'FOLDER_ID' => true,
-        //                )))
-        //        <script>
-        //            BX(() => {
-        //                const node = document.querySelector('.bx-disk-context-button')
-        //                console.log(node)
-        //                if(node){
-        //                    node.style.display = 'none'
-        //                }
-        //            })
-        //        </script>
-        ?>
-
         <div class="disk-folder-list-config">
-            <!--        --><? // if (!empty($arResult['ENABLED_TRASHCAN_TTL'])): ?>
-            <!--            <div class="disk-folder-list-trashcan-info">-->
-            <!--                <span class="disk-folder-list-trashcan-info-text">-->
-            <?php //= Loc::getMessage('DISK_FOLDER_LIST_TRASHCAN_TTL_NOTICE', ['#TTL_DAY#' => $arResult['TRASHCAN_TTL']]) ?><!--</span>-->
-            <!--            </div>-->
-            <!--        --><? // endif; ?>
-            <!--        <div class="disk-folder-list-sorting">-->
-            <!--            <span class="disk-folder-list-sorting-text" data-role="disk-folder-list-sorting">-->
-            <?php //= $sortLabel ?><!--</span>-->
-            <!--        </div>-->
             <div class="disk-folder-list-view">
                 <a href="?<?= $uriToGrid->getQuery() ?>"
                    class="disk-folder-list-view-item disk-folder-list-view-item-lines <?= ($arResult['GRID']['MODE'] === FolderListOptions::VIEW_MODE_GRID ? 'disk-folder-list-view-item-active' : '') ?>"></a>
@@ -112,10 +86,14 @@
                    class="disk-folder-list-view-item disk-folder-list-view-item-grid-tile js-disk-change-view <?= ($arResult['GRID']['MODE'] === FolderListOptions::VIEW_MODE_TILE && $arResult['GRID']['VIEW_SIZE'] === FolderListOptions::VIEW_TILE_SIZE_XL ? 'disk-folder-list-view-item-active' : '') ?>"
                    data-view-tile-size="<?= FolderListOptions::VIEW_TILE_SIZE_XL ?>"></a>
             </div>
+            <?php
+                $menuButton = new \Bitrix\UI\Buttons\Button([ "text" => "Добавить",]);
+                $menuButton->addClass('ui-btn js-disk-add-button ui-btn-primary ui-btn-dropdown');
+                echo $menuButton->render();
+            ?>
         </div>
     </div>
 </div>
-
 
 <?php
 $APPLICATION->includeComponent(
@@ -124,7 +102,7 @@ $APPLICATION->includeComponent(
     [
         'FILTER_ID' => 'folder_list_' . $_GET['STORAGE_ID'],
         'GRID_ID' => 'folder_list_' . $_GET['STORAGE_ID'],
-        'ENABLE_LIVE_SEARCH' => true,
+        'ENABLE_LIVE_SEARCH' => false,
     ]
 );
 ?>
@@ -134,7 +112,6 @@ $APPLICATION->includeComponent(
     BX.Main.filterManager.data['<?='folder_list_' . $_GET['STORAGE_ID']?>'] = BX.Main.Filter
 </script>
 <div id="disk-folder-list-toolbar"></div>
-
 
 <?php
 $APPLICATION->IncludeComponent('bitrix:disk.folder.list', "",
