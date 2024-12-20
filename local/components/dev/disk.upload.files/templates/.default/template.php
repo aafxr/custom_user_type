@@ -2,30 +2,24 @@
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true) die();
 /** CMain */
 global $APPLICATION;
+/** CBitrixComponent */
+global $component;
 
 use Bitrix\Disk\Ui;
 CJSCore::Init(["fx","ajax","viewer","disk"]);
 \CModule::IncludeModule("crm");
 \Bitrix\Main\UI\Extension::load("ui.buttons");
 
-Bitrix\Main\Page\Asset::getInstance()->addCss('/bitrix/js/disk/css/disk.css')
+Bitrix\Main\Page\Asset::getInstance()->addCss('/bitrix/js/disk/css/disk.css');
+
+
+$btnId = rand(1000000, 10000000);
 
 ?>
-<style>
-    .bx-disk-popup-upload-file-progress-line-end{
-        transition: all .2s;
-    }
-
-    .bx-disk-popup-upload-file-progress-filename{
-        display: flex;
-        align-items: center;
-    }
-
-</style>
-<label class="input-file">
+<div id="<?=$btnId?>" class="input-file <?=$arResult['CLASS_NAME']?>">
     <input id="upload-field" type="file" name="files[]" multiple="">
     <span class="ui-btn ui-btn-success ui-btn-icon-add">Загрузить файл</span>
-</label>
+</div>
 <script>
     function getDialogTemplate(parameters = {}){
         const {fileUploads} = parameters
@@ -61,6 +55,12 @@ Bitrix\Main\Page\Asset::getInstance()->addCss('/bitrix/js/disk/css/disk.css')
                             <table class="bx-disk-upload-file-list" id="FolderListPlaceHolder">
                                 ${content.join('')}
                             </table>
+                            <div class="bx-disk-upload-file-buttons">
+                                <button
+                                    class="ui-btn ui-btn-success ui-btn-icon-add"
+                                    onclick="BX.Disk.upload<?=$btnId?>.addFiles(event)"
+                                    >Загрузить еще</button>
+                            </div
                         </div>
                     </div>
                 </div>
@@ -69,47 +69,83 @@ Bitrix\Main\Page\Asset::getInstance()->addCss('/bitrix/js/disk/css/disk.css')
     }
 
     BX(() => {
-        const fileUploadList = []
+        let folderId = <?=$arResult['FOLDER_ID'] ?>;
+        const namespace = BX.namespace('BX.Disk.upload<?=$btnId?>')
+        let fileUploads = []
+        const btnNode = document.getElementById('<?=$btnId?>')
+        const inputFilesNode = btnNode.querySelector('input')
 
-       const dialog = new BX.CDialog({
-           title: 'Загрузка нового документа',
-           content: getDialogTemplate({fileUploads: fileUploadList}),
-           width: 580,
-           buttons: [
-               {
-                   title: 'Заккрыть',
-                   name: 'Заккрыть',
-                   action: function () {
-                       BX.WindowManager.Get().Close();
-                   },
-                   onclick: "BX.WindowManager.Get().Close()"
-               }
-           ]
-       })
 
+        BX.addCustomEvent('disk.upload.files:folderChange', (controllerId, uploader) => {
+            if(uploader){
+                folderId = uploader.folderId
+                fileUploads = []
+            }
+        })
+
+        namespace.addFiles = function(e){
+            inputFilesNode.click()
+        }
+
+        console.log(namespace)
+
+        const dialog = new BX.PopupWindow('call_feedback', window.body, {
+            title: 'Загрузка нового документа',
+            autoHide : true,
+            lightShadow : true,
+            closeIcon : true,
+            closeByEsc : true,
+            overlay: {}
+        });
+        dialog.setContent(getDialogTemplate({fileUploads}));
+
+        btnNode.addEventListener('click', (e) => {
+            if(fileUploads.length){
+                dialog.show()
+                return
+            }
+            inputFilesNode.click()
+        })
+
+        inputFilesNode.click()
         window.dialog  = dialog
 
-        const inputFilesNode = document.getElementById('upload-field')
-        const fileUploads = []
         if(inputFilesNode){
-            inputFilesNode.addEventListener('change', (e) => {
+            inputFilesNode.addEventListener('input', (e) => {
                 for (let i = 0; i < e.target.files.length; i++){
                     const file = e.target.files.item(i)
+                    console.log({
+                        file,
+                        URL: '<?= $arResult['COMPONENT_PATH'] ?>' + '/uploadFile.php',
+                        folderId,
+                        onSuccess: (f) => {
+                            dialog.setContent(getDialogTemplate({fileUploads}))
+                            if(fileUploads.every(f => f.isCompleted())){
+                                BX.onCustomEvent(window, 'disk.upload.files:allLoadsDone', [this.id, this]);
+                            }
+                        },
+                        onChange: (f) => dialog.setContent(getDialogTemplate({fileUploads})),
+                        reject: (f) => dialog.setContent(getDialogTemplate({fileUploads})),
+                    })
                     const fu = new BX.Disk.FileUploadClass({
                         file,
                         URL: '<?= $arResult['COMPONENT_PATH'] ?>' + '/uploadFile.php',
-                        folderId: <?=$arResult['FOLDER_ID'] ?>,
-                        onSuccess: (f) => dialog.SetContent(getDialogTemplate({fileUploads})),
-                        onChange: (f) => dialog.SetContent(getDialogTemplate({fileUploads})),
-                        reject: (f) => dialog.SetContent(getDialogTemplate({fileUploads})),
+                        folderId,
+                        onSuccess: (f) => {
+                            dialog.setContent(getDialogTemplate({fileUploads}))
+                            if(fileUploads.every(f => f.isCompleted())){
+                                BX.onCustomEvent(window, 'disk.upload.files:allLoadsDone', [this.id, this]);
+                            }
+                        },
+                        onChange: (f) => dialog.setContent(getDialogTemplate({fileUploads})),
+                        reject: (f) => dialog.setContent(getDialogTemplate({fileUploads})),
                     })
                     fileUploads.push(fu)
                 }
-                dialog.SetContent(getDialogTemplate({fileUploads}))
-                dialog.Show()
+                dialog.setContent(getDialogTemplate({fileUploads}))
+                dialog.show()
                 fileUploads.forEach(f => f.send())
             })
         }
-
     })
 </script>

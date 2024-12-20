@@ -122,7 +122,6 @@ if($idPlacementEntity && $storage):
                 obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
             }
         </script>
-
         <iframe
             class="app-frame"
             src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"

@@ -42,3 +42,30 @@
 .input-file input[type=file]:disabled + span {
     background-color: #eee;
 }
+
+
+
+.bx-disk-popup-upload-file-progress-line-end{
+    transition: all .2s;
+}
+
+.bx-disk-popup-upload-file-progress-filename{
+    display: flex;
+    align-items: center;
+}
+
+.bx-disk-upload-file-section{
+    display: flex;
+    flex-direction: column;
+}
+
+.bx-disk-upload-file-list{
+    flex: 1 1;
+}
+
+.bx-disk-upload-file-buttons{
+    flex:none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
