@@ -1,39 +1,88 @@
 <?php
-$uploaddir="./uploaddir";
+
+$result = [];
+$result['errors'] = [];
+
+function printResult() {
+    global $result;
+    echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+}
+
+$folderId = $_GET['folderId'];
+$fileName = $_GET['file'];
+if(!$folderId) $result['errors'][] = 'folderId not set in query params';
+if(!$fileName) $result['errors'][] = 'file not set in query params';
+
+if(count($result['errors']) != 0){
+    printResult();
+    die();
+}
+
+$uploadDir = $_SERVER['DOCUMENT_ROOT'].'/upload/temp/.part/';
+
+if(!is_dir($uploadDir)){
+    if(!mkdir($uploadDir, 0777, true)) {
+        $result['errors'][] = 'folder not exist';
+        printResult();
+        die();
+    }
+}
 
 // Идентификатор загрузки (аплоада). Для генерации идентификатора я обычно использую функцию md5()
-$hash=$_SERVER["HTTP_UPLOAD_ID"];
+$hash = $_SERVER["HTTP_UPLOAD_ID"];
+
+
 
 // Информацию о ходе загрузки сохраним в системный лог, это позволить решать проблемы оперативнее
-openlog("html5upload.php", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+//openlog("html5upload.php", LOG_PID | LOG_PERROR, LOG_LOCAL0);
 
 // Проверим корректность идентификатора
-if (preg_match("/^[0123456789abcdef]{32}$/i",$hash)) {
+if (preg_match("/^[0123456789abcdef]{32,}$/i",$hash)) {
+    $hash .='__'.$fileName;
+    $result['hash'] = $hash;
 
+    // пост-обработка
+    // abort - сотрем загружаемый файл. Загрузка не удалась.
+    if ($_GET["action"]=="abort") {
+        if (is_file($uploadDir.$hash.".html5upload")) unlink($uploadDir.$hash.".html5upload");
+        $result['ok'] = true;
+        printResult();
+        return;
+    }
 
-    // Если HTTP запрос сделан методом GET, то это не загрузка порции, а пост-обработка
-    if ($_SERVER["REQUEST_METHOD"]=="GET") {
+    // done - загрузка завершена успешно. Переименуем файл и создадим файл-флаг.
+    if ($_SERVER["REQUEST_METHOD"]=="POST" && $_GET["action"]=="done") {
+        require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+        /** CUser */
+        global $USER;
 
-        // abort - сотрем загружаемый файл. Загрузка не удалась.
-        if ($_GET["action"]=="abort") {
-            if (is_file($uploaddir."/".$hash.".html5upload")) unlink($uploaddir."/".$hash.".html5upload");
-            print "ok abort";
-            return;
+        // Если файл существует, то удалим его
+        if (is_file($uploadDir.$hash.".original")) unlink($uploadDir.$hash.".original");
+
+        $file_ext = strtolower(end(explode('.', $hash)));
+        $arFileName = explode(".", end(explode('__', $hash)));
+        $fileName = implode(".",array_slice($arFileName, 0, -1));
+        $fileName = $fileName." (".$USER->GetID()."-".time().").".$file_ext;
+
+        $uploadDirResult = $_SERVER['DOCUMENT_ROOT'].'/upload/temp/';
+
+        // Переименуем загружаемый файл
+        rename($uploadDir.$hash.".html5upload",$uploadDirResult.$fileName);
+        // Создадим файл-флаг
+        $fw=fopen($uploadDir.$hash.".original_ready","wb");if ($fw) fclose($fw);
+
+        if (!\Bitrix\Main\Loader::includeModule('disk')){
+            $result['errors'][] = 'disk module not included';
+            printResult();
+            die();
         }
+        $file = $uploadDirResult.$fileName;
+        $arFile = CFile::MakeFileArray($file);
 
-        // done - загрузка завершена успешно. Переименуем файл и создадим файл-флаг.
-        if ($_GET["action"]=="done") {
-            syslog(LOG_INFO, "Finished for hash ".$hash);
-
-            // Если файл существует, то удалим его
-            if (is_file($uploaddir."/".$hash.".original")) unlink($uploaddir."/".$hash.".original");
-
-            // Переименуем загружаемый файл
-            rename($uploaddir."/".$hash.".html5upload",$uploaddir."/".$hash.".original");
-
-            // Создадим файл-флаг
-            $fw=fopen($uploaddir."/".$hash.".original_ready","wb");if ($fw) fclose($fw);
-        }
+        $folder = \Bitrix\Disk\Folder::getById($folderId);
+        $file = $folder->uploadFile($arFile, array(
+            'CREATED_BY' => $USER->GetID()
+        ));
     }
 
     // Если HTTP запрос сделан методом POST, то это загрузка порции
@@ -42,7 +91,7 @@ if (preg_match("/^[0123456789abcdef]{32}$/i",$hash)) {
         syslog(LOG_INFO, "Uploading chunk. Hash ".$hash." (".intval($_SERVER["HTTP_PORTION_FROM"])."-".intval($_SERVER["HTTP_PORTION_FROM"]+$_SERVER["HTTP_PORTION_SIZE"]).", size: ".intval($_SERVER["HTTP_PORTION_SIZE"]).")");
 
         // Имя файла получим из идентификатора загрузки
-        $filename=$uploaddir."/".$hash.".html5upload";
+        $filename=$uploadDir.$hash.".html5upload";
 
         // Если загружается первая порция, то откроем файл для записи, если не первая, то для дозаписи.
         if (intval($_SERVER["HTTP_PORTION_FROM"])==0)
@@ -52,9 +101,10 @@ if (preg_match("/^[0123456789abcdef]{32}$/i",$hash)) {
 
         // Если не смогли открыть файл на запись, то выдаем сообщение об ошибке
         if (!$fout) {
-            syslog(LOG_INFO, "Can't open file for writing: ".$filename);
             header("HTTP/1.0 500 Internal Server Error");
-            print "Can't open file for writing.";
+            $result['errors'][] =  "Can't open file for writing.";
+            $result['fileName'] = $filename;
+            printResult();
             return;
         }
 
@@ -79,10 +129,9 @@ if (preg_match("/^[0123456789abcdef]{32}$/i",$hash)) {
 }
 else {
     // Если неверный идентификатор загрузку, то вернем HTTP 500 и сообщение об ошибке
-    syslog(LOG_INFO, "Uploading chunk. Wrong hash ".$hash);
     header("HTTP/1.0 500 Internal Server Error");
-    print "Wrong session hash.";
+    $result['errors'][] = "Wrong session hash.";
 }
 
-// Закроем syslog лог
-closelog();
+
+printResult();

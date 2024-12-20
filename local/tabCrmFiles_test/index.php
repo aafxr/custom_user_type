@@ -91,6 +91,7 @@ if($idPlacementEntity && $storage):
         ]
     );*/
     ?>
+<div class="content-wrapper">
     <div class="top-panel">
         <div class="ut-btn-toolbar ut-btn-split">
             <form id="upload-form" method="post" enctype="multipart/form-data">
@@ -114,24 +115,41 @@ if($idPlacementEntity && $storage):
         </div>
     </div>
 
-<div>
+    <div class="content-panel">
 
-    <script>
-        function resizeIframe(obj) {
-            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-        }
-    </script>
+        <script>
+            function resizeIframe(obj) {
+                obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+            }
+        </script>
 
-    <iframe
-        class="app-frame"
-        src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
-        style="width: 100%;  border-radius: var(--ui-border-radius-md);border: none;"
-<!--        onload="resizeIframe(this)"-->
-    ></iframe>
+        <iframe
+            class="app-frame"
+            src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
+            style="width: 100%; height: 100%; border-radius: var(--ui-border-radius-md);border: none;"
+        ></iframe>
+    </div>
 </div>
 <?php endif ?>
 
 <style>
+   .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .top-panel {
+        flex: 0 0 auto;
+    }
+
+    .content-panel {
+        position relative;
+        flex: 1 1 auto;
+        overflow-y: auto;
+    }
+
+
     .ut-btn-toolbar {
         display: flex;
         flex-direction: row;
@@ -207,7 +225,6 @@ if($idPlacementEntity && $storage):
             if (data.ok) {
                 console.dir(data);
                 //alert("Загрузка временно недоступна");
-                debugger
                 location.reload();
             } else {
                 alert("fail!");

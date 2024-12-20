@@ -1,3 +1,48 @@
+<style>
+    .bx-disk-interface-toolbar {
+        display: flex;
+        align-items: center;
+    }
+
+    .disk-breadcrumbs-item-title {
+        text-decoration: unset;
+    }
+
+    .ui-btn.js-disk-add-button.ui-btn-primary.ui-btn-dropdown {
+        margin-left: var(--ui-btn-margin-left);
+    }
+
+    .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .top-panel {
+        flex: 0 0 auto;
+    }
+
+    .content-panel {
+        position relative;
+        flex: 1 1 auto;
+        overflow-y: auto;
+    }
+
+    .preview-img{
+        position: relative;
+        width: 60px!important;
+        height: 60px!important;
+        background: transparent!important;;
+    }
+
+    .preview-img img{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+</style>
+
 <div id="bx-disk-container" class="bx-disk-container">
     <div id="disk-folder-list-toolbar"></div>
     <div id="disk-folder-breadcrumbs"></div>
@@ -46,21 +91,8 @@
     $uriToGrid = (clone $uri);
     $uriToGrid->addParams(['viewMode' => FolderListOptions::VIEW_MODE_GRID,]);
     ?>
-    <style>
-        .bx-disk-interface-toolbar {
-            display: flex;
-            align-items: center;
-        }
 
-        .disk-breadcrumbs-item-title {
-            text-decoration: unset;
-        }
-
-        .ui-btn.js-disk-add-button.ui-btn-primary.ui-btn-dropdown{
-            margin-left: var(--ui-btn-margin-left);
-        }
-    </style>
-    <div class="disk-folder-list-toolbar" id="disk-folder-list-toolbar" style="align-items: center;">
+    <div class="disk-folder-list-toolbar top-panel" id="disk-folder-list-toolbar" style="align-items: center;">
         <?
         $APPLICATION->IncludeComponent(
             'bitrix:disk.breadcrumbs',
@@ -87,14 +119,13 @@
                    data-view-tile-size="<?= FolderListOptions::VIEW_TILE_SIZE_XL ?>"></a>
             </div>
             <?php
-                $menuButton = new \Bitrix\UI\Buttons\Button([ "text" => "Добавить",]);
-                $menuButton->addClass('ui-btn js-disk-add-button ui-btn-primary ui-btn-dropdown');
-                echo $menuButton->render();
+            $menuButton = new \Bitrix\UI\Buttons\Button(["text" => "Добавить",]);
+            $menuButton->addClass('ui-btn js-disk-add-button ui-btn-primary ui-btn-dropdown');
+            echo $menuButton->render();
             ?>
         </div>
     </div>
 </div>
-
 <?php
 $APPLICATION->includeComponent(
     'bitrix:main.ui.filter',
@@ -111,10 +142,10 @@ $APPLICATION->includeComponent(
 <script>
     BX.Main.filterManager.data['<?='folder_list_' . $_GET['STORAGE_ID']?>'] = BX.Main.Filter
 </script>
-<div id="disk-folder-list-toolbar"></div>
+<!--<div id="disk-folder-list-toolbar"></div>-->
 
 <?php
-$APPLICATION->IncludeComponent('bitrix:disk.folder.list', "",
+$APPLICATION->IncludeComponent('refloor:disk.folder.list', "",
     array_merge(
         array_intersect_key(
             $_GET,
@@ -150,19 +181,55 @@ $APPLICATION->IncludeComponent('bitrix:disk.folder.list', "",
                 })
         }
 
-        const resize = (w = window) => {
-            const parent = w.parent
-            if(parent){
-                const frames = parent.document.querySelectorAll('iframe')
-                frames.forEach(frame => {
-                    if (frame ) {
-                        frame.style.height = frame.contentDocument.documentElement.offsetHeight + 'px'
-                    }
-                })
-            }
-            if (w !== parent) resize(parent)
+        // const resize = (w = window) => {
+        //     const parent = w.parent
+        //     if(parent){
+        //         const frames = parent.document.querySelectorAll('iframe')
+        //         frames.forEach(frame => {
+        //             if (frame ) {
+        //                 frame.style.height = frame.contentDocument.documentElement.offsetHeight + 'px'
+        //             }
+        //         })
+        //     }
+        //     if (w !== parent) resize(parent)
+        // }
+        // resize();
+        // window.addEventListener('resize', resize)
+    })
+</script>
+
+
+<script>
+    BX(() => {
+
+        function updateGridPReview(){
+            const tableNode = document.getElementById('folder_list_<?=$_GET['STORAGE_ID']?>_table')
+            if(!tableNode) return
+
+            const extList = ['jpg', 'png', 'jpeg']
+            const spans = tableNode.querySelectorAll('span.bx-disk-folder-title')
+            spans.forEach(s => {
+                if(!s.dataset.src) return
+                const fileExt = s.dataset.src.split('.').pop()
+                if(extList.includes(fileExt)){
+                    const fileId = s.dataset.objectId
+                    fetch('https://crm.refloor-nsk.ru/local/tabCrmFiles_test/getFilePreview.php?fileId=' + fileId)
+                        .then(r => r.json())
+                        .then(data => {
+                            if(data.ok){
+                                try {
+                                    const node = s.closest('.bx-disk-object-name').querySelector('.bx-disk-file-icon')
+                                    node.innerHTML = `<img src="${data.url}" />`
+                                    node.classList.add('preview-img')
+                                }catch (e){console.error(e)}
+                            }
+                        })
+                }
+            })
         }
-        resize();
-        window.addEventListener('resize', resize)
+
+        updateGridPReview()
+        BX.addCustomEvent('BX.Main.grid:paramsUpdated', BX.delegate(updateGridPReview))
+
     })
 </script>

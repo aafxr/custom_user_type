@@ -2,43 +2,66 @@ BX.namespace("BX.Disk");
 
 BX.Disk.FileUploadClass = (function(){
     const FileUploadClass = function(parameters){
+        const {file, URL, folderId} = parameters
+        if(!file || !URL || !folderId){
+            throw new Error('необходимые параметры: file, URL, folderId')
+        }
         /** File */
         this.file = parameters.file
-        this.folderId = parameters.folderId
         this.onSuccess = parameters.onSuccess
         this.onReject = parameters.onReject
         this.onChange = parameters.onChange
         this.errors = []
         this.printLog = parameters.printLog
-        this.URL = parameters.URL
-        this.xhr = new XMLHttpRequest
+        this.folderId = parameters.folderId || 0
+        this.URL = parameters.URL + '?folderId=' + this.folderId + '&file=' + this.file.name
         this.sendBytes = 0
+        this.progress = 0
         this.chunk = parameters.chunk || 1024*1024
+        this.timeout = parameters.timeout || 10000
+        this.timeoutId = null
+        this.uploadId = FileUploadClass.makeUID(32)
+        this.blob = null
+        this.status = FileUploadClass.STATUS_INIT
+    }
+
+    FileUploadClass.STATUS_INIT = 0
+    FileUploadClass.STATUS_DONE = 1
+    FileUploadClass.STATUS_LOADING = 2
+    FileUploadClass.STATUS_REJECTED = 3
+    FileUploadClass.STATUS_ABORTED = 4
+
+    FileUploadClass.makeUID = function (length) {
+        let result = '';
+        const characters = 'abcdef0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < length) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            counter += 1;
+        }
+        return result;
     }
 
 
     FileUploadClass.prototype.send = function(url){
-        if(url) this.URL = url
-        this.xhr.open('POST', this.URL, true)
+        if(url) {
+            let [path, params] = url.split('?')
+            if(!params) params = ''
+            const sp = new URLSearchParams(params)
+            sp.set('folderId', this.folderId)
+            sp.set('file', this.file.name)
+            this.URL = path + '?' + sp.toString()
+        }
+        this.status = FileUploadClass.STATUS_LOADING
+        this._UploadPortion()
     }
 
     FileUploadClass.prototype._UploadPortion = function() {
-
-        // Объект FileReader, в него будем считывать часть загружаемого файла
         var reader = new FileReader();
-
-        // Текущий объект
         var that=this;
-
-        // Позиция с которой будем загружать файл
         var loadfrom = this.sendBytes;
-
-        // Объект Blob, для частичного считывания файла
-        var blob=null;
-
-        // Таймаут для функции setTimeout. С помощью этой функции реализована повторная попытка загрузки
-        // по таймауту (что не совсем корректно)
-        var xhrHttpTimeout= null;
+        that.timeoutId = null;
 
         /*
         * Событие срабатывающее после чтения части файла в FileReader
@@ -46,24 +69,22 @@ BX.Disk.FileUploadClass = (function(){
         */
         reader.onloadend = function(evt) {
             if (evt.target.readyState == FileReader.DONE) {
-
-                // Создадим объект XMLHttpRequest, установим адрес скрипта для POST
-                // и необходимые заголовки HTTP запроса.
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', that.URL, true);
                 xhr.setRequestHeader("Content-Type", "application/x-binary; charset=x-user-defined");
-
                 // Идентификатор загрузки (чтобы знать на стороне сервера что с чем склеивать)
-                xhr.setRequestHeader("Upload-Id", that.options['uploadid']);
+                xhr.setRequestHeader("Upload-Id", that.uploadId);
                 // Позиция начала в файле
-                xhr.setRequestHeader("Portion-From", from);
+                xhr.setRequestHeader("Portion-From", loadfrom);
                 // Размер порции
-                xhr.setRequestHeader("Portion-Size", that.options['portion']);
+                xhr.setRequestHeader("Portion-Size", that.chunk);
 
                 // Установим таймаут
-                that.xhrHttpTimeout=setTimeout(function() {
+                that.timeoutId = setTimeout(function() {
                     xhr.abort();
-                },that.options['timeout']);
+                    that._errorHandle(new Error('timeout limit'))
+                    that.status = FileUploadClass.STATUS_ABORTED
+                },that.timeout);
 
                 /*
                 * Событие XMLHttpRequest.onProcess. Отрисовка ProgressBar.
@@ -71,30 +92,9 @@ BX.Disk.FileUploadClass = (function(){
                 */
                 xhr.upload.addEventListener("progress", function(evt) {
                     if (evt.lengthComputable) {
-
-                        // Посчитаем количество закаченного в процентах (с точность до 0.1)
-                        var percentComplete = Math.round((loadfrom+evt.loaded) * 1000 / that.filesize);percentComplete/=10;
-
-                        // Посчитаем ширину синей полоски ProgressBar
-                        var width=Math.round((loadfrom+evt.loaded) * 300 / that.filesize);
-
-                        // Изменим свойства элементом ProgressBar'а, добавим к нему текст
-                        var div1=document.getElementById('cnuploader_progressbar');
-                        var div2=document.getElementById('cnuploader_progresscomplete');
-
-                        div1.style.display='block';
-                        div2.style.display='block';
-                        div2.style.width=width+'px';
-                        if (percentComplete<30) {
-                            div2.textContent='';
-                            div1.textContent=percentComplete+'%';
-                        }
-                        else {
-                            div2.textContent=percentComplete+'%';
-                            div1.textContent='';
-                        }
+                        that.progress += evt.loaded
+                        that._handleChange()
                     }
-
                 }, false);
 
 
@@ -104,46 +104,45 @@ BX.Disk.FileUploadClass = (function(){
                 * @param evt Событие
                 */
                 xhr.addEventListener("load", function(evt) {
-
                     // Очистим таймаут
-                    clearTimeout(that.xhrHttpTimeout);
+                    clearTimeout(that.timeoutId);
 
                     // Если сервер не вернул HTTP статус 200, то выведем окно с сообщением сервера.
                     if (evt.target.status!=200) {
-                        alert(evt.target.responseText);
+                        console.log(evt)
+                        that._errorHandle(new Error(`server response code ${evt.target.status}`));
                         return;
                     }
 
                     // Добавим к текущей позиции размер порции.
-                    that.position+=that.options['portion'];
+                    that.sendBytes += that.chunk;
 
                     // Закачаем следующую порцию, если файл еще не кончился.
-                    if (that.filesize>that.position) {
-                        that.UploadPortion(that.position);
+                    if (that.file.size > that.sendBytes) {
+                        that._UploadPortion(that.sendBytes);
                     }
                     else {
                         // Если все порции загружены, сообщим об этом серверу. XMLHttpRequest, метод GET,
                         // PHP скрипт тот-же.
                         var gxhr = new XMLHttpRequest();
-                        gxhr.open('GET', that.options['uploadscript']+'?action=done', true);
-
+                        gxhr.open('POST', that.URL + '&action=done', true);
                         // Установим идентификатор загруки.
-                        gxhr.setRequestHeader("Upload-Id", that.options['uploadid']);
+                        gxhr.setRequestHeader("Upload-Id", that.uploadId);
 
                         /*
                         * Событие XMLHttpRequest.onLoad. Окончание загрузки сообщения об окончании загрузки файла :).
                         * @param evt Событие
                         */
                         gxhr.addEventListener("load", function(evt) {
-
                             // Если сервер не вернул HTTP статус 200, то выведем окно с сообщением сервера.
                             if (evt.target.status!=200) {
-                                alert(evt.target.responseText.toString());
+                                console.log(evt)
+                                that._errorHandle(new Error(`server response code ${evt.target.status}`));
                                 return;
                             }
-                                // Если все нормально, то отправим пользователя дальше. Там может быть сообщение
+                            // Если все нормально, то отправим пользователя дальше. Там может быть сообщение
                             // об успешной загрузке или следующий шаг формы с дополнительным полями.
-                            else window.parent.location=that.options['redirect_success'];
+                            that._handleSuccess()
                         }, false);
 
                         // Отправим HTTP GET запрос
@@ -158,16 +157,16 @@ BX.Disk.FileUploadClass = (function(){
                 xhr.addEventListener("error", function(evt) {
 
                     // Очистим таймаут
-                    clearTimeout(that.xhrHttpTimeout);
+                    clearTimeout(that.timeoutId);
 
                     // Сообщим серверу об ошибке во время загруке, сервер сможет удалить уже загруженные части.
                     // XMLHttpRequest, метод GET,  PHP скрипт тот-же.
                     var gxhr = new XMLHttpRequest();
 
-                    gxhr.open('GET', that.options['uploadscript']+'?action=abort', true);
+                    gxhr.open('POST', that.URL + '?action=abort', true);
 
                     // Установим идентификатор загруки.
-                    gxhr.setRequestHeader("Upload-Id", that.options['uploadid']);
+                    gxhr.setRequestHeader("Upload-Id", that.uploadId);
 
                     /*
                     * Событие XMLHttpRequest.onLoad. Окончание загрузки сообщения об ошибке загрузки :).
@@ -177,7 +176,8 @@ BX.Disk.FileUploadClass = (function(){
 
                         // Если сервер не вернул HTTP статус 200, то выведем окно с сообщением сервера.
                         if (evt.target.status!=200) {
-                            alert(evt.target.responseText);
+                            console.log(evt)
+                            that._errorHandle(new Error(`server response code ${evt.target.status}`));
                             return;
                         }
                     }, false);
@@ -186,7 +186,7 @@ BX.Disk.FileUploadClass = (function(){
                     gxhr.sendAsBinary('');
 
                     // Отобразим сообщение об ошибке
-                    if (that.options['message_error']==undefined) alert("There was an error attempting to upload the file."); else alert(that.options['message_error']);
+                    that._errorHandle(evt)
                 }, false);
 
                 /*
@@ -194,8 +194,8 @@ BX.Disk.FileUploadClass = (function(){
                 * @param evt Событие
                 */
                 xhr.addEventListener("abort", function(evt) {
-                    clearTimeout(that.xhrHttpTimeout);
-                    that.UploadPortion(that.position);
+                    clearTimeout(that.timeoutId);
+                    that._UploadPortion(that.sendBytes);
                 }, false);
 
                 // Отправим порцию методом POST
@@ -206,11 +206,11 @@ BX.Disk.FileUploadClass = (function(){
         that.blob=null;
 
         // Считаем порцию в объект Blob. Три условия для трех возможных определений Blob.[.*]slice().
-        if (this.file.slice) that.blob=this.file.slice(from,from+that.options['portion']);
+        if (this.file.slice) that.blob=this.file.slice(this.sendBytes ,this.sendBytes + that.chunk);
         else {
-            if (this.file.webkitSlice) that.blob=this.file.webkitSlice(from,from+that.options['portion']);
+            if (this.file.webkitSlice) that.blob=this.file.webkitSlice(this.sendBytes ,this.sendBytes + that.chunk);
             else {
-                if (this.file.mozSlice) that.blob=this.file.mozSlice(from,from+that.options['portion']);
+                if (this.file.mozSlice) that.blob=this.file.mozSlice(this.sendBytes ,this.sendBytes + that.chunk);
             }
         }
 
@@ -219,19 +219,55 @@ BX.Disk.FileUploadClass = (function(){
     }
 
 
-    FileUploadClass.prototype.sendAsBinary = function(datastr){
+    XMLHttpRequest.prototype.sendAsBinary = function(datastr){
         function byteValue(x) {
             return x.charCodeAt(0) & 0xff;
         }
         var ords = Array.prototype.map.call(datastr, byteValue);
         var ui8a = new Uint8Array(ords);
-        XML.send(ui8a.buffer);
+        this.send(ui8a.buffer);
     }
 
 
-    FileUploadClass.prototype.errorHandle = function(e){
+    FileUploadClass.prototype._errorHandle = function(e){
         if(this.printLog) console.error(e)
         this.errors.push(e)
+        this.status = FileUploadClass.STATUS_REJECTED
+        if (this.onReject) this.onReject(this)
+    }
+
+    FileUploadClass.prototype._handleSuccess = function(){
+        this.status = FileUploadClass.STATUS_DONE
+        if(this.onSuccess) this.onSuccess(this)
+    }
+
+    FileUploadClass.prototype._handleChange = function(){
+        if(this.onChange) this.onChange(this)
+    }
+
+    FileUploadClass.prototype.isCompleted = function (){
+        return this.status === FileUploadClass.STATUS_DONE
+    }
+
+    FileUploadClass.prototype.isRejected = function (){
+        return this.status === FileUploadClass.STATUS_REJECTED
+    }
+
+    FileUploadClass.prototype.isAborted = function (){
+        return this.status === FileUploadClass.STATUS_ABORTED
+    }
+
+    FileUploadClass.prototype.isLoading = function (){
+        return this.status === FileUploadClass.STATUS_LOADING
+    }
+
+
+    /**
+     * количество закаченного в процентах (с точность до 0.1)
+     * @returns {number}
+     */
+    FileUploadClass.prototype.getProgress = function(){
+        return Math.floor((this.progress / this.file.size) * 1000) / 10
     }
 
     return FileUploadClass

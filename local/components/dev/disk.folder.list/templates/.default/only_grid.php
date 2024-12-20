@@ -87,7 +87,7 @@ if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED!==true) die();
 			'AJAX_OPTION_HISTORY' => 'N',
 
 			'SHOW_CHECK_ALL_CHECKBOXES' => true,
-			'SHOW_ROW_CHECKBOXES' => true,
+			'SHOW_ROW_CHECKBOXES' => false,
 			'SHOW_ROW_ACTIONS_MENU' => true,
 			'SHOW_GRID_SETTINGS_MENU' => true,
 			'SHOW_NAVIGATION_PANEL' => true,
