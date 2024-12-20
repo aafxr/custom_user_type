@@ -38,7 +38,7 @@ $btnId = rand(1000000, 10000000);
                                 </div>
                             </td>
                             <td class="bx-disk-popup-upload-file-progress-container-lasttd">
-                                ${fu.isCompleted() ? '<span class="bx-disk-popup-upload-file-progress-btn-end" id="file${fu.uploadId}Done"></span>' : ''}
+                                ${fu.isCompleted() ? `<span class="bx-disk-popup-upload-file-progress-btn-end" id="file${fu.uploadId}Done"></span>` : ''}
                             </td>
                         </tr>
                     `
@@ -52,9 +52,11 @@ $btnId = rand(1000000, 10000000);
                     <div class="bx-disk-popup-content tac bx-disk-upload-file">
                         <div class="bx-disk-popup-upload-title">Загружено файлов <span id="FolderListNumber">${complited.length}</span> из <span id="FolderListCount">${content.length}</span></div>
                         <div class="bx-disk-upload-file-section">
-                            <table class="bx-disk-upload-file-list" id="FolderListPlaceHolder">
-                                ${content.join('')}
-                            </table>
+                            <div class="bx-disk-upload-file-content">
+                                <table class="bx-disk-upload-file-list" id="FolderListPlaceHolder">
+                                    ${content.join('')}
+                                </table>
+                            </div>
                             <div class="bx-disk-upload-file-buttons">
                                 <button
                                     class="ui-btn ui-btn-success ui-btn-icon-add"
@@ -69,6 +71,7 @@ $btnId = rand(1000000, 10000000);
     }
 
     BX(() => {
+        const chunkSize = 1024*1024 * 20;
         let folderId = <?=$arResult['FOLDER_ID'] ?>;
         const namespace = BX.namespace('BX.Disk.upload<?=$btnId?>')
         let fileUploads = []
@@ -118,6 +121,7 @@ $btnId = rand(1000000, 10000000);
                         file,
                         URL: '<?= $arResult['COMPONENT_PATH'] ?>' + '/uploadFile.php',
                         folderId,
+                        chunk: chunkSize,
                         onSuccess: (f) => {
                             dialog.setContent(getDialogTemplate({fileUploads}))
                             if(fileUploads.every(f => f.isCompleted())){

@@ -59,11 +59,15 @@
     flex-direction: column;
 }
 
-.bx-disk-upload-file-list{
+.bx-disk-upload-file-content{
     flex: 1 1;
+    height: 100%;
+    overflow: auto;
 }
 
 .bx-disk-upload-file-buttons{
+    margin-top: auto;
+    padding-top: 10px;
     flex:none;
     display: flex;
     justify-content: center;
