@@ -21,60 +21,51 @@ $btnId = rand(1000000, 10000000);
     <span class="ui-btn ui-btn-success ui-btn-icon-add">Загрузить файл</span>
 </div>
 <script>
-    function getDialogTemplate(parameters = {}){
-        const {fileUploads} = parameters
-        let content = []
-        let complited = []
+    function newFileUploadTemplate(fu, onDone = () => {}){
+        const node = document.createElement('tr')
+        node.id = fu.uploadId
+        node.innerHTML = `
+            <td class="bx-disk-popup-upload-file-progress-container-td">
+                <div class="bx-disk-popup-upload-file-progress-container">
+                    <div class="bx-disk-popup-upload-file-progress-line-end" style="width: ${fu.getProgress()}%"></div>
+                    <div class="bx-disk-popup-upload-file-progress-filename">${fu.file.name}</div>
+                </div>
+            </td>
+            <td class="bx-disk-popup-upload-file-progress-container-lasttd">
+                <span class="bx-disk-popup-upload-file-progress-btn-end" style="opacity: 0; pointer-events: none" id="file${fu.uploadId}Done"></span>
+            </td>
+        `
 
-        if(fileUploads && Array.isArray(fileUploads)){
-            for (const fu of fileUploads){
-                if(fu.isCompleted() ) complited.push(fu)
-                const inner = `
-                        <tr id="${fu.uploadId}">
-                            <td class="bx-disk-popup-upload-file-progress-container-td">
-                                <div class="bx-disk-popup-upload-file-progress-container">
-                                    <div class="bx-disk-popup-upload-file-progress-line-end" style="width: ${fu.getProgress()}%"></div>
-                                    <div class="bx-disk-popup-upload-file-progress-filename">${fu.file.name}</div>
-                                </div>
-                            </td>
-                            <td class="bx-disk-popup-upload-file-progress-container-lasttd">
-                                ${fu.isCompleted() ? `<span class="bx-disk-popup-upload-file-progress-btn-end" id="file${fu.uploadId}Done"></span>` : ''}
-                            </td>
-                        </tr>
-                    `
-                content.push(inner)
-            }
+
+
+        fu.onChange = function(){
+            node.querySelector('.bx-disk-popup-upload-file-progress-line-end').style.width = `${fu.getProgress()}%`
+        }.bind(fu)
+
+        fu.onSuccess = function() {
+            console.log(fu)
+            const n = node.querySelector('.bx-disk-popup-upload-file-progress-btn-end')
+            n.style.opacity = 1
+            n.style.pointerEvents = 'all'
+            onDone()
+        }.bind(fu)
+
+        fu.onReject = () => {
+
         }
 
-        return `
-            <div id="popup-window-content-bx-dfu-upload-FolderList" class="popup-window-content" dropzone="copy f:*/*">
-                <div class="bx-disk-popup-container" style="display: block;">
-                    <div class="bx-disk-popup-content tac bx-disk-upload-file">
-                        <div class="bx-disk-popup-upload-title">Загружено файлов <span id="FolderListNumber">${complited.length}</span> из <span id="FolderListCount">${content.length}</span></div>
-                        <div class="bx-disk-upload-file-section">
-                            <div class="bx-disk-upload-file-content">
-                                <table class="bx-disk-upload-file-list" id="FolderListPlaceHolder">
-                                    ${content.join('')}
-                                </table>
-                            </div>
-                            <div class="bx-disk-upload-file-buttons">
-                                <button
-                                    class="ui-btn ui-btn-success ui-btn-icon-add"
-                                    onclick="BX.Disk.upload<?=$btnId?>.addFiles(event)"
-                                    >Загрузить еще</button>
-                            </div
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `
+        return {
+            node, fileUploader: fu
+        }
+
     }
 
     BX(() => {
-        const chunkSize = 1024*1024 * 20;
+        const chunkSize = 1024*1024 * 10;
         let folderId = <?=$arResult['FOLDER_ID'] ?>;
         const namespace = BX.namespace('BX.Disk.upload<?=$btnId?>')
         let fileUploads = []
+        let filesLoaded = 0
         const btnNode = document.getElementById('<?=$btnId?>')
         const inputFilesNode = btnNode.querySelector('input')
 
@@ -86,12 +77,33 @@ $btnId = rand(1000000, 10000000);
             }
         })
 
-        namespace.addFiles = function(e){
-            inputFilesNode.click()
-        }
 
-        console.log(namespace)
+        const dialogContent = `
+            <div id="popup-window-content-bx-dfu-upload-FolderList" class="popup-window-content" dropzone="copy f:*/*">
+                <div class="bx-disk-popup-container" style="display: block;">
+                    <div class="bx-disk-popup-content tac bx-disk-upload-file">
+                        <div class="bx-disk-popup-upload-title">Загружено файлов <span id="FolderListNumber">0</span> из <span id="FolderListCount">0</span></div>
+                        <div class="bx-disk-upload-file-section">
+                            <div class="bx-disk-upload-file-content">
+                                <table class="bx-disk-upload-file-list" id="FolderListPlaceHolder">
 
+                                </table>
+                            </div>
+                            <div class="bx-disk-upload-file-buttons">
+                                <button
+                                    class="ui-btn ui-btn-success ui-btn-icon-add"
+                                    onclick="BX.Disk.upload<?=$btnId?>.addFiles(event)"
+                                    >Загрузить еще</button>
+                                <button
+                                    class="ui-btn"
+                                    onclick="BX.Disk.upload<?=$btnId?>.closeDialog(event)"
+                                    >Закрыть</button>
+                            </div
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `
         const dialog = new BX.PopupWindow('call_feedback', window.body, {
             title: 'Загрузка нового документа',
             autoHide : true,
@@ -100,7 +112,29 @@ $btnId = rand(1000000, 10000000);
             closeByEsc : true,
             overlay: {}
         });
-        dialog.setContent(getDialogTemplate({fileUploads}));
+        dialog.setContent(dialogContent);
+        const tableNode = dialog.getContentContainer().querySelector('.bx-disk-upload-file-list')
+
+
+        namespace.addFiles = function(e){
+            inputFilesNode.click()
+        }
+
+
+        namespace.closeDialog = function(e){
+            dialog.close()
+        }
+
+
+        function updateDialogTitle(){
+            const dialogTitleNode = dialog.getContentContainer().querySelector('.bx-disk-popup-upload-title')
+            dialogTitleNode.querySelector('#FolderListNumber').innerText = fileUploads.length
+            dialogTitleNode.querySelector('#FolderListCount').innerText = filesLoaded
+            if(fileUploads.every(f => f.isCompleted())){
+                BX.onCustomEvent(window, 'disk.upload.files:allLoadsDone', [])
+            }
+        }
+
 
         btnNode.addEventListener('click', (e) => {
             if(fileUploads.length){
@@ -117,37 +151,21 @@ $btnId = rand(1000000, 10000000);
             inputFilesNode.addEventListener('input', (e) => {
                 for (let i = 0; i < e.target.files.length; i++){
                     const file = e.target.files.item(i)
-                    console.log({
-                        file,
-                        URL: '<?= $arResult['COMPONENT_PATH'] ?>' + '/uploadFile.php',
-                        folderId,
-                        chunk: chunkSize,
-                        onSuccess: (f) => {
-                            dialog.setContent(getDialogTemplate({fileUploads}))
-                            if(fileUploads.every(f => f.isCompleted())){
-                                BX.onCustomEvent(window, 'disk.upload.files:allLoadsDone', [this.id, this]);
-                            }
-                        },
-                        onChange: (f) => dialog.setContent(getDialogTemplate({fileUploads})),
-                        reject: (f) => dialog.setContent(getDialogTemplate({fileUploads})),
-                    })
                     const fu = new BX.Disk.FileUploadClass({
                         file,
                         URL: '<?= $arResult['COMPONENT_PATH'] ?>' + '/uploadFile.php',
                         folderId,
-                        onSuccess: (f) => {
-                            dialog.setContent(getDialogTemplate({fileUploads}))
-                            if(fileUploads.every(f => f.isCompleted())){
-                                BX.onCustomEvent(window, 'disk.upload.files:allLoadsDone', [this.id, this]);
-                            }
-                        },
-                        onChange: (f) => dialog.setContent(getDialogTemplate({fileUploads})),
-                        reject: (f) => dialog.setContent(getDialogTemplate({fileUploads})),
+                        chunk: chunkSize,
                     })
+                    const {node} = newFileUploadTemplate(fu, () => {
+                        filesLoaded += 1
+                        updateDialogTitle()
+                    })
+                    tableNode.appendChild(node)
                     fileUploads.push(fu)
                 }
-                dialog.setContent(getDialogTemplate({fileUploads}))
                 dialog.show()
+                updateDialogTitle()
                 fileUploads.forEach(f => f.send())
             })
         }
