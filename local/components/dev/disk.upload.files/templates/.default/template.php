@@ -128,8 +128,8 @@ $btnId = rand(1000000, 10000000);
 
         function updateDialogTitle(){
             const dialogTitleNode = dialog.getContentContainer().querySelector('.bx-disk-popup-upload-title')
-            dialogTitleNode.querySelector('#FolderListNumber').innerText = fileUploads.length
-            dialogTitleNode.querySelector('#FolderListCount').innerText = filesLoaded
+            dialogTitleNode.querySelector('#FolderListNumber').innerText = filesLoaded
+            dialogTitleNode.querySelector('#FolderListCount').innerText = fileUploads.length
             if(fileUploads.every(f => f.isCompleted())){
                 BX.onCustomEvent(window, 'disk.upload.files:allLoadsDone', [])
             }
