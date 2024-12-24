@@ -1,18 +1,28 @@
 <?php
-require_once ($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/prolog_before.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_before.php');
+/** CUser */
+global $USER;
 
-$result = [];
+//$USER->Authorize(1);
 
-if (!\Bitrix\Main\Loader::includeModule('crm')){
+$result = ['request' => $_POST];
+
+if (!\Bitrix\Main\Loader::includeModule('crm')) {
     http_response_code(500);
     $result['ok'] = false;
     $result['message'] = 'module crm not included';
-    include ('footer.php');
+    include('footer.php');
 }
 
 
-$entity = new \CCrmCompany;
+include('FormLeadClass.php');
 
-$result['request'] = $_REQUEST;
+$formLead = new FormLeadClass(FormLeadClass::SITE_QUARTZPARQUET, $_POST);
+if ($formLead->createAndBind()) {
+    $result['ok'] = true;
+} else {
+    $result['ok'] = false;
+    $result['message'] = $formLead->getErrorMessage();
+}
 
-include ('footer.php');
+include('footer.php');
