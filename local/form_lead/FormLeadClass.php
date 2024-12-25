@@ -85,7 +85,6 @@ class FormLeadClass
             'COMPANY_TYPE' => $companyType,
             "OPENED" => "Y", // "Доступен для всех" = Да
             'UF_CITY_LIST' => $companyCity,
-            'ADDRESS' => $companyCity,
             'UF_SOURCE_IB' => 'Пришел с '.$cSource,
             'UF_CATEGORY_TEXT' => 'Пришел с '.$cSource,
             'CREATED_BY_ID' => $createdById,
