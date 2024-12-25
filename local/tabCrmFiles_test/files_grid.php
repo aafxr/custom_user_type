@@ -214,14 +214,14 @@ $APPLICATION->IncludeComponent('refloor:disk.folder.list', "",
         const tableNode = document.getElementById('folder_list_<?=$_GET['STORAGE_ID']?>_table')
         if(!tableNode) return
 
-        const extList = ['jpg', 'png', 'jpeg']
+        const extList = ['jpg', 'png', 'jpeg', 'jfif', 'webp']
         const spans = tableNode.querySelectorAll('span.bx-disk-folder-title')
         spans.forEach(s => {
             if(!s.dataset.src) return
-            const fileExt = s.dataset.src.split('.').pop()
+            const fileExt = s.dataset.src.split('.').pop().toLowerCase()
             if(extList.includes(fileExt)){
                 const fileId = s.dataset.objectId
-                fetch('https://crm.refloor-nsk.ru/local/tabCrmFiles_test/getFilePreview.php?fileId=' + fileId)
+                fetch('https://crm.refloor-nsk.ru/local/apps/tabCrmFiles/getFilePreview.php?fileId=' + fileId)
                     .then(r => r.json())
                     .then(data => {
                         if(data.ok){

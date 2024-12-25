@@ -32,6 +32,9 @@ class FormLeadClass
             case FormLeadClass::SITE_QUARTZPARQUET:
                 $this->convertQuartzparquetFields();
                 break;
+            case FormLeadClass::SITE_FARGOSPC:
+                $this->convertFargoFields();
+                break;
             default:
                 $this->errors[] = 'unknown source name';
                 return false;
@@ -44,10 +47,6 @@ class FormLeadClass
     {
         $this->arContact = [];
         [$name, $secondName, $lastName] = explode(' ', $this->formFields['form_text_1']);
-//        $this->arContact['NAME'] = $name.' '.$secondName;
-//        $this->arContact['LAST_NAME'] = $lastName;
-//        $this->arContact['FULL_NAME'] = $this->formFields['form_text_1'];
-//        $this->arContact['ADDRESS'] = $this->formFields['form_text_4'];
         $this->contactPhone = $this->formFields['form_text_2'];
         $this->contactMail = $this->formFields['form_text_3'];
         $this->arContact = [
@@ -62,11 +61,36 @@ class FormLeadClass
             'TITLE'   => $this->formFields['form_text_13'],
             'COMPANY_TYPE' => 'CUSTOMER',
             "OPENED" => "Y", // "Доступен для всех" = Да
-            'UF_CITY_LIST' => $this->formFields['form_text_4']
+            'UF_CITY_LIST' => [$this->formFields['form_text_4']],
+            'ADDRESS' => $this->formFields['form_text_4'],
+            'UF_SOURCE_IB' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
+            'UF_CATEGORY_TEXT' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
+        ];
+    }
+
+    private function convertFargoFields()
+    {
+        $this->arContact = [];
+        [$name, $secondName, $lastName] = explode(' ', $this->formFields['form_text_74']);
+        $this->contactPhone = $this->formFields['form_text_75'];
+        $this->contactMail = $this->formFields['form_text_92'];
+        $this->arContact = [
+            'NAME' => ($name.' '.$secondName) ?? '',
+            'LAST_NAME' => $lastName ?? '',
+            'FULL_NAME'   => $this->formFields['form_text_74'],
+            "OPENED" => "Y", // "Доступен для всех" = Да
+            'SOURCE_DESCRIPTION' => 'Пришел с '.FormLeadClass::SITE_FARGOSPC,
         ];
 
-//        $this->arCompany['UF_CITY_LIST'] = $this->formFields['form_text_4'];
-//        $this->arCompany['TITLE'] = $this->formFields['form_text_13'];
+        $this->arCompany = [
+            'TITLE'   => $this->formFields['form_text_93'],
+            'COMPANY_TYPE' => 'CUSTOMER',
+            "OPENED" => "Y", // "Доступен для всех" = Да
+            'UF_CITY_LIST' => [$this->formFields['form_text_83']],
+            'ADDRESS' => $this->formFields['form_text_83'],
+            'UF_SOURCE_IB' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
+            'UF_CATEGORY_TEXT' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
+        ];
     }
 
 
@@ -76,19 +100,15 @@ class FormLeadClass
             $this->errors[] = 'bind fail. CompanyID: '.$this->arCompany['ID'].', ContactID: '.$this->arContact['ID'];
             return false;
         }
-        \Bitrix\Crm\Binding\ContactCompanyTable::bindContactIDs(
-            $this->arCompany['ID'],
-            [$this->arContact['ID']]
-        );
+        \Bitrix\Crm\Binding\ContactCompanyTable::bindContactIDs($this->arCompany['ID'], [$this->arContact['ID']]);
         return true;
     }
 
 
-    public function createAndBind()
+    public function createAndBind(): bool
     {
         if(!$this->convertFormFields()) return false;
         if(!$this->createContact()) return false;
-//        $this->arCompany['CONTACT_ID'] = [$this->arContact['ID']];
         if(!$this->createCompany()) return false;
         if(!$this->bind()) return false;
         return true;
@@ -100,6 +120,7 @@ class FormLeadClass
     public function createCompany(): bool
     {
         $this->company = new \CCrmCompany(false);
+        \CCrmCompany::GetUserFieldEntityID();
         $id = $this->company->Add($this->arCompany);
         if($id)
         {
@@ -154,14 +175,14 @@ class FormLeadClass
     }
 
 
-    public function getMultiFields($contactID, $arFields, $typeID, $valueType = 'WORK'): array
+    public function getMultiFields($contactID, $value, $typeID, $valueType = 'WORK'): array
     {
         $multiField = [
             'ENTITY_ID'  => \CCrmOwnerType::ContactName,
             'ELEMENT_ID' => $contactID,
             'TYPE_ID'    => $typeID,
             'VALUE_TYPE' => $valueType,
-            'VALUE'      => $arFields['VALUE']
+            'VALUE'      => $value
         ];
         if(isset($arFields['ID'])) $multiField['ID'] = $arFields['ID'];
         return $multiField;

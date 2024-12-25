@@ -94,19 +94,23 @@ if($idPlacementEntity && $storage):
 <div class="content-wrapper">
     <div class="top-panel">
         <div class="ut-btn-toolbar ut-btn-split">
+            <?
+            /*
             <form id="upload-form" method="post" enctype="multipart/form-data">
                 <label class="input-file">
                     <input id="upload-field" type="file" name="files[]"  multiple>
                     <span class="ui-btn ui-btn-success ui-btn-icon-add" href="protoBitrix24://X:/CRM/<?=$folderName?>/">Загрузить файл</span>
                 </label>
             </form>
+            */
+            ?>
 
             <a class="ui-btn ui-btn-primary ui-btn-icon-disk" href="protoBitrix24://X:/CRM/<?=$folderName?>/">Открыть на компьютере</a>
 
         </div>
         <div class="ut-btn-split">
             <?php if($arCompany['ORIGIN_ID']): ?>
-            <div id="mawisync" class="ui-btn ui-btn-active ui-btn-icon-download" onclick="downloadFromMawi()">Загрузить из MawiSoft</div>
+                <? //<div id="mawisync" class="ui-btn ui-btn-active ui-btn-icon-download" onclick="downloadFromMawi()">Загрузить из MawiSoft</div> ?>
             <?php endif ?>
             <a class="ui-btn ui-btn-icon-setting" download href="https://crm.refloor-nsk.ru/upload/script/refProtoBitrix24.reg">Настройка ПК</a>
 
@@ -124,7 +128,7 @@ if($idPlacementEntity && $storage):
         </script>
         <iframe
             class="app-frame"
-            src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/tabCrmFiles_test/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
+            src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/apps/tabCrmFiles/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
             style="width: 100%; height: 100%; border-radius: var(--ui-border-radius-md);border: none;"
         ></iframe>
     </div>
@@ -205,6 +209,9 @@ if($idPlacementEntity && $storage):
         background-color: #eee;
     }
 </style>
+<?php
+/*
+?>
 <script type="text/javascript">
     document.getElementById("upload-field").addEventListener("change", function () {
         const url = '/local/tabCrmFiles_test/upload.php';
@@ -247,3 +254,5 @@ if($idPlacementEntity && $storage):
         return false;
     }
 </script>
+*/
+?>
