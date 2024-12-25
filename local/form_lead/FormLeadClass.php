@@ -1,6 +1,9 @@
 <?php
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true) die();
 
+/** CUser */
+global $USER;
+
 
 class FormLeadClass
 {
@@ -28,12 +31,31 @@ class FormLeadClass
 
     public function convertFormFields(): bool
     {
+        global $USER;
         switch ($this->contactSource){
             case FormLeadClass::SITE_QUARTZPARQUET:
-                $this->convertQuartzparquetFields();
+                $this->convertFields(
+                    $this->formFields['form_text_1'],
+                    $this->formFields['form_text_2'],
+                    $this->formFields['form_text_3'],
+                    FormLeadClass::SITE_QUARTZPARQUET,
+                    $this->formFields['form_text_13'],
+                    'CUSTOMER',
+                    $this->formFields['form_text_4'],
+                    $USER->GetID()
+                );
                 break;
             case FormLeadClass::SITE_FARGOSPC:
-                $this->convertFargoFields();
+                $this->convertFields(
+                    $this->formFields['form_text_74'],
+                    $this->formFields['form_text_75'],
+                    $this->formFields['form_text_92'],
+                    FormLeadClass::SITE_FARGOSPC,
+                    $this->formFields['form_text_93'],
+                    'CUSTOMER',
+                    $this->formFields['form_text_83'],
+                    $USER->GetID()
+                );
                 break;
             default:
                 $this->errors[] = 'unknown source name';
@@ -42,54 +64,33 @@ class FormLeadClass
         return true;
     }
 
-
-    private function convertQuartzparquetFields()
+    private function convertFields($cName, $cPhone, $cMail, $cSource, $companyTitle, $companyType, $companyCity, $createdById): void
     {
-        $this->arContact = [];
-        [$name, $secondName, $lastName] = explode(' ', $this->formFields['form_text_1']);
-        $this->contactPhone = $this->formFields['form_text_2'];
-        $this->contactMail = $this->formFields['form_text_3'];
+        [$name, $secondName, $lastName] = explode(' ', $cName);
+        $this->contactPhone = $cPhone;
+        $this->contactMail = $cMail;
         $this->arContact = [
             'NAME' => ($name.' '.$secondName) ?? '',
             'LAST_NAME' => $lastName ?? '',
-            'FULL_NAME'   => $this->formFields['form_text_1'],
+            'FULL_NAME'   => $cName,
             "OPENED" => "Y", // "Доступен для всех" = Да
-            'SOURCE_DESCRIPTION' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
+            'SOURCE_DESCRIPTION' => 'Пришел с '.$cSource,
+            'CREATED_BY_ID' => $createdById,
+            'MODIFY_BY_ID' => $createdById,
+            'ASSIGNED_BY_ID' => $createdById,
         ];
 
         $this->arCompany = [
-            'TITLE'   => $this->formFields['form_text_13'],
-            'COMPANY_TYPE' => 'CUSTOMER',
+            'TITLE'   => $companyTitle,
+            'COMPANY_TYPE' => $companyType,
             "OPENED" => "Y", // "Доступен для всех" = Да
-            'UF_CITY_LIST' => [$this->formFields['form_text_4']],
-            'ADDRESS' => $this->formFields['form_text_4'],
-            'UF_SOURCE_IB' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
-            'UF_CATEGORY_TEXT' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
-        ];
-    }
-
-    private function convertFargoFields()
-    {
-        $this->arContact = [];
-        [$name, $secondName, $lastName] = explode(' ', $this->formFields['form_text_74']);
-        $this->contactPhone = $this->formFields['form_text_75'];
-        $this->contactMail = $this->formFields['form_text_92'];
-        $this->arContact = [
-            'NAME' => ($name.' '.$secondName) ?? '',
-            'LAST_NAME' => $lastName ?? '',
-            'FULL_NAME'   => $this->formFields['form_text_74'],
-            "OPENED" => "Y", // "Доступен для всех" = Да
-            'SOURCE_DESCRIPTION' => 'Пришел с '.FormLeadClass::SITE_FARGOSPC,
-        ];
-
-        $this->arCompany = [
-            'TITLE'   => $this->formFields['form_text_93'],
-            'COMPANY_TYPE' => 'CUSTOMER',
-            "OPENED" => "Y", // "Доступен для всех" = Да
-            'UF_CITY_LIST' => [$this->formFields['form_text_83']],
-            'ADDRESS' => $this->formFields['form_text_83'],
-            'UF_SOURCE_IB' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
-            'UF_CATEGORY_TEXT' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
+            'UF_CITY_LIST' => $companyCity,
+            'ADDRESS' => $companyCity,
+            'UF_SOURCE_IB' => 'Пришел с '.$cSource,
+            'UF_CATEGORY_TEXT' => 'Пришел с '.$cSource,
+            'CREATED_BY_ID' => $createdById,
+            'MODIFY_BY_ID' => $createdById,
+            'ASSIGNED_BY_ID' => $createdById,
         ];
     }
 
@@ -119,43 +120,51 @@ class FormLeadClass
 
     public function createCompany(): bool
     {
-        $this->company = new \CCrmCompany(false);
-        \CCrmCompany::GetUserFieldEntityID();
-        $id = $this->company->Add($this->arCompany);
-        if($id)
-        {
-            $this->arCompany['ID'] = $id;
-            $this->errors[] = 'companyID: ' . $id;
-            return true;
+        try {
+            $result = \Bitrix\Crm\CompanyTable::add($this->arCompany);
+            if($result->isSuccess())
+            {
+                $this->arCompany['ID'] = $result->getId();
+                return true;
+            }
+            $this->errors[] = implode('\n', $result->getErrorMessages());
+            $this->errors[] = 'failed create company';
+            return false;
+        } catch (Exception $e){
+            $this->errors[] = $e->getMessage();
+            return false;
         }
-        $this->errors[] = 'failed create company';
-        return false;
     }
 
 
     public function createContact(): bool
     {
-        $this->contact = new \CCrmContact(false);
-        $id = $this->contact->Add($this->arContact);
-        if($id)
-        {
-            $this->arContact['ID'] = $id;
-            $fm = new \CCrmFieldMulti();
-            $value = $this->getMultiFields($id, $this->contactPhone, 'PHONE');
-            if(!$fm->Add($value)){
-                $this->errors[] = $fm->LAST_ERROR . $this->contactPhone . ' phone fail '. json_encode($value);
-                return false;
+        try {
+            $result = \Bitrix\Crm\ContactTable::add($this->arContact);
+            if($result->isSuccess())
+            {
+                $this->arContact['ID'] = $result->getId();
+                $fm = new \CCrmFieldMulti();
+                $value = $this->getMultiFields($result->getId(), $this->contactPhone, 'PHONE');
+                if(!$fm->Add($value)){
+                    $this->errors[] = $fm->LAST_ERROR . $this->contactPhone . ' phone fail '. json_encode($value);
+                    return false;
+                }
+                $value = $this->getMultiFields($result->getId(), $this->contactMail, 'EMAIL');
+                if(!$fm->Add($value)){
+                    $this->errors[] = $fm->LAST_ERROR . $this->contactMail . ' email fail ' . json_encode($value);
+                    return false;
+                }
+                $this->errors[] = 'contactID: ' . $result->getId();
+                return true;
             }
-            $value = $this->getMultiFields($id, $this->contactMail, 'EMAIL');
-            if(!$fm->Add($value)){
-                $this->errors[] = $fm->LAST_ERROR . $this->contactMail . ' email fail ' . json_encode($value);
-                return false;
-            }
-            $this->errors[] = 'contactID: ' . $id;
-            return true;
+            $this->errors[] = implode('\n', $result->getErrorMessages());
+            $this->errors[] = 'failed create contact '.$result->getId();
+            return false;
+        } catch (Exception $e){
+            $this->errors[] = $e->getMessage();
+            return false;
         }
-        $this->errors[] = 'failed create contact '.$id;
-        return false;
     }
 
 
