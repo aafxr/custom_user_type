@@ -1,5 +1,6 @@
 <?php
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED != true) die();
+require_once ($_SERVER['DOCUMENT_ROOT'].'/local/php_interface/custom/refloor_functions.php');
 
 /** CUser */
 global $USER;
@@ -84,13 +85,22 @@ class FormLeadClass
             'TITLE'   => $companyTitle,
             'COMPANY_TYPE' => $companyType,
             "OPENED" => "Y", // "Доступен для всех" = Да
-            'UF_CITY_LIST' => $companyCity,
+            'UF_CITY_LIST' => $this->getCityId($companyCity),
             'UF_SOURCE_IB' => 'Пришел с '.$cSource,
-            'UF_CATEGORY_TEXT' => 'Пришел с '.$cSource,
             'CREATED_BY_ID' => $createdById,
             'MODIFY_BY_ID' => $createdById,
             'ASSIGNED_BY_ID' => $createdById,
         ];
+    }
+
+
+    private function getCityId($cityName){
+        return getUfCityListValueId($cityName);
+    }
+
+    private function getSourceId(){
+        $IBLOCK_SOURCE_ID = 20;
+        $elementId = CIBlockElement::GetList([],["IBLOCK_ID" => $IBLOCK_SOURCE_ID,'XML_ID' => $bxHLSource['UF_XML_ID']])->Fetch()['ID'];
     }
 
 
