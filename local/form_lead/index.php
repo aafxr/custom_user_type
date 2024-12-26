@@ -23,7 +23,11 @@ try {
     $requestBody = file_get_contents('php://input');
     try{
         $request = json_decode($requestBody, true);
-    }catch (Exception $e){
+    }catch (Exception $e){}
+
+    if (!$request) $request = $_POST;
+
+    if(!count($request)){
         http_response_code(400);
         $result['ok'] = false;
         $result['message'] = 'bad request';
