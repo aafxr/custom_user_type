@@ -98,7 +98,13 @@ class FormLeadClass
         return getUfCityListValueId($cityName);
     }
 
-    private function getSourceId(){
+    private function getSourceId($companyId){
+        $arCompany = CCrmCompany::GetList([], ["ID" => $companyId])->fetch();
+
+        $hlbl = 16; // CrmCompanyCategories - категории
+        $hlblock = Bitrix\Highloadblock\HighloadBlockTable::getById($hlbl)->fetch();
+        $bxSourceClass = Bitrix\Highloadblock\HighloadBlockTable::compileEntity($hlblock)->getDataClass();
+
         $IBLOCK_SOURCE_ID = 20;
         $elementId = CIBlockElement::GetList([],["IBLOCK_ID" => $IBLOCK_SOURCE_ID,'XML_ID' => $bxHLSource['UF_XML_ID']])->Fetch()['ID'];
     }
