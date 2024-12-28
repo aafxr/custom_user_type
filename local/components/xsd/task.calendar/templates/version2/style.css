@@ -1,0 +1,232 @@
+.load {
+	background: rgba(255,255,255,0.25);
+	height: 16px;
+	border-radius: 8px;
+}
+.period {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 2px;
+	margin: 15px 0;
+}
+.day {
+	flex: 1;
+	background: #e7f0ff;
+	background-image: linear-gradient(352deg, #d3e2fb, #e7f0ff);
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 4px;
+}
+.day.current {
+	background: #b1cff9;
+
+}
+.period.month .day a.day-title {
+	color: #939aa1;
+	font-weight: bolder;
+	cursor: pointer;
+	font-size:14px;
+	display: block;
+	padding: 4px 0;
+	text-align: right;
+	position: relative;
+}
+.period.month .day a.day-title:hover:before {
+	content: 'Добавить задачу';
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	padding: 4px;
+	font-weight: 400;
+	text-decoration: underline;
+}
+
+
+.day.current .day-title {
+	color: #333;
+}
+.day.weekend {
+	background: #fafafa;
+}
+.day.day-before {
+	opacity: 0.4;
+}
+.day .task-list {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+.task.order-1 { order: 10; border-left: #e75151 8px solid;}
+.task.order-2 { order: 20; border-left: #7fbd66 8px solid;}
+.task.order-3 { order: 30; border-left: #60a1fb 8px solid;}
+.task.order-4 { order: 40; border-left: #eaeaea 8px solid;}
+.task.order-9 { order: 90; border-left: red 8px solid; background: #ffd7d7;}
+.task.order-die { order: 0; border-left: red 8px solid; background: #ffd7d7;}
+.task {
+	filter: drop-shadow(2px 2px 1px #3332);
+	background: white;
+	border-radius: 0 4px 4px 0;
+	padding: 4px;
+	margin-left:0px;
+	margin-top: 0px;
+	margin-right: 1px;
+	margin-bottom: 1px;
+	transition: 0.1s;
+	border-left: #fff 8px solid;
+
+}
+.task:hover {
+	margin-left:1px;
+	margin-top: 1px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	filter:drop-shadow(0px 0px 0px #333f);
+}
+.task.long {
+	background: #fdfdd5;
+}
+.repeat-task {
+	width: 1rem;
+	height: 1rem;
+}
+.task a {
+	font-family: "OpenSans-Semibold","Helvetica Neue",Arial,Helvetica,sans-serif;
+	color: #333;
+	font-size: 13px;
+
+	line-height: 16px;
+	display: block;
+}
+.user-info {
+	display: flex;
+	flex-direction: row;
+	margin: 6px 0 2px;
+
+}
+.userpic {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+
+	background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNDAgNDAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8ZyBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8ZyBpZD0iaWNvbiI+CiAgICAgICAgICAgIDxjaXJjbGUgaWQ9Ik92YWwiIGZpbGw9IiM3Qjg2OTEiIGZpbGwtcnVsZT0ibm9uemVybyIgY3g9IjIwIiBjeT0iMjAiIHI9IjIwIj48L2NpcmNsZT4KICAgICAgICAgICAgPHBhdGggZD0iTTE3LjEyODQwNjksOS4zMDg1NTg3IEMxNi4yMjIyODk0LDcuODcyODY5NyAyMy44NjE1MzA0LDYuNjgwNDc0MTEgMjQuMzY4NzQ5OCwxMS4wNzQzNzAyIEMyNC41NjgxOTg5LDEyLjM5ODI5OSAyNC41NjgxOTg5LDEzLjc0NTQzOTUgMjQuMzY4NzQ5OCwxNS4wNjkzNjgzIEMyNC4zNjg3NDk4LDE1LjA2OTM2ODMgMjUuNTEwNDIzNSwxNC45Mzg2OTQ4IDI0Ljc0ODczNDYsMTcuMTA4NTYyNSBDMjQuNzQ4NzM0NiwxNy4xMDg1NjI1IDI0LjMyOTIwMzksMTguNjY5NzY2OCAyMy42ODQ0MzM0LDE4LjMxOTAxMTYgQzIzLjY4NDQzMzQsMTguMzE5MDExNiAyMy43ODkzMTYxLDIwLjI5Mjg2OTEgMjIuNzc0ODc3MiwyMC42MjcyOTAxIEMyMi43NzQ4NzcyLDIwLjYyNzI5MDEgMjIuODQ3MDkxNCwyMS42Nzg2OTU4IDIyLjg0NzA5MTQsMjEuNzUwMDUwNCBMMjMuNjk0NzQ5NywyMS44NzY0MjU1IEMyMy42OTQ3NDk3LDIxLjg3NjQyNTUgMjMuNjY4OTU4OSwyMi43NTMzMTM0IDIzLjgzODMxODYsMjIuODQ3ODc5NyBDMjQuNjEyMDQzMywyMy4zNDY1MDIyIDI1LjQ1OTcwMTYsMjMuNzI1NjI3MyAyNi4zNTEyMDQyLDIzLjk2OTc4MDQgQzI4Ljk4MzU4NzMsMjQuNjM3NzYyNiAzMC4zMTk1NTE4LDI1Ljc4MzczNDcgMzAuMzE5NTUxOCwyNi43ODc4NTc0IEwzMS4wMjcwOCwzMC4zODkxMTU2IEMyNy45ODAzMjQ0LDMxLjY2NTc2MTIgMjQuNDQ0NDAyOSwzMi40MjkxNjk1IDIwLjY2MzQ2ODcsMzIuNTA5MTIxIEwxOS4zNDIxMTksMzIuNTA5MTIxIEMxNS41Njg5MjE5LDMyLjQyOTE2OTUgMTIuMDQwNzM3NywzMS42NjkyIDksMzAuMzk3NzEyNSBDOS4xMzg0MTA3NCwyOS40MDEzMjcxIDkuMzE4OTQ2NDgsMjguMjc0MjY4MyA5LjUwNTUwMDA4LDI3LjU0NzgyNjkgQzkuOTA2MTE3NDksMjUuOTg2NjIyNSAxMi4xNTkzNzU1LDI0LjgyNjg5NTMgMTQuMjMyMDk3OCwyMy45MzUzOTI2IEMxNS4zMDQ5OTU5LDIzLjQ3MzczNjkgMTUuNTM3MTEzMywyMy4xOTYwNTU4IDE2LjYxNjg4ODksMjIuNzI0MDgzOCBDMTYuNjc3MDY3NSwyMi40MzY5NDYgMTYuNzAxMTM5LDIyLjE0MjkzMDYgMTYuNjg5MTAzMiwyMS44NDk3NzQ5IEwxNy42MDcyNTY0LDIxLjc0MDU5MzggQzE3LjYwNzI1NjQsMjEuNzQwNTkzOCAxNy43Mjc2MTM2LDIxLjk1OTgxNTggMTcuNTM0MTgyNSwyMC42NzAyNzQ4IEMxNy41MzQxODI1LDIwLjY3MDI3NDggMTYuNTAyNTQ5NiwyMC40MDI5MDk5IDE2LjQ1NDQwNjgsMTguMzQ5MTAwOSBDMTYuNDU0NDA2OCwxOC4zNDkxMDA5IDE1LjY3ODk2MjgsMTguNjA3MDA5MSAxNS42MzI1MzkzLDE3LjM2MzAzMTkgQzE1LjU5OTAxMTIsMTYuNTIwNTMxOCAxNC45Mzc5MDY1LDE1Ljc4ODA3MjUgMTUuODg5NTg3OCwxNS4xODE5ODgyIEwxNS40MDQ3MjA0LDEzLjg5MDcyNzggQzE1LjQwNDcyMDQsMTMuODkwNzI3OCAxNC44OTU3ODE1LDguOTA0NTAyNTIgMTcuMTI4NDA2OSw5LjMwODU1ODcgTDE3LjEyODQwNjksOS4zMDg1NTg3IFoiIGlkPSJQYXRoIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=);
+}
+.period-description {
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	flex: 1;
+	font-size: 2rem;
+	color: #333;
+}
+
+#calendar-control {
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+}
+.period-type-selector {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+}
+.period-type-selector .item {
+	padding: 10px 15px;
+	background: #eaf6ff;
+	color: #333;
+}
+.period-type-selector .active {
+	background: #b2e421;
+	color: #535c69;
+
+}
+
+.period-control {
+
+	display: flex;
+	flex-direction: row;
+}
+.period-control .btn {
+	padding: 10px 15px;
+	background: #eaf6ff;
+	color: #333;
+}
+.period-control .value {
+	padding: 10px 15px;
+	background: #d3e1ed;
+	color: #333;
+}
+
+.period.month .day {
+	min-width: calc(100% / 6 - 10px);
+	max-width: calc(100% / 6 - 10px);
+}
+.period.month .day.weekend {
+	min-width: calc(100% / 12 - 10px);
+	max-width: calc(100% / 12 - 10px);
+}
+
+.period.month .day .user-info {
+	display: none;
+}
+.period.month .day a,.period.month .day .task {
+	font-size: 11px;
+	line-height: 12px;
+}
+.day-title.day-title-month {
+	display: flex;
+	justify-content: end;
+	color: #939aa1;
+}
+.weekday-header {
+	font-size: 10px;
+	font-weight: 600;
+	text-align: center;
+
+	min-height: 20px;
+	justify-content: center;
+}
+.pagetitle-inner-container {
+	display: flex;
+}
+
+.long.deadline .title {
+	
+	background-image: url(/local/components/xsd/task.calendar/templates/version2/images/finish-flag.png);
+	background-repeat: no-repeat;
+	background-size: 13px 13px;
+	padding-left: 20px;
+}
+#workarea-content {
+	padding:  0 1rem;
+}
+
+.task-users {
+	display: flex;
+	gap: 4px;
+	margin-top: 4px;
+	align-items: center;
+}
+.task-users span {
+	font-weight: bolder;
+	font-family: monospace;
+	color: #ccc;
+}
+.userpic {
+	background-size: cover;
+	background-position: center;
+	width: 18px;
+	height: 18px;
+}
+.task.done {
+	text-decoration: line-through;
+	opacity: 0.7;
+}
+.task.done.order-1 { order: 110; }
+.task.done.order-2 { order: 120; }
+.task.done.order-3 { order: 130; }
+.task.done.order-4 { order: 140; }
+.task.done.order-9 { order: 190; }

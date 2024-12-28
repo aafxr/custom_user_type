@@ -1,0 +1,179 @@
+.tasks-grid-username {
+    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    vertical-align: middle;
+    color: #3a3f46;
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 3.5px 13px 3.5px 0px;
+    font-weight: 600;
+    transition: 250ms linear all;
+    box-sizing: border-box;
+    height: 28px;
+    background: #e4edf7;
+    border-radius: 14px 14px 14px 14px;
+    gap: 4px;
+}
+.tasks-grid-username-pic {
+    background-color: #535c6a;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0Ny4xODgiIGhlaWdodD0iNTQuMDYzIiB2aWV3Qm94PSIwIDAgNDcuMTg4IDU0LjA2MyI+PGRlZnM+PHN0eWxlPi5jbHMtMSB7IGZpbGw6ICNmZmY7IGZpbGwtcnVsZTogZXZlbm9kZDsgfTwvc3R5bGU+PC9kZWZzPjxwYXRoIGlkPSJTaGFwZV8yX2NvcHlfNCIgZGF0YS1uYW1lPSJTaGFwZSAyIGNvcHkgNCIgY2xhc3M9ImNscy0xIiBkPSJNNDcuMTggNTQuMDYyYzAtMy4yMTctMy42MS0xNi44MjYtMy42MS0xNi44MjYgMC0xLjk5LTIuNi00LjI2LTcuNzItNS41ODVhMTcuMzk0IDE3LjM5NCAwIDAgMS00Ljg4Ny0yLjIyM2MtLjMzLS4xODgtLjI4LTEuOTI1LS4yOC0xLjkyNWwtMS42NDgtLjI1YzAtLjE0Mi0uMTQtMi4yMjUtLjE0LTIuMjI1IDEuOTcyLS42NjMgMS43Ny00LjU3NCAxLjc3LTQuNTc0IDEuMjUyLjY5NSAyLjA2OC0yLjQgMi4wNjgtMi40IDEuNDgyLTQuMy0uNzM4LTQuMDQtLjczOC00LjA0YTI3LjA1IDI3LjA1IDAgMCAwIDAtNy45MThjLS45ODctOC43MDgtMTUuODQ3LTYuMzQ0LTE0LjA4NS0zLjUtNC4zNDMtLjgtMy4zNTIgOS4wODItMy4zNTIgOS4wODJsLjk0MiAyLjU2Yy0xLjg1IDEuMi0uNTY0IDIuNjUtLjUgNC4zMi4wOSAyLjQ2NiAxLjYgMS45NTUgMS42IDEuOTU1LjA5MyA0LjA3IDIuMSA0LjYgMi4xIDQuNi4zNzcgMi41NTYuMTQyIDIuMTIuMTQyIDIuMTJsLTEuNzg2LjIxN2E3LjEgNy4xIDAgMCAxLS4xNCAxLjczMmMtMi4xLjkzNi0yLjU1MyAxLjQ4NS00LjY0IDIuNC00LjAzMiAxLjc2Ny04LjQxNCA0LjA2NS05LjE5MyA3LjE2Uy0uMDEyIDU0LjA2LS4wMTIgNTQuMDZoNDcuMTl6Ii8+PC9zdmc+);
+    width: 22px;
+    height: 22px;
+    background-size: cover;
+    border-radius: 50%;
+    border: white 3px solid;
+}
+.task-report-success {
+
+
+}
+.task-col-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-start;
+}
+.task-description {
+    border-radius: 0 14px 14px 14px;
+    padding: 3.5px 13px 3.5px 4px;
+    background-color: #fffcee;
+    border: #f7f1eb 1px solid;
+    cursor: pointer;
+}
+.task-report-text {
+    border-radius: 0 14px 14px 14px;
+    padding: 3.5px 13px 3.5px 4px;
+    background-color: #ffffff;
+    font-family: "Open Sans", sans-serif;
+    font-size: 13.3px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.task-report-text.success {
+    color: #107000;
+    background: #eaf1e9;
+}
+
+.task-event-type {
+    background-color: #FFF6D5;
+    padding: 1px 4px;
+    font-size: 12px;
+    border-radius: 3px;
+    margin-left: 2px;
+    border: solid 1px #f5e9bf;
+}
+.task-overdue {
+    display: inline-flex;
+    color: red;
+    font-size: 9px;
+    border-radius: 4px;
+    padding: 4px 5px;
+    line-height: 1.2;
+    background: #f4f4f4;
+}
+
+.task-col-header {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+}
+.task-report-datetime {
+    font-size: 12px;
+    color: #7c8289;
+}
+
+.eventType {
+    background-color: #FFF6D5;
+    padding: 1px 4px;
+    font-size: 12px;
+    border-radius: 3px;
+    margin-left: 2px;
+    border: solid 1px #f5e9bf;
+}
+.grtxt {
+    color: #55707e;
+    font-size: 12px;
+}
+
+.action-task-report.report
+{
+    font-weight: bold;
+    color: #D8454A;
+    text-decoration: #D8454A underline dotted;
+}
+.reportsuccess {
+    color: #107000;
+    font-weight: bold;
+    margin-top: 3px;
+
+}
+.reportsuccess .datetime {
+    color: #107000;
+    border-bottom: #107000 1px dotted;
+}
+
+.companyprops {
+    font-size: 10px;
+    margin-top: 6px;
+}
+a.text {
+    color: #333;
+}
+.flex-control-line {
+    display: flex;
+    flex-direction: row;
+
+}
+.priority-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2px
+}
+.priority-list .priority {
+    border-radius: 4px;
+    display: inline-flex;
+    background: red;
+    color: white;
+    padding: 1px 3px;
+}
+
+.action-task-report {
+    cursor: pointer;
+}
+
+.refloor-start-container {
+    position: relative;
+}
+.refloor-start-container .refloor-btn-refresh {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.ui-white {
+    color: white;
+}
+
+.grid-filter {
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+    border-radius: 8px;
+    padding: 6px;
+    background: #e8f0ff;
+}
+.header-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.check-container {
+    margin-left: 1rem;
+}
+.header-container .calendar {
+
+    flex: none;
+}

@@ -1,0 +1,103 @@
+.eventType {
+    background-color: #FFF6D5;
+    padding: 1px 4px;
+    font-size: 12px;
+    border-radius: 3px;
+    margin-left: 2px;
+    border: solid 1px #f5e9bf;
+}
+.grtxt {
+    color: #55707e;
+    font-size: 12px;
+}
+
+.action-task-report.report
+{
+    font-weight: bold;
+    color: #D8454A;
+    text-decoration: #D8454A underline dotted;
+}
+.reportsuccess {
+    color: #107000;
+    font-weight: bold;
+    margin-top: 3px;
+
+}
+.reportsuccess .datetime {
+    color: #107000;
+    border-bottom: #107000 1px dotted;
+}
+
+.companyprops {
+    font-size: 10px;
+    margin-top: 6px;
+}
+a.text {
+    color: #333;
+}
+.flex-control-line {
+    display: flex;
+    flex-direction: row;
+
+}
+.priority-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2px
+}
+.priority-list .priority {
+    border-radius: 4px;
+    display: inline-flex;
+    background: red;
+    color: white;
+    padding: 1px 3px;
+}
+
+.action-task-report {
+    cursor: pointer;
+}
+
+.refloor-start-container {
+    position: relative;
+}
+.refloor-start-container .refloor-btn-refresh {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.ui-white {
+    color: white;
+}
+
+.grid-filter {
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+    border-radius: 8px;
+    padding: 6px;
+    background: #e8f0ff;
+}
+.header-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.check-container {
+    margin-left: 1rem;
+}
+.header-container .calendar {
+    
+    flex: none;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.link {
+    cursor: pointer;
+    color: #2067b0;
+}
+select.ui-ctl-element {
+    max-width: 240px;
+}

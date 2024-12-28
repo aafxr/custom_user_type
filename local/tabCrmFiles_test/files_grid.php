@@ -1,4 +1,26 @@
 <style>
+    body{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bx-disk-container{
+        flex: none;
+    }
+
+    .bx-disk-interface-filelist{
+        flex: 1 1;
+    }
+
+    .disk-folder-list-config{
+        display: flex!important;
+        flex-wrap: wrap!important;
+        padding: 7px 0!important;
+        gap: 6px!important;
+        overflow: auto!important;
+        height: 100%!important;
+    }
+
     .bx-disk-interface-toolbar {
         display: flex;
         align-items: center;
@@ -99,6 +121,9 @@
 
     <div class="disk-folder-list-toolbar top-panel" id="disk-folder-list-toolbar" style="align-items: center;">
         <?
+            $APPLICATION->IncludeComponent('refloor:disk.upload.files', '', ['FOLDER_ID' => $_GET['FOLDER_ID'], 'CLASS_NAME' => 'upload-more'])
+        ?>
+        <?
         $APPLICATION->IncludeComponent(
             'bitrix:disk.breadcrumbs',
             '',
@@ -122,27 +147,30 @@
                 <a href="?<?= $uriToTileXL->getQuery() ?>"
                    class="disk-folder-list-view-item disk-folder-list-view-item-grid-tile js-disk-change-view <?= ($arResult['GRID']['MODE'] === FolderListOptions::VIEW_MODE_TILE && $arResult['GRID']['VIEW_SIZE'] === FolderListOptions::VIEW_TILE_SIZE_XL ? 'disk-folder-list-view-item-active' : '') ?>"
                    data-view-tile-size="<?= FolderListOptions::VIEW_TILE_SIZE_XL ?>"></a>
+
             </div>
+            <a class="ui-btn ui-btn-primary ui-btn-icon-disk" href="protoBitrix24://X:/CRM/<?=$folderName?>/">Открыть на компьютере</a>
+            <a class="ui-btn ui-btn-icon-setting" download href="https://crm.refloor-nsk.ru/upload/script/refProtoBitrix24.reg">Настройка ПК</a>
+            <a class="ui-btn ui-btn-icon-setting" download href="https://crm.refloor-nsk.ru/upload/script/disk.cmd">Подлючение диска</a>
             <?php
             $menuButton = new \Bitrix\UI\Buttons\Button(["text" => "Добавить",]);
             $menuButton->addClass('ui-btn js-disk-add-button ui-btn-primary ui-btn-dropdown');
             echo $menuButton->render();
-            $APPLICATION->IncludeComponent('refloor:disk.upload.files', '', ['FOLDER_ID' => $_GET['FOLDER_ID'], 'CLASS_NAME' => 'upload-more'])
             ?>
         </div>
     </div>
+    <?php
+    $APPLICATION->includeComponent(
+        'bitrix:main.ui.filter',
+        '',
+        [
+            'FILTER_ID' => 'folder_list_' . $_GET['STORAGE_ID'],
+            'GRID_ID' => 'folder_list_' . $_GET['STORAGE_ID'],
+            'ENABLE_LIVE_SEARCH' => false,
+        ]
+    );
+    ?>
 </div>
-<?php
-$APPLICATION->includeComponent(
-    'bitrix:main.ui.filter',
-    '',
-    [
-        'FILTER_ID' => 'folder_list_' . $_GET['STORAGE_ID'],
-        'GRID_ID' => 'folder_list_' . $_GET['STORAGE_ID'],
-        'ENABLE_LIVE_SEARCH' => false,
-    ]
-);
-?>
 
 
 <script>

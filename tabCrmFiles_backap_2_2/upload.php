@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $fileName = implode(".",array_slice($arFileName, 0, -1));
 
             $file_name = $fileName." (".$userId."-".time().").".$file_ext;
-            $file = $path .$file_name;
+            $file = $path . $file_name;
 
             /*if (!in_array($file_ext, $extensions)) {
                 $errors[] = 'Extension not allowed: ' . $file_name . ' ' . $file_type;

@@ -13,6 +13,15 @@ global $USER;
 
 $isAuthorized = $USER->IsAuthorized();
 
+/*
+ *
+ *
+ * распределение заявок
+ *
+ *
+ *
+ */
+
 try {
     if (!$isAuthorized) $USER->Authorize(1);
 

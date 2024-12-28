@@ -1,0 +1,15 @@
+.alert-container {
+    display: none !important;
+}
+
+.resize-none {
+    resize: none;
+}
+.mb-0 {
+    margin-bottom: 0;
+    color: red;
+}
+
+.ui-form {
+    color: red;
+}

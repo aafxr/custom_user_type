@@ -91,48 +91,11 @@ if($idPlacementEntity && $storage):
         ]
     );*/
     ?>
-<div class="content-wrapper">
-    <div class="top-panel">
-        <div class="ut-btn-toolbar ut-btn-split">
-            <?
-            /*
-            <form id="upload-form" method="post" enctype="multipart/form-data">
-                <label class="input-file">
-                    <input id="upload-field" type="file" name="files[]"  multiple>
-                    <span class="ui-btn ui-btn-success ui-btn-icon-add" href="protoBitrix24://X:/CRM/<?=$folderName?>/">Загрузить файл</span>
-                </label>
-            </form>
-            */
-            ?>
-
-            <a class="ui-btn ui-btn-primary ui-btn-icon-disk" href="protoBitrix24://X:/CRM/<?=$folderName?>/">Открыть на компьютере</a>
-
-        </div>
-        <div class="ut-btn-split">
-            <?php if($arCompany['ORIGIN_ID']): ?>
-                <? //<div id="mawisync" class="ui-btn ui-btn-active ui-btn-icon-download" onclick="downloadFromMawi()">Загрузить из MawiSoft</div> ?>
-            <?php endif ?>
-            <a class="ui-btn ui-btn-icon-setting" download href="https://crm.refloor-nsk.ru/upload/script/refProtoBitrix24.reg">Настройка ПК</a>
-
-            <a class="ui-btn ui-btn-icon-setting" download href="https://crm.refloor-nsk.ru/upload/script/disk.cmd">Подлючение диска</a>
-
-        </div>
-    </div>
-
-    <div class="content-panel">
-
-        <script>
-            function resizeIframe(obj) {
-                obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-            }
-        </script>
-        <iframe
-            class="app-frame"
-            src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/apps/tabCrmFiles/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
-            style="width: 100%; height: 100%; border-radius: var(--ui-border-radius-md);border: none;"
-        ></iframe>
-    </div>
-</div>
+    <iframe
+        class="app-frame"
+        src="https://<?= $_SERVER['HTTP_HOST']; ?>/local/apps/tabCrmFiles/files_grid.php?FOLDER_ID=<?=$folderId; ?>&STORAGE_ID=<?=$storageId;?>&PARENT_ID=<?= $parentId ?>"
+        style="width: 100%; height: 100%; border-radius: var(--ui-border-radius-md);border: none;"
+    ></iframe>
 <?php endif ?>
 
 <style>
@@ -151,7 +114,6 @@ if($idPlacementEntity && $storage):
         flex: 1 1 auto;
         overflow-y: auto;
     }
-
 
     .ut-btn-toolbar {
         display: flex;
@@ -214,7 +176,7 @@ if($idPlacementEntity && $storage):
 ?>
 <script type="text/javascript">
     document.getElementById("upload-field").addEventListener("change", function () {
-        const url = '/local/tabCrmFiles_test/upload.php';
+        const url = '/local/apps/tabCrmFiles/upload.php';
         const files = document.querySelector('[type=file]').files;
         const formData = new FormData();
         for (let i = 0; i < files.length; i++) {

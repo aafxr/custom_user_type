@@ -65,6 +65,7 @@
     use \Bitrix\Disk\Internals\Grid\FolderListOptions;
 
 
+    echo $_GET['CRUMBS'].'<br/>';
     $arFolderIds = $_GET['CRUMBS'] ?? [$_GET['FOLDER_ID']];
     $crumbs = [];
 
@@ -126,6 +127,7 @@
             $menuButton = new \Bitrix\UI\Buttons\Button(["text" => "Добавить",]);
             $menuButton->addClass('ui-btn js-disk-add-button ui-btn-primary ui-btn-dropdown');
             echo $menuButton->render();
+            $APPLICATION->IncludeComponent('refloor:disk.upload.files', '', ['FOLDER_ID' => $_GET['FOLDER_ID'], 'CLASS_NAME' => 'upload-more'])
             ?>
         </div>
     </div>
@@ -173,7 +175,15 @@ $APPLICATION->IncludeComponent('refloor:disk.folder.list', "",
 </script>
 
 <script>
-    BX(() => {
+    BX.addCustomEvent(window, 'disk.upload.files:allLoadsDone', () => {
+        const tbodyTdList = document.querySelectorAll('#folder_list_<?=$_GET['STORAGE_ID']?>_table tbody .main-grid-row-body')
+        tbodyTdList.forEach(td => td.remove())
+        document.querySelector('.main-grid-more a').click()
+    })
+</script>
+
+<script>
+    function updateFoldersLink(){
         const refreshLink = document.querySelector('.main-grid-more a')
         if (refreshLink) {
             const url = new URL(refreshLink.href)
@@ -184,40 +194,47 @@ $APPLICATION->IncludeComponent('refloor:disk.folder.list', "",
                     e.href = u.toString()
                 })
         }
+        const url = new URL(refreshLink.href)
+        BX.onCustomEvent(window, 'disk.upload.files:folderChange', [
+            '<?=$_GET['STORAGE_ID']?>',
+            {folderId: url.searchParams.get('FOLDER_ID')}
+        ])
+    }
+    BX(() => {
+        const folderListNode = document.getElementById('folder_list_<?=$_GET['STORAGE_ID']?>')
+        updateFoldersLink()
+        let observer = new MutationObserver(updateFoldersLink);
+        observer.observe(folderListNode, {subtree: true, childList: true})
     })
 </script>
 
+
 <script>
-    BX(() => {
+    function updateGridPReview(){
+        const tableNode = document.getElementById('folder_list_<?=$_GET['STORAGE_ID']?>_table')
+        if(!tableNode) return
 
-        function updateGridPReview(){
-            const tableNode = document.getElementById('folder_list_<?=$_GET['STORAGE_ID']?>_table')
-            if(!tableNode) return
-
-            const extList = ['jpg', 'png', 'jpeg']
-            const spans = tableNode.querySelectorAll('span.bx-disk-folder-title')
-            spans.forEach(s => {
-                if(!s.dataset.src) return
-                const fileExt = s.dataset.src.split('.').pop()
-                if(extList.includes(fileExt)){
-                    const fileId = s.dataset.objectId
-                    fetch('https://crm.refloor-nsk.ru/local/apps/tabCrmFiles/getFilePreview.php?fileId=' + fileId)
-                        .then(r => r.json())
-                        .then(data => {
-                            if(data.ok){
-                                try {
-                                    const node = s.closest('.bx-disk-object-name').querySelector('.bx-disk-file-icon')
-                                    node.innerHTML = `<img src="${data.url}" />`
-                                    node.classList.add('preview-img')
-                                }catch (e){console.error(e)}
-                            }
-                        })
-                }
-            })
-        }
-
-        updateGridPReview()
-        BX.addCustomEvent('BX.Main.grid:paramsUpdated', BX.delegate(updateGridPReview))
-
-    })
+        const extList = ['jpg', 'png', 'jpeg', 'jfif', 'webp']
+        const spans = tableNode.querySelectorAll('span.bx-disk-folder-title')
+        spans.forEach(s => {
+            if(!s.dataset.src) return
+            const fileExt = s.dataset.src.split('.').pop().toLowerCase()
+            if(extList.includes(fileExt)){
+                const fileId = s.dataset.objectId
+                fetch('https://crm.refloor-nsk.ru/local/apps/tabCrmFiles/getFilePreview.php?fileId=' + fileId)
+                    .then(r => r.json())
+                    .then(data => {
+                        if(data.ok){
+                            try {
+                                const node = s.closest('.bx-disk-object-name').querySelector('.bx-disk-file-icon')
+                                node.innerHTML = `<img src="${data.url}" />`
+                                node.classList.add('preview-img')
+                            }catch (e){console.error(e)}
+                        }
+                    })
+            }
+        })
+    }
+    BX.addCustomEvent('BX.Main.grid:paramsUpdated', updateGridPReview)
+    BX(() => {updateGridPReview()})
 </script>

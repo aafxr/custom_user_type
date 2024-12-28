@@ -1,6 +1,11 @@
 <?php
 if(!defined('B_PROLOG_INCLUDED') && B_PROLOG_INCLUDED !== true) die();
 
+
+
+
+
+
 function getLeadResponsible($cityId, $selectNum){
     return '1';
     switch ($selectNum){
@@ -31,3 +36,40 @@ function getLeadResponsible($cityId, $selectNum){
             return '1';
     }
 }
+
+
+
+$responsibleForDesigners = [];
+
+function getResponsibleForNewDesigner(){
+    $hldata = Bitrix\Highloadblock\HighloadBlockTable::getById(22)->fetch();
+    $hlentity = Bitrix\Highloadblock\HighloadBlockTable::compileEntity($hldata);
+    $hlclass = $hlentity->getDataClass();
+
+
+    $currentTime = DateTime::createFromPhp(new \DateTime);
+
+
+    $res = $hlclass::getList([
+        'filter' => [
+            '<UF_START' => $currentTime,
+            '>=UF_END' => $currentTime,
+        ]
+    ]);
+
+    $arSchedule = $res->fetch();
+    if($arSchedule) return $arSchedule['UF_RESPONSIBLE_ID'];
+
+    /* создаем запись в расписании */
+    $res = $hlclass::getList([
+        'order' => ['UF_END' => 'DESC'],
+        'filter' => [
+            '<UF_END' => $currentTime,
+        ]
+    ]);
+
+    $arSchedule = $res->fetch();
+
+}
+
+
