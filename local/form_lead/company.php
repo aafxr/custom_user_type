@@ -22,7 +22,7 @@ if (!\Bitrix\Main\Loader::includeModule('crm')) {
 $oCompany = CCrmCompany::GetList(
     ['DATE_CREATE' => 'DESC'],
     ['ID' => $companyId],
-    ['*', 'UF_*']
+    []
 );
 
 

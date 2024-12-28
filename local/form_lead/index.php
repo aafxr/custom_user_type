@@ -35,13 +35,16 @@ try {
     }
 
 
-//    $result['ok'] = true;
-//    $result['get'] = $_GET;
-//    $result['post'] = $_POST;
-//    $result['REQUEST'] = $_REQUEST;
-//    $result['server'] = $_SERVER;
-//    $result['body'] = $requestBody;
-//    include('footer.php');
+/*
+    Салон напольных покрытий    UC_KUQTW0
+    Салон отделочных материалов UC_BHXO1M
+    Комплектование объектов     UC_L3LRS2
+    Розничный покупатель        UC_O2JYI1
+    Интернет-магазин            UC_2X9UMM
+    Дизайнер                    COMPETITOR
+    Архитектор                  UC_2HCJM7
+    Другое                      OTHER
+ */
 
 
     if (!\Bitrix\Main\Loader::includeModule('crm')) {
@@ -56,21 +59,19 @@ try {
 
 
     $contactSource = '';
-    if (str_contains($_SERVER['HTTP_ORIGIN'], FormLeadClass::SITE_QUARTZPARQUET))
+    if (str_contains($_SERVER['HTTP_ORIGIN'], 'quartzparquet.ru'))
     {
-        $contactSource = FormLeadClass::SITE_QUARTZPARQUET;
+        if(count(array_intersect_key([
+            'form_text_1' => true,
+            'form_text_3' => true,
+            'form_text_4' => true,
+            'form_dropdown_SIMPLE_QUESTION_964' => true,
+        ],$request))){
+            include 'qp_diller.php';
+        }
     } elseif (str_contains($_SERVER['HTTP_ORIGIN'], FormLeadClass::SITE_FARGOSPC))
     {
         $contactSource = FormLeadClass::SITE_FARGOSPC;
-    }
-
-
-    $formLead = new FormLeadClass($contactSource, $request);
-    if ($formLead->createAndBind()) {
-        $result['ok'] = true;
-    } else {
-        $result['ok'] = false;
-        $result['message'] = $formLead->getErrorMessage();
     }
 
 

@@ -5,92 +5,96 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/local/php_interface/custom/refloor_fun
 /** CUser */
 global $USER;
 
-
 class FormLeadClass
 {
+    const FARGO_DROPDOWN_CONVERT = [
+        '84' => 1,
+        '85' => 2,
+        '86' => 3,
+        '87' => 4,
+        '88' => 5,
+        '89' => 6,
+        '90' => 7,
+        '91' => 8,
+    ];
+
+
     const SITE_QUARTZPARQUET = 'quartzparquet';
     const SITE_FARGOSPC = 'fargospc';
 
-    public $contactSource = false;
-    public $formFields = false;
-    public $company = false;
-    public $contact = false;
-    public $arCompany = false;
-    public $arContact = false;
-    public $contactPhone = false;
-    public $contactMail = false;
+    private $options = false;
+    private $company = false;
+    private $contact = false;
+    private $arCompany = false;
+    private $arContact = false;
+    private $contactPhone = false;
+    private $contactMail = false;
 
-    public $errors = [];
+    private $errors = [];
 
 
-    public function __construct($contactSource, $fields)
+    /**
+     *
+     * 'COMPANY_TYPE' - detCompanyType(1-8)    (getCompanyType.php)
+     *
+     *
+     * 'UF_CITY_LIST' - getUfCityListValueId($cityName)    (/local/php_interface/custom/refloor_functions.php)
+     *
+     *
+     * 'UF_SOURCE_IB' - infoblock  id=20 значение поля UF_XML_ID
+     *
+     *
+     * ```
+     *  $options = [
+     *      'CUSTOMER' => [
+     *          'NAME'  => '',
+     *          'LAST_NAME' => '',
+     *          'FULL_NAME' => '',
+     *          'SOURCE_DESCRIPTION' => '',
+     *      ],
+     *      'COMPANY' => [
+     *          'TITLE' => '',
+     *          'COMPANY_TYPE' => '',
+     *          'UF_CITY_LIST' => '',
+     *          'UF_SOURCE_IB' => '',
+     *      ],
+     *      'PHONE' => '',
+     *      'MAIL' => '',
+     *      'RESPONSIBLE' => ''
+     *  ];
+     * ```
+     *
+     *
+     * @param $options
+     */
+    public function __construct($options)
     {
-        $this->contactSource = $contactSource;
-        $this->formFields = $fields;
+        $this->options = $options;
     }
 
-
-    public function convertFormFields(): bool
+    private function convertFields(): void
     {
-        global $USER;
-        switch ($this->contactSource){
-            case FormLeadClass::SITE_QUARTZPARQUET:
-                $this->convertFields(
-                    $this->formFields['form_text_1'],
-                    $this->formFields['form_text_2'],
-                    $this->formFields['form_text_3'],
-                    FormLeadClass::SITE_QUARTZPARQUET,
-                    $this->formFields['form_text_13'],
-                    'CUSTOMER',
-                    $this->formFields['form_text_4'],
-                    $USER->GetID()
-                );
-                break;
-            case FormLeadClass::SITE_FARGOSPC:
-                $this->convertFields(
-                    $this->formFields['form_text_74'],
-                    $this->formFields['form_text_75'],
-                    $this->formFields['form_text_92'],
-                    FormLeadClass::SITE_FARGOSPC,
-                    $this->formFields['form_text_93'],
-                    'CUSTOMER',
-                    $this->formFields['form_text_83'],
-                    $USER->GetID()
-                );
-                break;
-            default:
-                $this->errors[] = 'unknown source name';
-                return false;
-        }
-        return true;
-    }
+        $this->contactPhone = $this->options['PHONE'];
+        $this->contactMail = $this->options['MAIL'];
 
-    private function convertFields($cName, $cPhone, $cMail, $cSource, $companyTitle, $companyType, $companyCity, $createdById): void
-    {
-        [$name, $secondName, $lastName] = explode(' ', $cName);
-        $this->contactPhone = $cPhone;
-        $this->contactMail = $cMail;
-        $this->arContact = [
-            'NAME' => ($name.' '.$secondName) ?? '',
-            'LAST_NAME' => $lastName ?? '',
-            'FULL_NAME'   => $cName,
-            "OPENED" => "Y", // "Доступен для всех" = Да
-            'SOURCE_DESCRIPTION' => 'Пришел с '.$cSource,
-            'CREATED_BY_ID' => $createdById,
-            'MODIFY_BY_ID' => $createdById,
-            'ASSIGNED_BY_ID' => $createdById,
-        ];
+        $this->arContact['NAME'] = $this->options['CUSTOMER']['NAME'];
+        $this->arContact['LAST_NAME'] = $this->options['CUSTOMER']['LAST_NAME'];
+        $this->arContact['FULL_NAME'] = $this->options['CUSTOMER']['FULL_NAME'];
+        $this->arContact['SOURCE_DESCRIPTION'] = $this->options['CUSTOMER']['SOURCE_DESCRIPTION'];
+        $this->arContact['OPENED'] = 'Y';
+        $this->arContact['CREATED_BY_ID'] = $this->options['RESPONSIBLE'];
+        $this->arContact['MODIFY_BY_ID'] = $this->options['RESPONSIBLE'];
+        $this->arContact['ASSIGNED_BY_ID'] = $this->options['RESPONSIBLE'];
 
-        $this->arCompany = [
-            'TITLE'   => $companyTitle,
-            'COMPANY_TYPE' => $companyType,
-            "OPENED" => "Y", // "Доступен для всех" = Да
-            'UF_CITY_LIST' => $this->getCityId($companyCity),
-            'UF_SOURCE_IB' => 'Пришел с '.$cSource,
-            'CREATED_BY_ID' => $createdById,
-            'MODIFY_BY_ID' => $createdById,
-            'ASSIGNED_BY_ID' => $createdById,
-        ];
+
+        $this->arCompany['TITLE'] = $this->options['COMPANY']['TITLE'];
+        $this->arCompany['COMPANY_TYPE'] = $this->options['COMPANY']['COMPANY_TYPE'];
+        $this->arCompany['UF_CITY_LIST'] = $this->options['COMPANY']['UF_CITY_LIST'];
+        $this->arCompany['UF_SOURCE_IB'] = $this->options['COMPANY']['UF_SOURCE_IB'];
+        $this->arCompany['OPENED'] = 'Y';
+        $this->arCompany['CREATED_BY_ID'] = $this->options['RESPONSIBLE'];
+        $this->arCompany['MODIFY_BY_ID'] = $this->options['RESPONSIBLE'];
+        $this->arCompany['ASSIGNED_BY_ID'] = $this->options['RESPONSIBLE'];
     }
 
 
@@ -110,7 +114,7 @@ class FormLeadClass
     }
 
 
-    public function bind(): bool
+    private function bind(): bool
     {
         if(!isset($this->arCompany['ID']) || !isset($this->arContact['ID'])){
             $this->errors[] = 'bind fail. CompanyID: '.$this->arCompany['ID'].', ContactID: '.$this->arContact['ID'];
@@ -123,7 +127,7 @@ class FormLeadClass
 
     public function createAndBind(): bool
     {
-        if(!$this->convertFormFields()) return false;
+        $this->convertFields();
         if(!$this->createContact()) return false;
         if(!$this->createCompany()) return false;
         if(!$this->bind()) return false;
@@ -133,7 +137,7 @@ class FormLeadClass
 
 
 
-    public function createCompany(): bool
+    private function createCompany(): bool
     {
         try {
             $result = \Bitrix\Crm\CompanyTable::add($this->arCompany);
@@ -152,7 +156,7 @@ class FormLeadClass
     }
 
 
-    public function createContact(): bool
+    private function createContact(): bool
     {
         try {
             $result = \Bitrix\Crm\ContactTable::add($this->arContact);
@@ -199,7 +203,7 @@ class FormLeadClass
     }
 
 
-    public function getMultiFields($contactID, $value, $typeID, $valueType = 'WORK'): array
+    private function getMultiFields($contactID, $value, $typeID, $valueType = 'WORK'): array
     {
         $multiField = [
             'ENTITY_ID'  => \CCrmOwnerType::ContactName,
