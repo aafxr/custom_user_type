@@ -12,9 +12,11 @@ if(!defined('B_PROLOG_INCLUDED') && B_PROLOG_INCLUDED !== true) die();
  * - 6 - Дизайнер                    COMPETITOR
  * - 7 - Архитектор                  UC_2HCJM7
  * - 8 - Другое                      OTHER
+ * - 9 - Строительная компания       UC_9Y40EM
+ * - 10 - Ремонтная компания         UC_ICXPA3
  *
  *
- * @param number $option число  1 - 8
+ * @param number $option число
  * @return string
  */
 function getCompanyType($option): string
@@ -26,8 +28,10 @@ function getCompanyType($option): string
         case 4: return 'UC_O2JYI1';
         case 5: return 'UC_2X9UMM';
         case 6: return 'COMPETITOR';
-        case 7: return 'UC_2HCJM7';
+    case 7: return 'UC_2HCJM7';
         case 8: return 'OTHER';
+        case 9: return 'UC_9Y40EM';
+        case 10: return 'UC_ICXPA3';
         default: return '';
     }
 }

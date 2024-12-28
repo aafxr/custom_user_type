@@ -14,36 +14,33 @@ global $result;
 
 /** нормализация выподающего списка к 1 - 8 */
 $DROPDOWN_CONVERT_FIELDS = [
-    '5' => 1,
-    '6' => 2,
-    '7' => 3,
-    '8' => 4,
-    '9' => 5,
-    '10' => 6,
-    '11' => 7,
-    '12' => 8,
+    '100' => 9,
+    '101' => 6,
+    '102' => 7,
+    '103' => 10,
+    '106' => 8,
 ];
 
-$selectedCompanyTypeNumber = $DROPDOWN_CONVERT_FIELDS[$request['form_dropdown_SIMPLE_QUESTION_964']];
-$cityId = getUfCityListValueId($request['form_text_4']) ?? '0';
+$selectedCompanyTypeNumber = $DROPDOWN_CONVERT_FIELDS[$request['form_dropdown_SIMPLE_QUESTION_283']];
+$cityId = getUfCityListValueId($request['form_text_98']) ?? '0';
 
-[$name, $secondName, $lastName] = explode(' ', $request['form_text_1']);
+[$name, $secondName, $lastName] = explode(' ', $request['form_text_74']);
 
 $options = [
     'CUSTOMER' => [
         'NAME' => $name.' '.$secondName,
         'LAST_NAME' => $lastName,
-        'FULL_NAME' => $request['form_text_1'],
+        'FULL_NAME' => $request['form_text_74'],
         'SOURCE_DESCRIPTION' => 'Пришел с '.FormLeadClass::SITE_QUARTZPARQUET,
-        ],
-    'COMPANY' => [
-        'TITLE' => $request['form_text_13'],
-        'COMPANY_TYPE' => getCompanyType($selectedCompanyTypeNumber),
-        'UF_CITY_LIST' => getUfCityListValueId($request['form_text_4']),
-        'UF_SOURCE_IB' => '3064',
     ],
-    'PHONE' => $request['form_text_2'],
-    'MAIL' => $request['form_text_3'],
+    'COMPANY' => [
+        'TITLE' =>  $request['form_text_107'],
+        'COMPANY_TYPE' => getCompanyType($selectedCompanyTypeNumber),
+        'UF_CITY_LIST' => getUfCityListValueId($request['form_text_98']),
+        'UF_SOURCE_IB' => '3067',
+    ],
+    'PHONE' => $request['form_text_96'],
+    'MAIL' => $request['form_text_97'],
     'RESPONSIBLE' => getLeadResponsible($cityId, $selectedCompanyTypeNumber),
 ];
 

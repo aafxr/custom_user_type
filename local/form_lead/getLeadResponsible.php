@@ -2,6 +2,7 @@
 if(!defined('B_PROLOG_INCLUDED') && B_PROLOG_INCLUDED !== true) die();
 
 function getLeadResponsible($cityId, $selectNum){
+    return '1';
     switch ($selectNum){
         case 1:
         case 2:

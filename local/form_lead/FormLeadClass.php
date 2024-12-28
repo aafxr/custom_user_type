@@ -22,11 +22,11 @@ class FormLeadClass
     const SITE_QUARTZPARQUET = 'quartzparquet';
     const SITE_FARGOSPC = 'fargospc';
 
-    private $options = false;
+    private $options = [];
     private $company = false;
     private $contact = false;
-    private $arCompany = false;
-    private $arContact = false;
+    private $arCompany = [];
+    private $arContact = [];
     private $contactPhone = false;
     private $contactMail = false;
 
@@ -103,14 +103,14 @@ class FormLeadClass
     }
 
     private function getSourceId($companyId){
-        $arCompany = CCrmCompany::GetList([], ["ID" => $companyId])->fetch();
-
-        $hlbl = 16; // CrmCompanyCategories - категории
-        $hlblock = Bitrix\Highloadblock\HighloadBlockTable::getById($hlbl)->fetch();
-        $bxSourceClass = Bitrix\Highloadblock\HighloadBlockTable::compileEntity($hlblock)->getDataClass();
-
-        $IBLOCK_SOURCE_ID = 20;
-        $elementId = CIBlockElement::GetList([],["IBLOCK_ID" => $IBLOCK_SOURCE_ID,'XML_ID' => $bxHLSource['UF_XML_ID']])->Fetch()['ID'];
+//        $arCompany = CCrmCompany::GetList([], ["ID" => $companyId])->fetch();
+//
+//        $hlbl = 16; // CrmCompanyCategories - категории
+//        $hlblock = Bitrix\Highloadblock\HighloadBlockTable::getById($hlbl)->fetch();
+//        $bxSourceClass = Bitrix\Highloadblock\HighloadBlockTable::compileEntity($hlblock)->getDataClass();
+//
+//        $IBLOCK_SOURCE_ID = 20;
+//        $elementId = CIBlockElement::GetList([],["IBLOCK_ID" => $IBLOCK_SOURCE_ID,'XML_ID' => $bxHLSource['UF_XML_ID']])->Fetch()['ID'];
     }
 
 
@@ -174,7 +174,6 @@ class FormLeadClass
                     $this->errors[] = $fm->LAST_ERROR . $this->contactMail . ' email fail ' . json_encode($value);
                     return false;
                 }
-                $this->errors[] = 'contactID: ' . $result->getId();
                 return true;
             }
             $this->errors[] = implode('\n', $result->getErrorMessages());
